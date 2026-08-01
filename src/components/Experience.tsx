@@ -6,7 +6,7 @@ import { Briefcase, GraduationCap, Users } from "lucide-react";
 const education = [
   {
     title: "Universitas Diponegoro",
-    role: "S1 Informatika — IPK: 3.63",
+    role: "S1 Informatika",
     period: "2024 – Sekarang",
     description: "Pursuing Computer Science with focus on software engineering, AI, and web development.",
     dot: "bg-primary shadow-[0_0_12px_rgba(37,99,235,0.8)]",
@@ -22,14 +22,14 @@ const education = [
 
 const internship = [
   {
-    title: "Dinas Komunikasi dan Informatika",
+    title: "Dinas Komunikasi dan Informatika - Kota Tegal",
     role: "E-Government Intern",
     period: "Jan – Feb 2026",
     description: "Developed a district information website system. Operated a Digital Literacy Seminar and FGD on AI in Government.",
     dot: "bg-primary shadow-[0_0_12px_rgba(37,99,235,0.8)]",
   },
   {
-    title: "Badan Pertanahan Nasional — Kab. Tegal",
+    title: "Badan Pertanahan Nasional - Kabupaten Tegal",
     role: "Data Entry Intern",
     period: "Jul – Aug 2025",
     description: "Validated physical documents and digitized land administration archives.",
@@ -39,14 +39,14 @@ const internship = [
 
 const organization = [
   {
-    title: "Young on Top — Semarang",
+    title: "Young on Top",
     role: "Divisi Marketing & Communication",
     period: "Des 2024 – Des 2025",
     description: "Created content and publicized events. Coordinated team branding and social activities.",
     dot: "bg-secondary shadow-[0_0_12px_rgba(124,58,237,0.8)]",
   },
   {
-    title: "Senat Mahasiswa Undip · BKSAP",
+    title: "Senat Mahasiswa Undip",
     role: "Badan Kerja Sama Antar Parlemen",
     period: "Feb – Des 2025",
     description: "External communication and coordination. Managed publication of parliamentary collaboration information.",
