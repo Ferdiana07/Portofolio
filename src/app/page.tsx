@@ -5,7 +5,7 @@ import Experience from "@/components/Experience";
 import Projects from "@/components/Projects";
 import GitHubStats from "@/components/GitHub";
 import Certifications from "@/components/Certifications";
-import Services from "@/components/Services";
+
 import Contact from "@/components/Contact";
 import SectionDivider from "@/components/SectionDivider";
 
@@ -26,8 +26,6 @@ export default function Home() {
       <SectionDivider variant="secondary-to-accent" />
       <Certifications />
       <SectionDivider variant="accent-to-primary" />
-      <Services />
-      <SectionDivider variant="primary-to-secondary" />
       <Contact />
     </>
   );

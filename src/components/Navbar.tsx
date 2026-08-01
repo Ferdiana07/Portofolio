@@ -60,14 +60,6 @@ export default function Navbar() {
                 <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-gradient-to-r from-primary to-accent transition-all duration-300 group-hover:w-full" />
               </Link>
             ))}
-            <a
-              href="/resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-5 py-2 text-sm font-semibold text-white bg-primary rounded-full hover:bg-accent transition-all duration-300 hover:shadow-[0_0_20px_rgba(56,189,248,0.4)]"
-            >
-              Resume
-            </a>
           </div>
 
           {/* Mobile Toggle */}
@@ -117,18 +109,7 @@ export default function Navbar() {
                 </Link>
               </motion.div>
             ))}
-            <motion.a
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: navLinks.length * 0.08, duration: 0.3 }}
-              href="/resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={handleLinkClick}
-              className="mt-4 px-8 py-3 text-base font-semibold text-white bg-primary rounded-full"
-            >
-              Download Resume
-            </motion.a>
+
           </motion.div>
         )}
       </AnimatePresence>
