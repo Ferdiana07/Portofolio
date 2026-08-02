@@ -39,19 +39,6 @@ export default function Hero() {
           animate="visible"
           className="flex flex-col items-start"
         >
-          {/* Status Badge */}
-          <motion.div
-            variants={itemVariants}
-            className="flex items-center gap-2 mb-6 px-4 py-2 rounded-full bg-white/[0.06] border border-white/[0.12] backdrop-blur-sm"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
-            </span>
-            <span className="text-xs font-semibold tracking-wider text-white/70 uppercase">
-              Available for Hire
-            </span>
-          </motion.div>
 
           {/* Main Heading */}
           <motion.h1
