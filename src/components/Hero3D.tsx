@@ -4,192 +4,108 @@ import { useRef, useMemo, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-// Component for the central Water Planet (representing sea/water and space rings)
-function CentralCelestialWaterSphere({ mouse }: { mouse: React.RefObject<{ x: number; y: number }> }) {
-  const groupRef = useRef<THREE.Group>(null);
-  const sphereRef = useRef<THREE.Mesh>(null);
-  const ringRef = useRef<THREE.Mesh>(null);
-  const ringOuterRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (groupRef.current && sphereRef.current && ringRef.current && ringOuterRef.current) {
-      const time = state.clock.getElapsedTime();
-
-      // Gentle water ripple/bubble expansion-contraction
-      const pulse = 1.0 + Math.sin(time * 1.5) * 0.02;
-      sphereRef.current.scale.set(pulse, pulse, pulse);
-      
-      // Gentle sphere rotation
-      sphereRef.current.rotation.y = time * 0.08;
-      
-      // Planetary rings rotating at different speeds
-      ringRef.current.rotation.z = -time * 0.05;
-      ringOuterRef.current.rotation.z = time * 0.03;
-
-      // Mouse Parallax/Follow lerp
-      const targetX = mouse.current.x * 0.5;
-      const targetY = mouse.current.y * 0.5;
-
-      groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetX, 0.05);
-      groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, -targetY, 0.05);
-    }
-  });
-
-  return (
-    <group ref={groupRef}>
-      {/* Central Water Sphere (Laut: index of refraction of water 1.33) */}
-      <mesh ref={sphereRef} castShadow receiveShadow>
-        <sphereGeometry args={[1.2, 64, 64]} />
-        <meshPhysicalMaterial
-          color="#38BDF8" // Accent color (Cyan-blue)
-          emissive="#081020"
-          roughness={0.05}
-          metalness={0.1}
-          clearcoat={1.0}
-          clearcoatRoughness={0.05}
-          transmission={0.8} // highly transparent like water
-          thickness={1.2}
-          ior={1.333} // IOR of water
-        />
-      </mesh>
-
-      {/* Planetary Ring 1 (Angkasa - Saturn-like inner ring) */}
-      <mesh ref={ringRef} rotation={[Math.PI / 3, Math.PI / 6, 0]}>
-        <ringGeometry args={[1.6, 1.9, 64]} />
-        <meshBasicMaterial
-          color="#7C3AED" // Purple
-          transparent
-          opacity={0.3}
-          side={THREE.DoubleSide}
-          wireframe
-        />
-      </mesh>
-
-      {/* Planetary Ring 2 (Angkasa - outer thin line ring) */}
-      <mesh ref={ringOuterRef} rotation={[Math.PI / 3, Math.PI / 6, 0]}>
-        <ringGeometry args={[2.0, 2.03, 64]} />
-        <meshBasicMaterial
-          color="#00E5FF" // Cyan
-          transparent
-          opacity={0.2}
-          side={THREE.DoubleSide}
-          wireframe
-        />
-      </mesh>
-    </group>
-  );
-}
-
-// A flat grid representing the undulating surface of the sea (Laut)
-function OceanWavesGrid() {
-  const gridRef = useRef<THREE.Mesh>(null);
+// ── Animated Ocean Wave Surface ──────────────────────────────────────────────
+// A large undulating mesh at the bottom representing the sea surface
+function OceanSurface() {
+  const meshRef = useRef<THREE.Mesh>(null);
   const geomRef = useRef<THREE.PlaneGeometry>(null);
 
-  useFrame((state) => {
-    if (gridRef.current && geomRef.current) {
-      const time = state.clock.getElapsedTime();
-      
-      // Rotate the plane grid slowly
-      gridRef.current.rotation.z = time * 0.01;
+  // Store per-vertex random phase offsets so each vertex ripples differently
+  const phases = useMemo(() => {
+    const g = new THREE.PlaneGeometry(22, 14, 40, 28);
+    const count = g.attributes.position.count;
+    const arr = new Float32Array(count);
+    for (let i = 0; i < count; i++) arr[i] = Math.random() * Math.PI * 2;
+    g.dispose();
+    return arr;
+  }, []);
 
-      // Deform plane vertices to create rolling sea wave ripples
-      const position = geomRef.current.attributes.position;
-      for (let i = 0; i < position.count; i++) {
-        const x = position.getX(i);
-        const y = position.getY(i);
-        
-        // Simple wave noise equation
-        const z = Math.sin(x * 0.4 + time * 0.8) * 0.15 + 
-                  Math.cos(y * 0.4 + time * 1.0) * 0.15;
-        position.setZ(i, z);
-      }
-      position.needsUpdate = true;
+  useFrame(({ clock }) => {
+    const geo = geomRef.current;
+    if (!geo) return;
+    const t = clock.getElapsedTime();
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const y = pos.getY(i);
+      const z =
+        Math.sin(x * 0.28 + t * 0.6 + phases[i]) * 0.18 +
+        Math.cos(y * 0.3 + t * 0.45 + phases[i] * 0.5) * 0.13;
+      pos.setZ(i, z);
     }
+    pos.needsUpdate = true;
+    geo.computeVertexNormals();
   });
 
   return (
-    <mesh ref={gridRef} position={[0, -2.0, -1]} rotation={[-Math.PI / 2.1, 0, 0]}>
-      <planeGeometry ref={geomRef} args={[12, 10, 24, 20]} />
+    <mesh
+      ref={meshRef}
+      position={[0, -2.4, -1.5]}
+      rotation={[-Math.PI / 2.6, 0, 0]}
+    >
+      <planeGeometry ref={geomRef} args={[22, 14, 40, 28]} />
       <meshBasicMaterial
-        color="#2563EB" // Blue
+        color="#2563EB"
         wireframe
         transparent
-        opacity={0.15}
+        opacity={0.08}
       />
     </mesh>
   );
 }
 
-// Custom particle field drifting and reacting to the mouse
-function ParticleField({ mouse }: { mouse: React.RefObject<{ x: number; y: number }> }) {
-  const pointsRef = useRef<THREE.Points>(null);
-  const count = 1500;
+// ── Star / Space Constellation ────────────────────────────────────────────────
+// Multi-colored particles scattered in a deep-space shell
+function StarField({ mouse }: { mouse: React.RefObject<{ x: number; y: number }> }) {
+  const ref = useRef<THREE.Points>(null);
+  const count = 1800;
 
-  // Generate random particles in a spherical distribution
   const [positions, colors] = useMemo(() => {
     const pos = new Float32Array(count * 3);
-    const cols = new Float32Array(count * 3);
-
-    const colorsList = [
-      new THREE.Color("#00E5FF"), // Bright Cyan
-      new THREE.Color("#2563EB"), // Primary Blue
-      new THREE.Color("#7C3AED"), // Secondary Purple
+    const col = new Float32Array(count * 3);
+    const palette = [
+      new THREE.Color("#00E5FF"),
+      new THREE.Color("#2563EB"),
+      new THREE.Color("#7C3AED"),
+      new THREE.Color("#ffffff"),
     ];
-
     for (let i = 0; i < count; i++) {
-      // Generate coordinates in a shell around the center
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(Math.random() * 2 - 1);
-      const r = 2.5 + Math.random() * 6.5; // Radius range 2.5 - 9.0
-
-      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      const r = 3.5 + Math.random() * 8;
+      pos[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
       pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
       pos[i * 3 + 2] = r * Math.cos(phi);
-
-      // Random color matching our palette
-      const clr = colorsList[Math.floor(Math.random() * colorsList.length)];
-      cols[i * 3] = clr.r;
-      cols[i * 3 + 1] = clr.g;
-      cols[i * 3 + 2] = clr.b;
+      const c = palette[Math.floor(Math.random() * palette.length)];
+      col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
     }
-
-    return [pos, cols];
+    return [pos, col];
   }, []);
 
-  useFrame((state) => {
-    if (pointsRef.current) {
-      const time = state.clock.getElapsedTime();
-      
-      // Gentle self-rotation
-      pointsRef.current.rotation.y = time * 0.015;
-      pointsRef.current.rotation.x = time * 0.008;
-
-      // Mouse interactive drift (slower than the main shapes)
-      const targetX = mouse.current.x * 0.25;
-      const targetY = mouse.current.y * 0.25;
-      pointsRef.current.position.x = THREE.MathUtils.lerp(pointsRef.current.position.x, targetX, 0.03);
-      pointsRef.current.position.y = THREE.MathUtils.lerp(pointsRef.current.position.y, targetY, 0.03);
-    }
+  useFrame(({ clock }) => {
+    if (!ref.current) return;
+    const t = clock.getElapsedTime();
+    ref.current.rotation.y = t * 0.012;
+    ref.current.rotation.x = t * 0.007;
+    // subtle mouse drift
+    const tx = mouse.current.x * 0.2;
+    const ty = mouse.current.y * 0.2;
+    ref.current.position.x = THREE.MathUtils.lerp(ref.current.position.x, tx, 0.025);
+    ref.current.position.y = THREE.MathUtils.lerp(ref.current.position.y, ty, 0.025);
   });
 
   return (
-    <points ref={pointsRef}>
+    <points ref={ref}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          args={[colors, 3]}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferAttribute attach="attributes-color" args={[colors, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.035}
-        sizeAttenuation={true}
+        size={0.028}
+        sizeAttenuation
         vertexColors
         transparent
-        opacity={0.65}
+        opacity={0.6}
         blending={THREE.AdditiveBlending}
         depthWrite={false}
       />
@@ -197,159 +113,247 @@ function ParticleField({ mouse }: { mouse: React.RefObject<{ x: number; y: numbe
   );
 }
 
-// Small orbiting moon/planet (Angkasa)
-function OrbitingMoon({ position, size, color, speed, offset, mouse }: {
-  position: [number, number, number];
-  size: number;
-  color: string;
-  speed: number;
-  offset: number;
-  mouse: React.RefObject<{ x: number; y: number }>;
-}) {
-  const meshRef = useRef<THREE.Mesh>(null);
+// ── Glowing Tech Circuit Nodes ─────────────────────────────────────────────
+// A cluster of tiny glowing spheres connected by thin line segments,
+// evoking a neural-network / circuit-board aesthetic
+function TechNodes({ mouse }: { mouse: React.RefObject<{ x: number; y: number }> }) {
+  const groupRef = useRef<THREE.Group>(null);
 
-  useFrame((state) => {
-    if (meshRef.current) {
-      const t = state.clock.getElapsedTime() * speed + offset;
-      
-      // Orbiting around the center water sphere in X-Z plane
-      const radius = Math.sqrt(position[0] * position[0] + position[2] * position[2]);
-      meshRef.current.position.x = Math.cos(t) * radius;
-      meshRef.current.position.z = Math.sin(t) * radius;
-      meshRef.current.position.y = position[1] + Math.sin(t * 2.0) * 0.15; // slight bobbing
-      
-      // Self rotation
-      meshRef.current.rotation.y = t * 0.5;
+  const { nodePositions, linePositions } = useMemo(() => {
+    const nodes: [number, number, number][] = [
+      [  1.2,  0.4,  0   ],
+      [  2.0, -0.3,  0.5 ],
+      [  1.5,  1.1, -0.4 ],
+      [  0.6, -0.8,  0.3 ],
+      [  2.6,  0.7, -0.2 ],
+      [  1.8, -1.0, -0.5 ],
+      [  3.0, -0.1,  0.3 ],
+      [  0.9,  1.6,  0.1 ],
+    ];
+    // Connect nearby nodes with lines
+    const lineVerts: number[] = [];
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const [ax, ay, az] = nodes[i];
+        const [bx, by, bz] = nodes[j];
+        const dist = Math.sqrt((bx-ax)**2 + (by-ay)**2 + (bz-az)**2);
+        if (dist < 1.6) {
+          lineVerts.push(ax, ay, az, bx, by, bz);
+        }
+      }
+    }
+    return {
+      nodePositions: nodes,
+      linePositions: new Float32Array(lineVerts),
+    };
+  }, []);
 
-      // Mouse parallax shift
-      const targetX = mouse.current.x * 0.4;
-      const targetY = mouse.current.y * 0.4;
-      meshRef.current.position.x += THREE.MathUtils.lerp(0, targetX, 0.05);
-      meshRef.current.position.y += THREE.MathUtils.lerp(0, targetY, 0.05);
+  // Each node pulses with a staggered phase
+  const nodeRefs = nodePositions.map(() => useRef<THREE.Mesh>(null)); // eslint-disable-line
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    nodeRefs.forEach((ref, i) => {
+      if (ref.current) {
+        const s = 1 + Math.sin(t * 1.8 + i * 0.9) * 0.18;
+        ref.current.scale.setScalar(s);
+      }
+    });
+    if (groupRef.current) {
+      const tx = mouse.current.x * 0.35;
+      const ty = mouse.current.y * 0.35;
+      groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, tx, 0.04);
+      groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, -ty, 0.04);
     }
   });
 
   return (
-    <mesh ref={meshRef} position={position}>
-      <sphereGeometry args={[size, 16, 16]} />
-      <meshPhysicalMaterial
-        color={color}
-        emissive={color}
-        emissiveIntensity={0.15}
-        roughness={0.2}
-        metalness={0.8}
-      />
-    </mesh>
+    <group ref={groupRef} position={[1.6, 0.2, -1.5]}>
+      {/* Connection lines */}
+      <lineSegments>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[linePositions, 3]} />
+        </bufferGeometry>
+        <lineBasicMaterial
+          color="#38BDF8"
+          transparent
+          opacity={0.18}
+          blending={THREE.AdditiveBlending}
+        />
+      </lineSegments>
+
+      {/* Nodes */}
+      {nodePositions.map(([x, y, z], i) => (
+        <mesh key={i} ref={nodeRefs[i]} position={[x, y, z]}>
+          <sphereGeometry args={[0.045, 8, 8]} />
+          <meshBasicMaterial
+            color={i % 3 === 0 ? "#00E5FF" : i % 3 === 1 ? "#7C3AED" : "#2563EB"}
+            blending={THREE.AdditiveBlending}
+          />
+        </mesh>
+      ))}
+    </group>
   );
 }
 
-// Spotlight and point lights that react to mouse coordinate changes
-function MovingLights({ mouse }: { mouse: React.RefObject<{ x: number; y: number }> }) {
-  const lightRef = useRef<THREE.PointLight>(null);
+// ── Subtle Floating Rings (Space orbital paths) ───────────────────────────────
+// Three thin, elegant torus rings at different tilts – like orbital paths
+function OrbitalRings({ mouse }: { mouse: React.RefObject<{ x: number; y: number }> }) {
+  const groupRef = useRef<THREE.Group>(null);
+  const r1 = useRef<THREE.Mesh>(null);
+  const r2 = useRef<THREE.Mesh>(null);
+  const r3 = useRef<THREE.Mesh>(null);
 
-  useFrame((state) => {
-    if (lightRef.current) {
-      // Translate mouse coordinates to 3D light positioning
-      const targetX = mouse.current.x * 5.5;
-      const targetY = mouse.current.y * 5.5;
-      lightRef.current.position.x = THREE.MathUtils.lerp(lightRef.current.position.x, targetX, 0.08);
-      lightRef.current.position.y = THREE.MathUtils.lerp(lightRef.current.position.y, targetY, 0.08);
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    if (r1.current) r1.current.rotation.z = t * 0.07;
+    if (r2.current) r2.current.rotation.x = t * -0.05;
+    if (r3.current) r3.current.rotation.y = t * 0.04;
+
+    if (groupRef.current) {
+      const tx = mouse.current.x * 0.45;
+      const ty = mouse.current.y * 0.45;
+      groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, tx, 0.045);
+      groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, -ty, 0.045);
     }
   });
 
   return (
-    <>
-      {/* Cursor-tracking light for dynamic specular highlights */}
-      <pointLight
-        ref={lightRef}
-        position={[0, 0, 3.5]}
-        intensity={6.0}
-        distance={15}
-        color="#00E5FF" // cyan glow
-      />
+    <group ref={groupRef} position={[-1.2, 0.1, -2]}>
+      {/* Inner ring – cyan */}
+      <mesh ref={r1} rotation={[Math.PI / 4, 0, 0]}>
+        <torusGeometry args={[1.0, 0.008, 16, 120]} />
+        <meshBasicMaterial color="#00E5FF" transparent opacity={0.3} blending={THREE.AdditiveBlending} />
+      </mesh>
+      {/* Middle ring – blue */}
+      <mesh ref={r2} rotation={[0, Math.PI / 5, Math.PI / 6]}>
+        <torusGeometry args={[1.4, 0.006, 16, 120]} />
+        <meshBasicMaterial color="#2563EB" transparent opacity={0.22} blending={THREE.AdditiveBlending} />
+      </mesh>
+      {/* Outer ring – purple */}
+      <mesh ref={r3} rotation={[Math.PI / 3, Math.PI / 4, 0]}>
+        <torusGeometry args={[1.8, 0.005, 16, 120]} />
+        <meshBasicMaterial color="#7C3AED" transparent opacity={0.18} blending={THREE.AdditiveBlending} />
+      </mesh>
+    </group>
+  );
+}
 
-      {/* Warm accent background point lights */}
-      <pointLight
-        position={[4, -3, 1]}
-        intensity={5.0}
-        distance={10}
-        color="#7C3AED" // purple glow
-      />
-      <pointLight
-        position={[-4, 3, 1]}
-        intensity={5.0}
-        distance={10}
-        color="#2563EB" // blue glow
-      />
+// ── Drifting Bubble Drops (Ocean Droplets) ────────────────────────────────────
+// A handful of tiny, slow-drifting transparent spheres evoking sea droplets
+function OceanBubbles({ mouse }: { mouse: React.RefObject<{ x: number; y: number }> }) {
+  const groupRef = useRef<THREE.Group>(null);
+
+  const bubbles = useMemo(() =>
+    Array.from({ length: 10 }, (_, i) => ({
+      pos: [
+        (Math.random() - 0.5) * 5,
+        (Math.random() - 0.5) * 3,
+        (Math.random() - 0.5) * 2,
+      ] as [number, number, number],
+      size: 0.04 + Math.random() * 0.10,
+      speed: 0.3 + Math.random() * 0.5,
+      phase: Math.random() * Math.PI * 2,
+    })),
+  []);
+
+  const refs = bubbles.map(() => useRef<THREE.Mesh>(null)); // eslint-disable-line
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    refs.forEach((ref, i) => {
+      if (!ref.current) return;
+      const b = bubbles[i];
+      // Float upward slowly and loop
+      const drift = ((t * b.speed + b.phase) % (Math.PI * 2)) / (Math.PI * 2);
+      ref.current.position.y = b.pos[1] + drift * 3.5 - 0.5;
+      ref.current.position.x = b.pos[0] + Math.sin(t * 0.4 + b.phase) * 0.2;
+    });
+    if (groupRef.current) {
+      const tx = mouse.current.x * 0.3;
+      const ty = mouse.current.y * 0.3;
+      groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, tx, 0.03);
+      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, ty, 0.03);
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      {bubbles.map((b, i) => (
+        <mesh key={i} ref={refs[i]} position={b.pos}>
+          <sphereGeometry args={[b.size, 12, 12]} />
+          <meshPhysicalMaterial
+            color="#38BDF8"
+            transparent
+            opacity={0.12}
+            roughness={0}
+            metalness={0}
+            transmission={0.9}
+            clearcoat={1}
+            ior={1.33}
+            depthWrite={false}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+// ── Mouse-reactive moving lights ──────────────────────────────────────────────
+function MovingLights({ mouse }: { mouse: React.RefObject<{ x: number; y: number }> }) {
+  const lightRef = useRef<THREE.PointLight>(null);
+  useFrame(() => {
+    if (!lightRef.current) return;
+    lightRef.current.position.x = THREE.MathUtils.lerp(
+      lightRef.current.position.x, mouse.current.x * 5, 0.08
+    );
+    lightRef.current.position.y = THREE.MathUtils.lerp(
+      lightRef.current.position.y, mouse.current.y * 5, 0.08
+    );
+  });
+  return (
+    <>
+      <pointLight ref={lightRef} position={[0, 0, 3.5]} intensity={5} distance={14} color="#00E5FF" />
+      <pointLight position={[ 4, -3,  1]} intensity={4} distance={9} color="#7C3AED" />
+      <pointLight position={[-4,  3,  1]} intensity={4} distance={9} color="#2563EB" />
     </>
   );
 }
 
+// ── Root export ───────────────────────────────────────────────────────────────
 export default function Hero3D() {
   const mouse = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      // Normalize coordinate system: x in [-1, 1], y in [-1, 1]
-      mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    const onMove = (e: MouseEvent) => {
+      mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
   }, []);
 
   return (
     <div className="absolute inset-0 z-0 opacity-80 pointer-events-none">
       <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-        {/* Lights setup */}
-        <ambientLight intensity={0.4} />
-        <directionalLight position={[5, 5, 2]} intensity={2.0} color="#ffffff" />
-        
+        <ambientLight intensity={0.35} />
+        <directionalLight position={[5, 5, 2]} intensity={1.5} color="#ffffff" />
         <MovingLights mouse={mouse} />
-        
-        <group position={[0.5, -0.2, -1.5]}>
-          {/* Central Water Orb representing "Ocean" and "Planets/Saturn" */}
-          <CentralCelestialWaterSphere mouse={mouse} />
-          
-          {/* Undulating Sea Surface Grid */}
-          <OceanWavesGrid />
-          
-          {/* Drifting particle field (Stars/Space) */}
-          <ParticleField mouse={mouse} />
 
-          {/* Left orbiting moon (purple) */}
-          <OrbitingMoon
-            position={[-2.6, 0.8, 0]}
-            size={0.16}
-            color="#7C3AED"
-            speed={1.1}
-            offset={0}
-            mouse={mouse}
-          />
+        {/* ── Sea: undulating ocean grid horizon ── */}
+        <OceanSurface />
 
-          {/* Right orbiting moon (cyan) */}
-          <OrbitingMoon
-            position={[3.2, -0.6, 0]}
-            size={0.22}
-            color="#00E5FF"
-            speed={0.8}
-            offset={Math.PI}
-            mouse={mouse}
-          />
+        {/* ── Space: deep star constellation ── */}
+        <StarField mouse={mouse} />
 
-          {/* Far orbiting mini moon (deep blue) */}
-          <OrbitingMoon
-            position={[0, -1.2, -3.0]}
-            size={0.12}
-            color="#2563EB"
-            speed={1.5}
-            offset={Math.PI / 2}
-            mouse={mouse}
-          />
-        </group>
+        {/* ── Space: thin orbital ring paths ── */}
+        <OrbitalRings mouse={mouse} />
+
+        {/* ── Technology: neural-network node cluster ── */}
+        <TechNodes mouse={mouse} />
+
+        {/* ── Sea: rising transparent bubbles ── */}
+        <OceanBubbles mouse={mouse} />
       </Canvas>
     </div>
   );
