@@ -4,27 +4,31 @@ import { useRef, useMemo, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-// Component for the central dynamic double-layer Torus Knot
-function CentralTorusKnot({ mouse }: { mouse: React.RefObject<{ x: number; y: number }> }) {
+// Component for the central Water Planet (representing sea/water and space rings)
+function CentralCelestialWaterSphere({ mouse }: { mouse: React.RefObject<{ x: number; y: number }> }) {
   const groupRef = useRef<THREE.Group>(null);
-  const solidRef = useRef<THREE.Mesh>(null);
-  const wireframeRef = useRef<THREE.Mesh>(null);
+  const sphereRef = useRef<THREE.Mesh>(null);
+  const ringRef = useRef<THREE.Mesh>(null);
+  const ringOuterRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
-    if (groupRef.current && solidRef.current && wireframeRef.current) {
+    if (groupRef.current && sphereRef.current && ringRef.current && ringOuterRef.current) {
       const time = state.clock.getElapsedTime();
 
-      // Constant subtle rotation
-      solidRef.current.rotation.y = time * 0.15;
-      solidRef.current.rotation.x = time * 0.1;
+      // Gentle water ripple/bubble expansion-contraction
+      const pulse = 1.0 + Math.sin(time * 1.5) * 0.02;
+      sphereRef.current.scale.set(pulse, pulse, pulse);
       
-      // Wireframe rotates slightly faster and in opposite direction for visual complexity
-      wireframeRef.current.rotation.y = -time * 0.22;
-      wireframeRef.current.rotation.z = time * 0.15;
+      // Gentle sphere rotation
+      sphereRef.current.rotation.y = time * 0.08;
+      
+      // Planetary rings rotating at different speeds
+      ringRef.current.rotation.z = -time * 0.05;
+      ringOuterRef.current.rotation.z = time * 0.03;
 
       // Mouse Parallax/Follow lerp
-      const targetX = mouse.current.x * 0.6;
-      const targetY = mouse.current.y * 0.6;
+      const targetX = mouse.current.x * 0.5;
+      const targetY = mouse.current.y * 0.5;
 
       groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetX, 0.05);
       groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, -targetY, 0.05);
@@ -33,34 +37,86 @@ function CentralTorusKnot({ mouse }: { mouse: React.RefObject<{ x: number; y: nu
 
   return (
     <group ref={groupRef}>
-      {/* Solid Refractive Glass/Metal Inner Mesh */}
-      <mesh ref={solidRef} castShadow receiveShadow>
-        <torusKnotGeometry args={[1.2, 0.35, 120, 16, 2, 3]} />
+      {/* Central Water Sphere (Laut: index of refraction of water 1.33) */}
+      <mesh ref={sphereRef} castShadow receiveShadow>
+        <sphereGeometry args={[1.2, 64, 64]} />
         <meshPhysicalMaterial
           color="#38BDF8" // Accent color (Cyan-blue)
-          emissive="#0B0F19"
-          roughness={0.15}
-          metalness={0.7}
+          emissive="#081020"
+          roughness={0.05}
+          metalness={0.1}
           clearcoat={1.0}
-          clearcoatRoughness={0.1}
-          transmission={0.45} // Semi-transparent glass
-          thickness={0.8} // Thickness of the glass
-          ior={1.5} // Index of refraction
+          clearcoatRoughness={0.05}
+          transmission={0.8} // highly transparent like water
+          thickness={1.2}
+          ior={1.333} // IOR of water
         />
       </mesh>
 
-      {/* Wireframe Outer Cyber Layer */}
-      <mesh ref={wireframeRef}>
-        <torusKnotGeometry args={[1.24, 0.36, 120, 16, 2, 3]} />
+      {/* Planetary Ring 1 (Angkasa - Saturn-like inner ring) */}
+      <mesh ref={ringRef} rotation={[Math.PI / 3, Math.PI / 6, 0]}>
+        <ringGeometry args={[1.6, 1.9, 64]} />
         <meshBasicMaterial
-          color="#7C3AED" // Secondary color (Purple)
-          wireframe
+          color="#7C3AED" // Purple
           transparent
-          opacity={0.25}
-          blending={THREE.AdditiveBlending}
+          opacity={0.3}
+          side={THREE.DoubleSide}
+          wireframe
+        />
+      </mesh>
+
+      {/* Planetary Ring 2 (Angkasa - outer thin line ring) */}
+      <mesh ref={ringOuterRef} rotation={[Math.PI / 3, Math.PI / 6, 0]}>
+        <ringGeometry args={[2.0, 2.03, 64]} />
+        <meshBasicMaterial
+          color="#00E5FF" // Cyan
+          transparent
+          opacity={0.2}
+          side={THREE.DoubleSide}
+          wireframe
         />
       </mesh>
     </group>
+  );
+}
+
+// A flat grid representing the undulating surface of the sea (Laut)
+function OceanWavesGrid() {
+  const gridRef = useRef<THREE.Mesh>(null);
+  const geomRef = useRef<THREE.PlaneGeometry>(null);
+
+  useFrame((state) => {
+    if (gridRef.current && geomRef.current) {
+      const time = state.clock.getElapsedTime();
+      
+      // Rotate the plane grid slowly
+      gridRef.current.rotation.z = time * 0.01;
+
+      // Deform plane vertices to create rolling sea wave ripples
+      const position = geomRef.current.attributes.position;
+      for (let i = 0; i < position.count; i++) {
+        const x = position.getX(i);
+        const y = position.getY(i);
+        
+        // Simple wave noise equation
+        const z = Math.sin(x * 0.4 + time * 0.8) * 0.15 + 
+                  Math.cos(y * 0.4 + time * 1.0) * 0.15;
+        position.setZ(i, z);
+      }
+      position.needsUpdate = true;
+    }
+  });
+
+  return (
+    <mesh ref={gridRef} position={[0, -2.0, -1]} rotation={[-Math.PI / 2.1, 0, 0]}>
+      <planeGeometry ref={geomRef} args={[12, 10, 24, 20]} />
+      <meshBasicMaterial
+        color="#2563EB" // Blue
+        wireframe
+        transparent
+        opacity={0.15}
+      />
+    </mesh>
   );
 }
 
@@ -141,55 +197,47 @@ function ParticleField({ mouse }: { mouse: React.RefObject<{ x: number; y: numbe
   );
 }
 
-// Orbiting geometric polyhedra accents
-interface FloatingOrbProps {
+// Small orbiting moon/planet (Angkasa)
+function OrbitingMoon({ position, size, color, speed, offset, mouse }: {
   position: [number, number, number];
-  geometryType: "icosahedron" | "octahedron";
   size: number;
   color: string;
   speed: number;
   offset: number;
   mouse: React.RefObject<{ x: number; y: number }>;
-}
-
-function FloatingOrb({ position, geometryType, size, color, speed, offset, mouse }: FloatingOrbProps) {
+}) {
   const meshRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
     if (meshRef.current) {
       const t = state.clock.getElapsedTime() * speed + offset;
       
-      // Floating sinusoidal motion
-      meshRef.current.position.y = position[1] + Math.sin(t) * 0.35;
-      meshRef.current.position.x = position[0] + Math.cos(t * 0.7) * 0.25;
+      // Orbiting around the center water sphere in X-Z plane
+      const radius = Math.sqrt(position[0] * position[0] + position[2] * position[2]);
+      meshRef.current.position.x = Math.cos(t) * radius;
+      meshRef.current.position.z = Math.sin(t) * radius;
+      meshRef.current.position.y = position[1] + Math.sin(t * 2.0) * 0.15; // slight bobbing
       
-      // Self-rotation
-      meshRef.current.rotation.x = t * 0.25;
-      meshRef.current.rotation.y = t * 0.35;
+      // Self rotation
+      meshRef.current.rotation.y = t * 0.5;
 
-      // Mouse influence
-      const targetX = mouse.current.x * 0.45;
-      const targetY = mouse.current.y * 0.45;
-      meshRef.current.position.x += THREE.MathUtils.lerp(0, targetX - meshRef.current.position.x * 0.02, 0.05);
-      meshRef.current.position.y += THREE.MathUtils.lerp(0, targetY - meshRef.current.position.y * 0.02, 0.05);
+      // Mouse parallax shift
+      const targetX = mouse.current.x * 0.4;
+      const targetY = mouse.current.y * 0.4;
+      meshRef.current.position.x += THREE.MathUtils.lerp(0, targetX, 0.05);
+      meshRef.current.position.y += THREE.MathUtils.lerp(0, targetY, 0.05);
     }
   });
 
   return (
     <mesh ref={meshRef} position={position}>
-      {geometryType === "icosahedron" ? (
-        <icosahedronGeometry args={[size, 0]} />
-      ) : (
-        <octahedronGeometry args={[size, 0]} />
-      )}
+      <sphereGeometry args={[size, 16, 16]} />
       <meshPhysicalMaterial
         color={color}
         emissive={color}
-        emissiveIntensity={0.2}
-        roughness={0.1}
-        metalness={0.9}
-        clearcoat={1.0}
-        clearcoatRoughness={0.15}
+        emissiveIntensity={0.15}
+        roughness={0.2}
+        metalness={0.8}
       />
     </mesh>
   );
@@ -263,41 +311,42 @@ export default function Hero3D() {
         <MovingLights mouse={mouse} />
         
         <group position={[0.5, -0.2, -1.5]}>
-          <CentralTorusKnot mouse={mouse} />
+          {/* Central Water Orb representing "Ocean" and "Planets/Saturn" */}
+          <CentralCelestialWaterSphere mouse={mouse} />
           
-          {/* Drifting particle field */}
+          {/* Undulating Sea Surface Grid */}
+          <OceanWavesGrid />
+          
+          {/* Drifting particle field (Stars/Space) */}
           <ParticleField mouse={mouse} />
 
-          {/* Left top floating orb (purple octahedron) */}
-          <FloatingOrb
-            position={[-3.2, 1.8, -1.0]}
-            geometryType="octahedron"
-            size={0.35}
+          {/* Left orbiting moon (purple) */}
+          <OrbitingMoon
+            position={[-2.6, 0.8, 0]}
+            size={0.16}
             color="#7C3AED"
-            speed={1.2}
+            speed={1.1}
             offset={0}
             mouse={mouse}
           />
 
-          {/* Right bottom floating orb (cyan icosahedron) */}
-          <FloatingOrb
-            position={[3.0, -1.8, -0.5]}
-            geometryType="icosahedron"
-            size={0.45}
+          {/* Right orbiting moon (cyan) */}
+          <OrbitingMoon
+            position={[3.2, -0.6, 0]}
+            size={0.22}
             color="#00E5FF"
-            speed={1.6}
-            offset={Math.PI / 3}
+            speed={0.8}
+            offset={Math.PI}
             mouse={mouse}
           />
 
-          {/* Far background deep blue floating orb */}
-          <FloatingOrb
-            position={[-1.5, -2.2, -2.5]}
-            geometryType="octahedron"
-            size={0.25}
+          {/* Far orbiting mini moon (deep blue) */}
+          <OrbitingMoon
+            position={[0, -1.2, -3.0]}
+            size={0.12}
             color="#2563EB"
-            speed={0.8}
-            offset={Math.PI}
+            speed={1.5}
+            offset={Math.PI / 2}
             mouse={mouse}
           />
         </group>
