@@ -16,7 +16,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Caesar Ferdiana Suwandi | Full Stack Software Engineer",
+  title: "Personal Website CFS",
   description: "Building Digital Experiences with Code, Design, and Artificial Intelligence.",
 };
 
