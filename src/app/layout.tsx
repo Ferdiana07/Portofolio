@@ -1,43 +1,40 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
-import "./globals.css";
-import SmoothScrolling from "@/components/SmoothScrolling";
-import Navbar from "@/components/Navbar";
+import { Geist, Geist_Mono } from "next/font/google";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Personal Website CFS",
-  description: "Building Digital Experiences with Code, Design, and Artificial Intelligence.",
+  title: "Caesar Ferdiana Suwandi | Developer Portfolio",
+  description:
+    "Portfolio Caesar Ferdiana Suwandi, mahasiswa Informatika UNDIP yang membangun produk web, AI, dan sistem informasi.",
+  keywords: ["Caesar Ferdiana Suwandi", "developer", "portfolio", "Informatika UNDIP", "web development", "AI"],
+  authors: [{ name: "Caesar Ferdiana Suwandi" }],
+  openGraph: {
+    title: "Caesar Ferdiana Suwandi | Developer Portfolio",
+    description: "Web, AI, and information systems built with curiosity and care.",
+    type: "website",
+    locale: "id_ID",
+  },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-background text-foreground overflow-x-hidden">
-        <SmoothScrolling>
-          <Navbar />
-          <main className="flex-grow flex flex-col items-center w-full">
-            {children}
-          </main>
-          <Footer />
-        </SmoothScrolling>
+    <html lang="id" className={`${geist.variable} ${geistMono.variable}`}>
+      <body>
+        <Navbar />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );
