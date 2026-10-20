@@ -7,10 +7,9 @@ export default function Certifications() {
     <section id="certifications" className="section section-certifications" aria-labelledby="certification-title">
       <div className="site-shell certifications-layout">
         <Reveal className="certification-copy">
-          <p className="section-kicker">Validasi Kompetensi</p>
-          <h2 id="certification-title">Sertifikasi & Pelatihan Berskala Industri.</h2>
+          <h2 id="certification-title">Kompetensi yang diuji, bukan sekadar dipelajari.</h2>
           <p>
-            Mendapatkan kredensial terverifikasi dari institusi teknologi global seperti <strong>Google</strong>, <strong>IBM</strong>, <strong>Cisco</strong>, <strong>Oracle</strong>, <strong>MongoDB</strong>, dan <strong>Dicoding Indonesia</strong>.
+            Kredensial terverifikasi dari Google, IBM, Cisco, Oracle, MongoDB, dan Dicoding melengkapi pengalaman implementasi langsung.
           </p>
           <div className="cert-cta-row">
             <a

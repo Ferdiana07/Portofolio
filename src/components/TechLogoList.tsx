@@ -28,7 +28,6 @@ import {
   SiMysql,
   SiNextdotjs,
   SiNodedotjs,
-  SiOpenjdk,
   SiPhp,
   SiPostgresql,
   SiPrisma,
@@ -42,6 +41,7 @@ import {
   SiVite,
 } from "react-icons/si";
 import { VscCode } from "react-icons/vsc";
+import { FaJava } from "react-icons/fa6";
 
 type TechnologyIcon = ComponentType<{
   size?: number;
@@ -56,7 +56,7 @@ const iconRules: Array<[RegExp, TechnologyIcon]> = [
   [/^javascript/i, SiJavascript],
   [/^python/i, SiPython],
   [/^php/i, SiPhp],
-  [/^java$/i, SiOpenjdk],
+  [/^java$/i, FaJava],
   [/^c$/i, SiC],
   [/^html/i, SiHtml5],
   [/css/i, SiCss],
@@ -91,8 +91,11 @@ const iconRules: Array<[RegExp, TechnologyIcon]> = [
   [/^sql$/i, Database],
 ];
 
-function getTechnologyIcon(technology: string) {
-  return iconRules.find(([pattern]) => pattern.test(technology))?.[1] ?? Braces;
+function getTechnologyIcons(technology: string): TechnologyIcon[] {
+  if (/html5.*css3/i.test(technology)) return [SiHtml5, SiCss];
+  if (/git\s*&\s*github/i.test(technology)) return [SiGit, SiGithub];
+
+  return [iconRules.find(([pattern]) => pattern.test(technology))?.[1] ?? Braces];
 }
 
 interface TechLogoListProps {
@@ -109,7 +112,7 @@ export default function TechLogoList({
   return (
     <div className={`tech-logo-list${large ? " tech-logo-list-large" : ""}`} aria-label={label}>
       {technologies.map((technology) => {
-        const Icon = getTechnologyIcon(technology);
+        const Icons = getTechnologyIcons(technology);
 
         return (
           <span
@@ -119,7 +122,11 @@ export default function TechLogoList({
             title={technology}
             tabIndex={0}
           >
-            <Icon size={large ? 24 : 20} aria-hidden={true} />
+            <span className={Icons.length > 1 ? "tech-logo-icons is-pair" : "tech-logo-icons"} aria-hidden="true">
+              {Icons.map((Icon, index) => (
+                <Icon key={`${technology}-${index}`} size={Icons.length > 1 ? (large ? 19 : 16) : (large ? 24 : 20)} />
+              ))}
+            </span>
             <span className="sr-only">{technology}</span>
           </span>
         );

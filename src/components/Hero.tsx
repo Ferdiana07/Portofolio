@@ -1,7 +1,8 @@
-import Link from "next/link";
 import { ArrowDownToLine, ArrowRight, Mail } from "lucide-react";
 import Reveal from "./Reveal";
 import HeroStage from "./HeroStage";
+import KineticHeading from "./KineticHeading";
+import MagneticLink from "./MagneticLink";
 import { GithubIcon, InstagramIcon, LinkedinIcon } from "./Icons";
 import { highlights, profile } from "@/data/portfolio";
 
@@ -11,23 +12,27 @@ export default function Hero() {
       <section id="top" className="hero-section">
         <div className="site-shell hero-grid">
           <Reveal className="hero-copy">
-            <p className="hero-role">FULL-STACK ENGINEERING / APPLIED AI</p>
-            <h1 className="hero-heading">
-              Membangun software.<br />
-              <span className="hero-highlight">Menciptakan dampak.</span>
-            </h1>
+            <p className="hero-role">FULL-STACK DEVELOPER / APPLIED AI /</p>
+            <KineticHeading />
 
             <p className="hero-intro">
-              <strong>{profile.name}</strong>, mahasiswa Informatika UNDIP yang mengembangkan produk full-stack dan AI terapan untuk kebutuhan nyata.
+              Saya <strong>{profile.name}</strong>, mahasiswa Informatika UNDIP yang suka mengubah ide menjadi produk full-stack dan solusi AI yang benar-benar berguna.
             </p>
 
             <div className="hero-actions">
-              <Link href="#projects" className="button button-primary">
-                Jelajahi Projek <ArrowRight size={17} strokeWidth={2} />
-              </Link>
-              <a href={profile.resume} target="_blank" rel="noreferrer" className="button button-secondary">
-                Unduh CV (PDF) <ArrowDownToLine size={17} strokeWidth={2} />
-              </a>
+              <MagneticLink href="#projects" className="button button-primary button-kinetic">
+                <span>Jelajahi Projek</span>
+                <span className="button-icon-island"><ArrowRight size={16} strokeWidth={1.8} /></span>
+              </MagneticLink>
+              <MagneticLink
+                href={profile.resume}
+                target="_blank"
+                rel="noreferrer"
+                className="button button-secondary button-kinetic"
+              >
+                <span>Unduh CV</span>
+                <span className="button-icon-island"><ArrowDownToLine size={16} strokeWidth={1.8} /></span>
+              </MagneticLink>
             </div>
 
             <div className="hero-socials" aria-label="Tautan media sosial Caesar">

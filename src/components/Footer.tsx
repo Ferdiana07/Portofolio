@@ -35,7 +35,6 @@ export default function Footer() {
 
         <div className="footer-copy-col">
           <p>© {new Date().getFullYear()} {profile.name}.</p>
-          <p className="footer-subcopy">Dirancang ringan, interaktif & bebas lag dengan Next.js App Router.</p>
         </div>
       </div>
     </footer>

@@ -8,7 +8,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import type { PointerEvent } from "react";
+import { type PointerEvent } from "react";
 import { profile } from "@/data/portfolio";
 
 const spring = { stiffness: 125, damping: 20, mass: 0.72 };
@@ -19,14 +19,14 @@ export default function HeroStage() {
   const pointerY = useMotionValue(0);
   const smoothX = useSpring(pointerX, spring);
   const smoothY = useSpring(pointerY, spring);
-  const rotateY = useTransform(smoothX, [-0.5, 0.5], [-8, 8]);
-  const rotateX = useTransform(smoothY, [-0.5, 0.5], [8, -8]);
-  const cardX = useTransform(smoothX, [-0.5, 0.5], [-8, 8]);
-  const cardY = useTransform(smoothY, [-0.5, 0.5], [-6, 6]);
-  const vectorX = useTransform(smoothX, [-0.5, 0.5], [12, -12]);
-  const vectorY = useTransform(smoothY, [-0.5, 0.5], [10, -10]);
-  const glowX = useTransform(smoothX, [-0.5, 0.5], [-90, 90]);
-  const glowY = useTransform(smoothY, [-0.5, 0.5], [-110, 110]);
+  const rotateY = useTransform(smoothX, [-0.5, 0.5], [-2.6, 2.6]);
+  const rotateX = useTransform(smoothY, [-0.5, 0.5], [2.2, -2.2]);
+  const cardX = useTransform(smoothX, [-0.5, 0.5], [-3, 3]);
+  const cardY = useTransform(smoothY, [-0.5, 0.5], [-2, 2]);
+  const vectorX = useTransform(smoothX, [-0.5, 0.5], [4, -4]);
+  const vectorY = useTransform(smoothY, [-0.5, 0.5], [3, -3]);
+  const glowX = useTransform(smoothX, [-0.5, 0.5], [-36, 36]);
+  const glowY = useTransform(smoothY, [-0.5, 0.5], [-42, 42]);
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     if (reduceMotion || event.pointerType === "touch") return;
@@ -41,7 +41,7 @@ export default function HeroStage() {
   };
 
   return (
-    <div
+    <motion.div
       className="hero-stage"
       onPointerMove={handlePointerMove}
       onPointerLeave={resetPointer}
@@ -57,8 +57,6 @@ export default function HeroStage() {
         fill="none"
         aria-hidden="true"
         style={reduceMotion ? undefined : { x: vectorX, y: vectorY }}
-        animate={reduceMotion ? undefined : { rotate: [-2, 2, -2], scale: [0.985, 1.015, 0.985] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       >
         <motion.path
           d="M96 328C146 159 305 75 459 150C560 199 584 337 511 437C431 547 249 554 139 463C70 406 48 323 96 328Z"
@@ -82,12 +80,9 @@ export default function HeroStage() {
           transition={{ duration: 1.1, delay: 0.48, ease: [0.16, 1, 0.3, 1] }}
         />
       </motion.svg>
-      <div className="hero-orbit hero-orbit-one" aria-hidden="true" />
-      <div className="hero-orbit hero-orbit-two" aria-hidden="true" />
-
       <motion.div
         className="portrait-card"
-        initial={reduceMotion ? false : { opacity: 0, y: 28, rotateY: -5 }}
+        initial={reduceMotion ? false : { opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0, rotateY: 0 }}
         transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: 0.16 }}
         style={
@@ -101,12 +96,11 @@ export default function HeroStage() {
             src="/images/caesar-portrait-v2.webp"
             alt={`Potret resmi ${profile.name}`}
             fill
-            priority
             sizes="(max-width: 767px) 88vw, (max-width: 1100px) 420px, 34vw"
             className="portrait-image"
           />
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }

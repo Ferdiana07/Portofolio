@@ -1,12 +1,66 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type PointerEvent, type ReactNode } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, Code2, ExternalLink, Info, LockKeyhole, Sparkles, X, Layers, CheckCircle2 } from "lucide-react";
+import {
+  AnimatePresence,
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from "framer-motion";
+import { ArrowUpRight, Code2, ExternalLink, Info, LockKeyhole, X, CheckCircle2 } from "lucide-react";
 import Reveal from "./Reveal";
 import TechLogoList from "./TechLogoList";
 import { profile, projects, ProjectItem } from "@/data/portfolio";
+
+const cardSpring = { stiffness: 155, damping: 22, mass: 0.6 };
+
+function ProjectCardShell({ children, className }: { children: ReactNode; className: string }) {
+  const reduceMotion = useReducedMotion();
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const spotlightX = useMotionValue(50);
+  const spotlightY = useMotionValue(50);
+  const rotateXTarget = useTransform(pointerY, [-0.5, 0.5], [1.8, -1.8]);
+  const rotateYTarget = useTransform(pointerX, [-0.5, 0.5], [-2.2, 2.2]);
+  const rotateX = useSpring(rotateXTarget, cardSpring);
+  const rotateY = useSpring(rotateYTarget, cardSpring);
+  const spotlight = useMotionTemplate`radial-gradient(520px circle at ${spotlightX}% ${spotlightY}%, rgba(195, 231, 127, 0.115), transparent 48%)`;
+
+  const handlePointerMove = (event: PointerEvent<HTMLElement>) => {
+    if (reduceMotion || event.pointerType === "touch") return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - bounds.left) / bounds.width;
+    const y = (event.clientY - bounds.top) / bounds.height;
+    pointerX.set(x - 0.5);
+    pointerY.set(y - 0.5);
+    spotlightX.set(x * 100);
+    spotlightY.set(y * 100);
+  };
+
+  const reset = () => {
+    pointerX.set(0);
+    pointerY.set(0);
+    spotlightX.set(50);
+    spotlightY.set(50);
+  };
+
+  return (
+    <motion.article
+      className={className}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={reset}
+      onPointerCancel={reset}
+      style={reduceMotion ? undefined : { rotateX, rotateY, transformPerspective: 1400 }}
+    >
+      <motion.div className="project-spotlight" style={{ background: spotlight }} aria-hidden="true" />
+      {children}
+    </motion.article>
+  );
+}
 
 export default function Projects() {
   const [activeFilter, setActiveFilter] = useState<"all" | "ai" | "fullstack" | "web">("all");
@@ -38,9 +92,9 @@ export default function Projects() {
       <div className="site-shell">
         <Reveal className="section-heading">
           <p className="section-kicker">Karya & Rekayasa</p>
-          <h2>Aplikasi nyata yang dirancang untuk memecahkan masalah.</h2>
+          <h2>Beberapa produk yang saya bangun untuk kebutuhan nyata.</h2>
           <p>
-            Mulai dari marketplace multi-role bahari, asisten belajar AI berbasis PDF, platform telemedicine klinik MERN, hingga sistem deteksi anomali ulasan IndoBERT.
+            Mulai dari alur pengguna sampai arsitektur di balik layar, semuanya saya kerjakan agar produknya enak dipakai dan siap dikembangkan.
           </p>
         </Reveal>
 
@@ -50,29 +104,37 @@ export default function Projects() {
             type="button"
             onClick={() => setActiveFilter("all")}
             className={`filter-btn ${activeFilter === "all" ? "active" : ""}`}
+            aria-pressed={activeFilter === "all"}
           >
-            Semua Projek ({projects.length})
+            {activeFilter === "all" && <motion.span layoutId="active-project-filter" className="filter-active-bg" />}
+            <span className="filter-label">Semua Projek ({projects.length})</span>
           </button>
           <button
             type="button"
             onClick={() => setActiveFilter("ai")}
             className={`filter-btn ${activeFilter === "ai" ? "active" : ""}`}
+            aria-pressed={activeFilter === "ai"}
           >
-            <Sparkles size={14} className="filter-icon" /> AI & Machine Learning ({projects.filter((p) => p.filterTag === "ai").length})
+            {activeFilter === "ai" && <motion.span layoutId="active-project-filter" className="filter-active-bg" />}
+            <span className="filter-label">AI & Machine Learning ({projects.filter((p) => p.filterTag === "ai").length})</span>
           </button>
           <button
             type="button"
             onClick={() => setActiveFilter("fullstack")}
             className={`filter-btn ${activeFilter === "fullstack" ? "active" : ""}`}
+            aria-pressed={activeFilter === "fullstack"}
           >
-            <Layers size={14} className="filter-icon" /> Full-Stack Platform ({projects.filter((p) => p.filterTag === "fullstack").length})
+            {activeFilter === "fullstack" && <motion.span layoutId="active-project-filter" className="filter-active-bg" />}
+            <span className="filter-label">Full-Stack Platform ({projects.filter((p) => p.filterTag === "fullstack").length})</span>
           </button>
           <button
             type="button"
             onClick={() => setActiveFilter("web")}
             className={`filter-btn ${activeFilter === "web" ? "active" : ""}`}
+            aria-pressed={activeFilter === "web"}
           >
-            Web & Organisasi ({projects.filter((p) => p.filterTag === "web").length})
+            {activeFilter === "web" && <motion.span layoutId="active-project-filter" className="filter-active-bg" />}
+            <span className="filter-label">Web & Organisasi ({projects.filter((p) => p.filterTag === "web").length})</span>
           </button>
         </Reveal>
 
@@ -86,16 +148,22 @@ export default function Projects() {
                 initial={reduceMotion ? false : { opacity: 0, y: 18, scale: 0.985 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -12, scale: 0.985 }}
-                transition={{ duration: reduceMotion ? 0 : 0.36, delay: index * 0.035 }}
+                transition={{ duration: reduceMotion ? 0 : 0.36, delay: index * 0.035, ease: [0.16, 1, 0.3, 1] }}
               >
               <Reveal delay={index * 0.04}>
-              <article className={`project-card project-card-${index + 1}`}>
+              <div className="project-shell">
+              <ProjectCardShell className={`project-card project-card-${index + 1}`}>
                 <div
                   className="project-media clickable-media"
                   onClick={() => setSelectedProject(project)}
                   role="button"
                   tabIndex={0}
-                  onKeyDown={(e) => e.key === "Enter" && setSelectedProject(project)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      setSelectedProject(project);
+                    }
+                  }}
                   aria-label={`Buka detail ${project.title}`}
                 >
                   <Image
@@ -115,20 +183,21 @@ export default function Projects() {
                     </span>
                   </div>
 
-                  <h3
+                  <button
+                    type="button"
                     className="project-title cursor-pointer"
                     onClick={() => setSelectedProject(project)}
                   >
                     {project.title}
-                  </h3>
+                  </button>
                   <p className="project-tagline">{project.tagline}</p>
                   <p className="project-desc">{project.description}</p>
 
                   <div className="stack-wrap">
-                    <span className="stack-label">Teknologi</span>
+                    <span className="stack-label">TechStack</span>
                     <TechLogoList
                       technologies={project.stack}
-                      label={`Teknologi ${project.title}`}
+                      label={`TechStack ${project.title}`}
                     />
                   </div>
 
@@ -169,7 +238,8 @@ export default function Projects() {
                     )}
                   </div>
                 </div>
-              </article>
+              </ProjectCardShell>
+              </div>
               </Reveal>
               </motion.div>
             ))}
@@ -247,10 +317,10 @@ export default function Projects() {
                 </div>
 
                 <div className="modal-section">
-                  <h4>Teknologi & Stack Digunakan</h4>
+                  <h4>TechStack</h4>
                   <TechLogoList
                     technologies={selectedProject.stack}
-                    label={`Teknologi ${selectedProject.title}`}
+                    label={`TechStack ${selectedProject.title}`}
                     large
                   />
                 </div>
@@ -291,8 +361,8 @@ export default function Projects() {
 
         <Reveal className="projects-footer">
           <div>
-            <h4>Eksplorasi Kode & Repositori Lain</h4>
-            <p>Eksperimen perkuliahan, skrip otomatisasi, dan proyek open-source lainnya dapat dilihat di profil GitHub.</p>
+            <h4>Masih ada eksperimen lain di GitHub</h4>
+            <p>Termasuk tugas perkuliahan, skrip otomatisasi, dan beberapa proyek kecil yang terus saya rapikan.</p>
           </div>
           <a href={profile.github} target="_blank" rel="noreferrer" className="button button-secondary">
             <Code2 size={18} /> Profil GitHub ({profile.shortName}) <ArrowUpRight size={17} strokeWidth={1.8} />

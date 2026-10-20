@@ -1,4 +1,4 @@
-import { ArrowUpRight, BookOpen, CheckCircle, GraduationCap } from "lucide-react";
+import { BookOpen, CheckCircle, GraduationCap } from "lucide-react";
 import Reveal from "./Reveal";
 import TechLogoList from "./TechLogoList";
 import { profile, skillCategories } from "@/data/portfolio";
@@ -8,10 +8,9 @@ export default function About() {
     <section id="about" className="section section-about">
       <div className="site-shell">
         <Reveal className="about-statement">
-          <p className="section-kicker">Profil & Kompetensi</p>
-          <h2>Mendalami sains komputer dengan orientasi hasil praktis.</h2>
+          <h2>Saya paling banyak belajar dari hal yang benar-benar dibangun.</h2>
           <p>
-            Saya adalah mahasiswa S1 Informatika Universitas Diponegoro yang aktif mengkombinasikan teori komputasi, pengembangan aplikasi skala penuh, dan teknologi AI terkini untuk menciptakan sistem yang andal dan mudah digunakan.
+            Perkuliahan memberi fondasi, lalu berbagai proyek membantu saya mengubah teori komputasi, full-stack, dan AI menjadi produk yang terasa sederhana saat digunakan.
           </p>
         </Reveal>
 
@@ -78,14 +77,6 @@ export default function About() {
               </Reveal>
             ))}
 
-            <Reveal delay={0.24}>
-              <div className="skills-callout">
-                <p>Seluruh riwayat implementasi kode dan arsitektur repositori dapat ditinjau langsung di GitHub.</p>
-                <a href={profile.github} target="_blank" rel="noreferrer" className="text-link">
-                  Jelajahi Repositori GitHub <ArrowUpRight size={17} strokeWidth={2} />
-                </a>
-              </div>
-            </Reveal>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { Briefcase, Calendar, CheckCircle2, MapPin, Users2 } from "lucide-react";
+import { Briefcase, Calendar, CheckCircle2, Users2 } from "lucide-react";
 import Reveal from "./Reveal";
 import { internships, organizations } from "@/data/portfolio";
 
@@ -7,10 +7,9 @@ export default function Experience() {
     <section id="experience" className="section section-experience">
       <div className="site-shell experience-layout">
         <Reveal className="experience-intro">
-          <p className="section-kicker">Rekam Jejak Profesional</p>
-          <h2>Pengalaman kerja, magang, dan kepemimpinan organisasi.</h2>
+          <h2>Saya juga belajar banyak dari kerja bareng tim.</h2>
           <p>
-            Menerapkan disiplin teknik informatika dalam pelayanan publik di instansi pemerintah, serta mengasah komunikasi strategis dan kepemimpinan melalui organisasi kampus dan kepemudaan.
+            Pengalaman di layanan publik, organisasi kampus, dan komunitas membentuk cara saya bekerja: tetap teknis, komunikatif, dan bertanggung jawab.
           </p>
         </Reveal>
 
@@ -29,9 +28,6 @@ export default function Experience() {
                 <div className="timeline-meta-bar">
                   <span className="timeline-badge-period">
                     <Calendar size={14} /> {item.period}
-                  </span>
-                  <span className="timeline-badge-location">
-                    <MapPin size={14} /> {item.location}
                   </span>
                 </div>
 

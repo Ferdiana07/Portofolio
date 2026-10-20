@@ -8,32 +8,50 @@ import { profile } from "@/data/portfolio";
 
 export default function Contact() {
   const [copied, setCopied] = useState(false);
-  const [isPrepared, setIsPrepared] = useState(false);
+  const [submitState, setSubmitState] = useState<"idle" | "sending" | "success" | "error">("idle");
 
   const handleCopyEmail = async () => {
     await navigator.clipboard.writeText(profile.email);
     setCopied(true);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const name = String(formData.get("name") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const subject = String(formData.get("subject") ?? "").trim();
     const message = String(formData.get("message") ?? "").trim();
-    const mailSubject = subject || `Pesan portfolio dari ${name}`;
-    const mailBody = [
-      `Nama: ${name}`,
-      `Email: ${email}`,
-      "",
-      "Pesan:",
-      message,
-    ].join("\n");
 
-    setIsPrepared(true);
-    window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+    setSubmitState("sending");
+
+    try {
+      const response = await fetch(`https://formsubmit.co/ajax/${profile.email}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          subject,
+          message,
+          _subject: `[Portfolio] ${subject}`,
+          _template: "table",
+          _honey: String(formData.get("company") ?? ""),
+        }),
+      });
+
+      if (!response.ok) throw new Error("Pengiriman gagal");
+
+      setSubmitState("success");
+      form.reset();
+    } catch {
+      setSubmitState("error");
+    }
   };
 
   return (
@@ -41,7 +59,6 @@ export default function Contact() {
       <div className="site-shell">
         <Reveal className="contact-box-grid">
           <div className="contact-left-card">
-            <p className="section-kicker">Hubungi & Kolaborasi</p>
             <h2>Mari membangun sesuatu yang benar-benar berguna.</h2>
             <p className="contact-description">
               Ceritakan peluang, masalah, atau ide yang ingin dikembangkan. Saya akan membalas melalui email secepatnya.
@@ -74,14 +91,29 @@ export default function Contact() {
             </div>
           </div>
 
-          <form className="contact-form-card" onSubmit={handleSubmit}>
+          <form
+            className="contact-form-card"
+            onSubmit={handleSubmit}
+            onChange={() => {
+              if (submitState === "success" || submitState === "error") setSubmitState("idle");
+            }}
+          >
             <div className="contact-form-heading">
               <div>
                 <h3>Kirim brief singkat</h3>
-                <p>Form akan membuka aplikasi email dengan pesan yang sudah tersusun.</p>
+                <p>Tulis pesannya di sini. Setelah dikirim, pesan akan langsung masuk ke email saya.</p>
               </div>
               <Send size={21} aria-hidden="true" />
             </div>
+
+            <input
+              className="contact-honeypot"
+              type="text"
+              name="company"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+            />
 
             <div className="contact-form-row">
               <label className="contact-form-field">
@@ -130,13 +162,18 @@ export default function Contact() {
               <p className="contact-form-target">
                 Tujuan: <strong>{profile.email}</strong>
               </p>
-              <button type="submit" className="button button-primary">
-                Kirim via Email <ArrowUpRight size={17} />
+              <button type="submit" className="button button-primary" disabled={submitState === "sending"}>
+                {submitState === "sending" ? "Mengirim..." : "Kirim Pesan"} <ArrowUpRight size={17} />
               </button>
             </div>
 
-            <p className={`contact-form-status${isPrepared ? " is-visible" : ""}`} aria-live="polite">
-              Pesan siap. Lanjutkan pengiriman melalui aplikasi email Anda.
+            <p
+              className={`contact-form-status${submitState !== "idle" ? " is-visible" : ""}${submitState === "error" ? " is-error" : ""}`}
+              aria-live="polite"
+            >
+              {submitState === "sending" && "Sedang mengirim pesan..."}
+              {submitState === "success" && "Pesan sudah terkirim. Terima kasih sudah menghubungi saya."}
+              {submitState === "error" && <>Pesan belum berhasil dikirim. Coba lagi atau kirim langsung ke <a href={`mailto:${profile.email}`}>{profile.email}</a>.</>}
             </p>
           </form>
         </Reveal>

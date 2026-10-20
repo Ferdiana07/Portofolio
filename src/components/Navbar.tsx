@@ -1,10 +1,11 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowDownToLine, Menu, X } from "lucide-react";
+import { ArrowDownToLine } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { profile } from "@/data/portfolio";
+import ScrollProgress from "./ScrollProgress";
 
 const navLinks = [
   { label: "Projek", href: "#projects" },
@@ -13,6 +14,22 @@ const navLinks = [
   { label: "Sertifikasi", href: "#certifications" },
   { label: "Kontak", href: "#contact" },
 ];
+
+const mobileMenuVariants = {
+  hidden: { opacity: 0, y: -12, scale: 0.985 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.34, ease: [0.16, 1, 0.3, 1] as const, staggerChildren: 0.045 },
+  },
+  exit: { opacity: 0, y: -8, scale: 0.99, transition: { duration: 0.2, ease: [0.4, 0, 1, 1] as const } },
+};
+
+const mobileItemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.38, ease: [0.16, 1, 0.3, 1] as const } },
+};
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,9 +74,14 @@ export default function Navbar() {
           aria-expanded={isOpen}
           aria-controls="mobile-navigation"
         >
-          {isOpen ? <X size={20} strokeWidth={2} /> : <Menu size={20} strokeWidth={2} />}
+          <span className={`menu-glyph${isOpen ? " is-open" : ""}`} aria-hidden="true">
+            <span />
+            <span />
+          </span>
         </button>
       </div>
+
+      <ScrollProgress />
 
       <AnimatePresence>
         {isOpen && (
@@ -67,25 +89,29 @@ export default function Navbar() {
             id="mobile-navigation"
             className="mobile-nav"
             aria-label="Navigasi mobile"
-            initial={reduceMotion ? false : { opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -12 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            variants={mobileMenuVariants}
+            initial={reduceMotion ? false : "hidden"}
+            animate="visible"
+            exit="exit"
           >
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} onClick={() => setIsOpen(false)}>
-                {link.label}
-              </Link>
+              <motion.div key={link.href} variants={reduceMotion ? undefined : mobileItemVariants}>
+                <Link href={link.href} onClick={() => setIsOpen(false)}>
+                  {link.label}
+                </Link>
+              </motion.div>
             ))}
-            <a
-              href={profile.resume}
-              target="_blank"
-              rel="noreferrer"
-              className="button button-primary mobile-cv-link"
-              onClick={() => setIsOpen(false)}
-            >
-              <ArrowDownToLine size={16} /> Unduh Resume CV (PDF)
-            </a>
+            <motion.div variants={reduceMotion ? undefined : mobileItemVariants}>
+              <a
+                href={profile.resume}
+                target="_blank"
+                rel="noreferrer"
+                className="button button-primary mobile-cv-link"
+                onClick={() => setIsOpen(false)}
+              >
+                <ArrowDownToLine size={16} /> Unduh Resume CV (PDF)
+              </a>
+            </motion.div>
           </motion.nav>
         )}
       </AnimatePresence>
