@@ -18,7 +18,13 @@ import { profile, projects, ProjectItem } from "@/data/portfolio";
 
 const cardSpring = { stiffness: 155, damping: 22, mass: 0.6 };
 
-function ProjectCardShell({ children, className }: { children: ReactNode; className: string }) {
+function ProjectCardShell({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className: string;
+}) {
   const reduceMotion = useReducedMotion();
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
@@ -28,7 +34,7 @@ function ProjectCardShell({ children, className }: { children: ReactNode; classN
   const rotateYTarget = useTransform(pointerX, [-0.5, 0.5], [-2.2, 2.2]);
   const rotateX = useSpring(rotateXTarget, cardSpring);
   const rotateY = useSpring(rotateYTarget, cardSpring);
-  const spotlight = useMotionTemplate`radial-gradient(520px circle at ${spotlightX}% ${spotlightY}%, rgba(195, 231, 127, 0.115), transparent 48%)`;
+  const spotlight = useMotionTemplate`radial-gradient(560px circle at ${spotlightX}% ${spotlightY}%, rgba(195, 231, 127, 0.11), transparent 48%)`;
 
   const handlePointerMove = (event: PointerEvent<HTMLElement>) => {
     if (reduceMotion || event.pointerType === "touch") return;
@@ -152,7 +158,9 @@ export default function Projects() {
               >
               <Reveal delay={index * 0.04}>
               <div className="project-shell">
-              <ProjectCardShell className={`project-card project-card-${index + 1}`}>
+              <ProjectCardShell
+                className={`project-card project-card-${index + 1}`}
+              >
                 <div
                   className="project-media clickable-media"
                   onClick={() => setSelectedProject(project)}

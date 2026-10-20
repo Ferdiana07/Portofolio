@@ -33,6 +33,7 @@ const mobileItemVariants = {
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
@@ -41,6 +42,27 @@ export default function Navbar() {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    const sections = ["top", ...navLinks.map((link) => link.href.slice(1))]
+      .map((id) => document.getElementById(id))
+      .filter((section): section is HTMLElement => Boolean(section));
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntry = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (!visibleEntry) return;
+        setActiveSection(visibleEntry.target.id === "top" ? "" : visibleEntry.target.id);
+      },
+      { rootMargin: "-32% 0px -58% 0px", threshold: [0, 0.35, 0.7] },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <header className="site-nav">
@@ -52,7 +74,12 @@ export default function Navbar() {
 
         <nav className="desktop-nav" aria-label="Navigasi utama">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="nav-item">
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`nav-item${activeSection === link.href.slice(1) ? " is-active" : ""}`}
+              aria-current={activeSection === link.href.slice(1) ? "location" : undefined}
+            >
               {link.label}
             </Link>
           ))}
@@ -96,7 +123,12 @@ export default function Navbar() {
           >
             {navLinks.map((link) => (
               <motion.div key={link.href} variants={reduceMotion ? undefined : mobileItemVariants}>
-                <Link href={link.href} onClick={() => setIsOpen(false)}>
+                <Link
+                  href={link.href}
+                  className={activeSection === link.href.slice(1) ? "is-active" : undefined}
+                  aria-current={activeSection === link.href.slice(1) ? "location" : undefined}
+                  onClick={() => setIsOpen(false)}
+                >
                   {link.label}
                 </Link>
               </motion.div>

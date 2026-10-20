@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import AmbientBackground from "@/components/AmbientBackground";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import "./globals.css";
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="id" className={`${geist.variable} ${geistMono.variable}`}>
       <body>
+        <AmbientBackground />
         <Navbar />
         <main>{children}</main>
         <Footer />

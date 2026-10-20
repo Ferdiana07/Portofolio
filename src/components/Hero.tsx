@@ -51,9 +51,9 @@ export default function Hero() {
             </div>
           </Reveal>
 
-          <Reveal className="portrait-wrap" delay={0.12}>
+          <div className="portrait-wrap">
             <HeroStage />
-          </Reveal>
+          </div>
         </div>
       </section>
 
