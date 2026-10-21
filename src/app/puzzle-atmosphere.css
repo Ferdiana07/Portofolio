@@ -1,0 +1,87 @@
+/* A printed canvas triptych becomes twelve movable tiles, not a physics canvas. */
+.paper-float { position: relative; }
+.puzzle-fallback { position: absolute; inset: 0; }
+.puzzle-piece { position: absolute; left: 0; top: 0; padding: 0; border: 0; border-radius: 2px; overflow: hidden; background: var(--sheet); color: var(--sheet-ink); box-shadow: 3px 6px 13px rgba(25,55,45,.16); user-select: none; -webkit-user-select: none; pointer-events: none; }
+.paper-study[data-ready=false] .puzzle-piece { visibility: hidden; }
+.paper-study[data-broken=true] .puzzle-piece { pointer-events: auto; touch-action: none; cursor: grab; }
+.puzzle-piece[data-dragging=true] { cursor: grabbing; }
+.puzzle-piece:focus-visible { outline: 2px solid #19372d; outline-offset: 3px; }
+.puzzle-sheet-0 { --sheet: #294b3a; --sheet-ink: #e7e0c7; }
+.puzzle-sheet-1 { --sheet: #e8dfc4; --sheet-ink: #19372d; }
+.puzzle-sheet-2 { --sheet: #a9bea0; --sheet-ink: #19372d; }
+.puzzle-print { position: absolute; width: 200%; height: 200%; left: calc(var(--tile-column) * -100%); top: calc(var(--tile-row) * -100%); display: flex; align-items: center; justify-content: center; background: var(--sheet) var(--canvas-weave); background-size: 90px; border-radius: 3px 3px 18px 3px; }
+.puzzle-print > span { font-family: var(--font-display),Georgia,serif; font-size: clamp(4rem,8.5vw,8rem); font-weight: 500; line-height: 1; }
+.puzzle-print::after { content: ""; position: absolute; inset: 0 0 0 56%; background: linear-gradient(90deg,rgba(25,55,45,.16),rgba(255,255,240,.09)); border-left: 1px solid rgba(255,255,235,.22); }
+.puzzle-print i { position: absolute; width: 35%; height: 1px; bottom: 13%; left: 17%; background: currentColor; opacity: .35; }
+.puzzle-break { position: absolute; z-index: 25; inset: 5% 0 19%; border: 0; padding: 0; color: inherit; background: transparent; cursor: pointer; touch-action: pan-y; border-radius: 16px; }
+.puzzle-break:focus-visible { outline: 2px solid #19372d; outline-offset: 4px; }
+.puzzle-help { position: absolute; bottom: 14%; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: .62rem; color: #19372d; pointer-events: none; }
+.paper-action { z-index: 30; border: 0; color: #19372d; cursor: pointer; white-space: nowrap; }
+.paper-action:hover svg { transform: rotate(90deg); }
+.paper-action:focus-visible,.puzzle-shuffle:focus-visible { outline: 2px solid #19372d; outline-offset: 4px; }
+.puzzle-shuffle { position: absolute; z-index: 30; right: 0; top: 0; display: inline-flex; align-items: center; gap: 7px; min-height: 44px; min-width: 44px; padding: 10px 13px; border: 0; border-radius: 999px; color: #19372d; background: #d5dfc9; box-shadow: var(--neu-flat-sm); font-size: .7rem; }
+.paper-study[data-broken=true] .paper-composition { animation: none !important; }
+
+/* Background print marks stay at the edges; no pointer handlers or render loop. */
+.scene-ornaments { position: absolute; inset: 0; }
+.scene-ornament { position: absolute; display: block; width: 40px; height: 40px; opacity: .24; animation-play-state: paused; }
+.scene-ornament svg { width: 100%; height: 100%; }
+.ornament-1 { top: 23%; right: 5%; }
+.ornament-2 { bottom: 18%; left: 3%; width: 25px; height: 25px; }
+.ornament-3 { top: 14%; left: 19%; width: 18px; height: 18px; }
+.atmosphere-top .ornament-1 { top: 40%; right: 3%; }
+.atmosphere-top .ornament-2 { bottom: 36%; left: 2%; }
+.atmosphere-hello .ornament-1 { top: 28%; right: 12%; width: 46px; height: 46px; }
+.atmosphere-hello .ornament-2 { bottom: 29%; left: 8%; width: 31px; height: 31px; }
+.atmosphere-about .ornament-1 { top: 15%; right: 5%; width: 60px; height: 60px; opacity: .16; }
+.atmosphere-projects .ornament-1 { top: 32%; right: 3%; }
+.atmosphere-experience .ornament-1 { top: 16%; right: 7%; width: 52px; height: 52px; }
+.atmosphere-certifications .ornament-1 { top: 18%; right: 3%; }
+.atmosphere-certifications .ornament-2 { bottom: 24%; left: 2%; }
+.atmosphere-contact .ornament-1 { top: 36%; right: 2%; }
+.atmosphere-contact .ornament-2 { bottom: 20%; left: 3%; }
+@media (prefers-reduced-motion: no-preference) {
+  .atmosphere-top .scene-ornament { animation: paper-glide 24s ease-in-out infinite alternate paused; }
+  .atmosphere-hello .scene-ornament { animation: bird-glide 19s ease-in-out infinite alternate paused; }
+  .atmosphere-about .scene-ornament { animation: ink-orbit 32s linear infinite paused; }
+  .atmosphere-projects .scene-ornament { animation: prism-turn 22s ease-in-out infinite alternate paused; }
+  .atmosphere-experience .scene-ornament { animation: compass-sway 25s ease-in-out infinite alternate paused; }
+  .atmosphere-certifications .scene-ornament { animation: star-breathe 9s ease-in-out infinite alternate paused; }
+  .atmosphere-contact .scene-ornament { animation: message-drift 21s ease-in-out infinite alternate paused; }
+  .scene-ornament.ornament-2 { animation-delay: -7s; }
+  .scene-ornament.ornament-3 { animation-delay: -12s; }
+  .journey-panel[aria-hidden=false] .scene-ornament { animation-play-state: running; }
+  .journey[data-motion-paused=true] .scene-ornament,.journey[data-hidden=true] .scene-ornament { animation-play-state: paused !important; }
+}
+@keyframes paper-glide { from { transform: translate3d(-10px,9px,0) rotate(-12deg); } to { transform: translate3d(12px,-19px,0) rotate(6deg); } }
+@keyframes bird-glide { 0% { transform: translate3d(-15px,8px,0) rotate(-8deg); } 50% { transform: translate3d(6px,-12px,0) rotate(4deg); } 100% { transform: translate3d(25px,2px,0) rotate(-4deg); } }
+@keyframes ink-orbit { to { transform: rotate(360deg); } }
+@keyframes prism-turn { to { transform: translate3d(-12px,14px,0) rotate(32deg); } }
+@keyframes compass-sway { 50% { transform: rotate(17deg); } 100% { transform: rotate(-12deg) translate3d(7px,-9px,0); } }
+@keyframes star-breathe { from { transform: scale(.82) rotate(-8deg); opacity: .15; } to { transform: scale(1.07) rotate(8deg); opacity: .32; } }
+@keyframes message-drift { to { transform: translate3d(13px,-26px,0) rotate(-12deg); } }
+@media (min-width: 768px) and (max-width: 1024px) and (min-height: 801px) {
+  .puzzle-print > span { font-size: 7rem; }
+}
+@media (max-width: 767px) {
+  .puzzle-print > span { font-size: 4.2rem; }
+  .puzzle-shuffle { top: -9%; padding: 9px 11px; font-size: .65rem; }
+  .puzzle-help { font-size: .55rem; bottom: 15%; }
+  .scene-ornament { opacity: .2; width: 29px; height: 29px; }
+  .scene-ornament.ornament-3 { display: none; }
+  .atmosphere-hello .ornament-1 { right: 3%; top: 39%; width: 30px; height: 30px; }
+  .atmosphere-about .ornament-1 { width: 38px; height: 38px; }
+}
+@media (max-width: 767px) and (max-height: 740px) {
+  .puzzle-print > span { font-size: 3.2rem; }
+  .puzzle-help { display: none; }
+}
+@media (min-width: 768px) and (max-height: 520px) {
+  .puzzle-print > span { font-size: 3.8rem; }
+  .puzzle-help { display: none; }
+  .puzzle-shuffle { top: -4%; padding: 8px; }
+  .puzzle-shuffle span { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-ornament { animation: none !important; }
+}

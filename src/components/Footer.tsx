@@ -8,7 +8,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="site-shell footer-inner">
         <div className="footer-brand-col">
-          <Link href="#top" className="brand" aria-label="Kembali ke atas">
+          <Link href="/#top" className="brand" aria-label="CFS. Kembali ke atas">
             <span className="brand-monogram">CFS</span>
             <span className="brand-dot">.</span>
           </Link>

@@ -3,13 +3,15 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowDownToLine } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { profile } from "@/data/portfolio";
-import ScrollProgress from "./ScrollProgress";
+import SoundToggle from "./SoundToggle";
 
 const navLinks = [
-  { label: "Projek", href: "#projects" },
+  { label: "About me", href: "#hello" },
   { label: "Profil & Skill", href: "#about" },
+  { label: "Projek", href: "#projects" },
   { label: "Pengalaman", href: "#experience" },
   { label: "Sertifikasi", href: "#certifications" },
   { label: "Kontak", href: "#contact" },
@@ -32,24 +34,60 @@ const mobileItemVariants = {
 };
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const reduceMotion = useReducedMotion();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  const linkHref = (href: string) => isHome ? href : href === "#projects" ? "/projects" : `/${href}`;
+  const isActive = (href: string) => isHome ? activeSection === href.slice(1) : href === "#projects";
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
+    if (!isOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { setIsOpen(false); menuButtonRef.current?.focus(); }
+      if (event.key === "Tab") {
+        const controls = [...(headerRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])') ?? [])]
+          .filter((element) => element.getClientRects().length > 0);
+        const first = controls[0]; const last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+    };
+    const closeOnDesktop = () => { if (window.innerWidth > 1024) setIsOpen(false); };
+    window.addEventListener("keydown", closeOnEscape);
+    window.addEventListener("resize", closeOnDesktop, { passive: true });
     return () => {
-      document.body.style.overflow = "";
+      window.removeEventListener("keydown", closeOnEscape);
+      window.removeEventListener("resize", closeOnDesktop);
     };
   }, [isOpen]);
 
   useEffect(() => {
+    if (!isOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    const surfaces = [...document.querySelectorAll<HTMLElement>("main, .footer")].map((element) => ({ element, inert: element.inert }));
+    document.body.style.overflow = "hidden";
+    surfaces.forEach(({ element }) => { element.inert = true; });
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      surfaces.forEach(({ element, inert }) => { element.inert = inert; });
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isHome) return;
+    const onChapter = (event: Event) => setActiveSection((event as CustomEvent<string>).detail === "top" ? "" : (event as CustomEvent<string>).detail);
+    window.addEventListener("portfolio:chapter", onChapter);
     const sections = ["top", ...navLinks.map((link) => link.href.slice(1))]
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
 
     const observer = new IntersectionObserver(
       (entries) => {
+        if (document.documentElement.dataset.journey === "on") return;
         const visibleEntry = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
@@ -61,24 +99,25 @@ export default function Navbar() {
     );
 
     sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
+    return () => { observer.disconnect(); window.removeEventListener("portfolio:chapter", onChapter); };
+  }, [isHome]);
 
   return (
-    <header className="site-nav">
+    <header ref={headerRef} className="site-nav" data-surface={isHome ? "home" : "catalogue"}>
       <div className="site-shell nav-inner">
-        <Link href="#top" className="brand" aria-label={`${profile.name}, kembali ke atas`}>
+        <Link href={isHome ? "#top" : "/"} className="brand" aria-label={`CFS. ${profile.name}, kembali ke atas`}>
           <span className="brand-monogram">CFS</span>
           <span className="brand-dot">.</span>
         </Link>
 
+        <div className="header-sound"><SoundToggle /></div>
         <nav className="desktop-nav" aria-label="Navigasi utama">
           {navLinks.map((link) => (
             <Link
               key={link.href}
-              href={link.href}
-              className={`nav-item${activeSection === link.href.slice(1) ? " is-active" : ""}`}
-              aria-current={activeSection === link.href.slice(1) ? "location" : undefined}
+              href={linkHref(link.href)}
+              className={`nav-item${isActive(link.href) ? " is-active" : ""}`}
+              aria-current={isActive(link.href) ? isHome ? "location" : "page" : undefined}
             >
               {link.label}
             </Link>
@@ -94,6 +133,7 @@ export default function Navbar() {
         </nav>
 
         <button
+          ref={menuButtonRef}
           type="button"
           className="menu-button"
           onClick={() => setIsOpen((open) => !open)}
@@ -108,7 +148,6 @@ export default function Navbar() {
         </button>
       </div>
 
-      <ScrollProgress />
 
       <AnimatePresence>
         {isOpen && (
@@ -124,9 +163,9 @@ export default function Navbar() {
             {navLinks.map((link) => (
               <motion.div key={link.href} variants={reduceMotion ? undefined : mobileItemVariants}>
                 <Link
-                  href={link.href}
-                  className={activeSection === link.href.slice(1) ? "is-active" : undefined}
-                  aria-current={activeSection === link.href.slice(1) ? "location" : undefined}
+                  href={linkHref(link.href)}
+                  className={isActive(link.href) ? "is-active" : undefined}
+                  aria-current={isActive(link.href) ? isHome ? "location" : "page" : undefined}
                   onClick={() => setIsOpen(false)}
                 >
                   {link.label}

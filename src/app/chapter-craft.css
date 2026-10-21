@@ -1,0 +1,121 @@
+/* Chapter materials: printed paper, shallow relief, and a few drifting fibres. */
+.journey-panel { isolation: isolate; }
+.scene-body { z-index: 2; }
+.scene-atmosphere { position: absolute; z-index: 0; inset: 0; overflow: hidden; pointer-events: none; color: var(--foreground); }
+.atmosphere-linework { position: absolute; inset: 0; width: 100%; height: 100%; stroke: currentColor; stroke-width: 1.2; opacity: .09; }
+.canvas-relief { position: absolute; width: min(40vw,540px); aspect-ratio: 1; border-radius: 50%; opacity: .55; box-shadow: 14px 16px 35px var(--neu-dark), -12px -12px 28px var(--neu-light), inset 1px 1px 2px var(--neu-light); }
+.relief-one { right: -14%; top: -12%; }
+.relief-two { width: min(28vw,360px); left: -12%; bottom: -12%; box-shadow: inset 8px 9px 18px var(--neu-dark), inset -7px -7px 15px var(--neu-light); }
+.atmosphere-projects .canvas-relief { display: none; }
+.atmosphere-experience .relief-one { width: min(47vw,600px); right: -21%; top: 25%; opacity: .8; }
+.atmosphere-experience .relief-two { display: none; }
+.route-path { stroke-dasharray: 6 10; }
+.scene-dust { position: absolute; inset: 0; }
+.scene-dust span { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: .19; }
+.scene-dust span:nth-child(1) { left: 9%; top: 24%; --drift-x: 22px; --drift-y: 35px; }
+.scene-dust span:nth-child(2) { left: 84%; top: 16%; --drift-x: -30px; --drift-y: 18px; animation-delay: -7s !important; }
+.scene-dust span:nth-child(3) { left: 93%; top: 71%; --drift-x: -22px; --drift-y: -38px; animation-delay: -3s !important; }
+.scene-dust span:nth-child(4) { left: 13%; top: 82%; --drift-x: 28px; --drift-y: -30px; animation-delay: -11s !important; }
+.scene-dust span:nth-child(5) { left: 72%; top: 86%; width: 2px; height: 7px; --drift-x: 18px; --drift-y: -22px; animation-delay: -9s !important; }
+.scene-dust span:nth-child(6) { left: 31%; top: 12%; width: 2px; height: 6px; --drift-x: -17px; --drift-y: 28px; animation-delay: -14s !important; }
+.atmosphere-projects .scene-dust { display: none; }
+
+/* Progress and playback controls replace the duplicate section menu. */
+.journey[data-enhanced=true] .journey-dock { min-height: 62px; padding-top: 12px; background: transparent; }
+.journey-status { display: flex; align-items: center; gap: 22px; }
+.journey-current { font-size: .75rem; font-weight: 600; }
+.journey-controls { display: flex; gap: 20px; align-items: center; }
+.motion-pause { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 8px 0; border: 0; background: transparent; color: inherit; font-size: .65rem; }
+.journey-scroll-cue { opacity: .8; }
+.chapter-arrows { margin: 0; }
+.journey-rail { height: 2px; }
+.journey-rail > span { border-radius: 999px; }
+
+/* Ink colours intentionally echo the canvas, without a live image filter. */
+.hello-glyph { display: inline-block; transform: translate(var(--repel-x,0),var(--repel-y,0)); transition: transform 180ms cubic-bezier(.2,.7,.2,1); }
+.hello-typed { min-height: 22px; margin: -5px 0 22px; font-size: .75rem; letter-spacing: .015em; color: #684550; }
+.hello-typed i { display: inline-block; width: 1px; height: .9em; margin-left: 5px; background: currentColor; opacity: 0; }
+.hello-typed i.is-typing { opacity: 1; }
+.hello-bio { max-width: 515px; font-size: .87rem; }
+.interest-panel { min-height: 90px; }
+
+/* Profile: moulded panels and recessed rows rather than flat separators. */
+.journey .education-panel,.journey .soft-skills-card { background: #d3c8e2; border: 0; box-shadow: 7px 8px 17px rgba(48,40,61,.13), -5px -5px 13px rgba(255,250,255,.38); }
+.journey .panel-icon-wrap { background: #d3c8e2; box-shadow: inset 3px 3px 6px rgba(48,40,61,.13), inset -3px -3px 6px rgba(255,250,255,.4); }
+.journey .skill-card-row { background: rgba(211,200,226,.65); border: 0; border-radius: 14px; padding: 18px 20px; margin-bottom: 18px; box-shadow: inset 3px 3px 7px rgba(48,40,61,.1), inset -3px -3px 7px rgba(255,250,255,.35); }
+.journey .tech-logo { background: #d3c8e2; border: 0; box-shadow: 3px 4px 7px rgba(48,40,61,.12), -2px -2px 5px rgba(255,250,255,.35); }
+
+/* Experience: a route through raised, dark canvas panels. */
+.journey .timeline-item-card { position: relative; background: #294439; border: 0; border-radius: 16px; box-shadow: 8px 9px 20px rgba(8,24,17,.32), -4px -4px 12px rgba(126,163,136,.09), inset 0 1px 0 rgba(219,238,208,.09); transition: transform .3s var(--ease); }
+.journey .timeline-item-card:hover { transform: translateY(-3px); }
+.journey .org-card-modern { background: #233c33; border: 0; border-radius: 16px; box-shadow: inset 4px 5px 10px rgba(8,24,17,.28), inset -3px -3px 9px rgba(126,163,136,.08); transition: transform .3s var(--ease); }
+.journey .org-card-modern:hover { transform: translateY(-3px) rotate(-.25deg); }
+.journey .block-icon-pill { background: #294439; box-shadow: var(--neu-flat-sm); border: 0; }
+.journey .timeline-badge-period { background: rgba(240,237,223,.08); }
+
+/* Keep the learning introduction fixed; only its certificate pane scrolls. */
+.journey[data-enhanced=true] [data-scene=certifications] .scene-body { overflow: hidden; }
+.journey[data-enhanced=true] .section-certifications { height: 100%; padding-block: 12px 0; }
+.journey[data-enhanced=true] .certifications-layout { height: 100%; min-height: 0; align-items: start; }
+.journey[data-enhanced=true] .certification-copy { position: static; }
+.journey[data-enhanced=true] .certificate-cards-grid { min-height: 0; max-height: 100%; overflow-y: auto; padding: 4px 12px 32px 2px; scrollbar-width: thin; scrollbar-color: #91a284 transparent; }
+.certificate-cards-grid:focus-visible { outline: 2px solid var(--foreground); outline-offset: -2px; }
+
+/* Catalogue glass remains bounded to each card, with a touch fallback. */
+.journey .preview-stage .preview-card { opacity: 1; }
+.journey .preview-stage .preview-card:not(.is-selected) .project-media { opacity: .85; }
+.catalogue-page .project-card { background: linear-gradient(125deg,rgba(255,255,255,.52),rgba(255,255,255,.12)),rgba(242,240,233,.57); border: 1px solid rgba(255,255,255,.7); -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px); box-shadow: 0 8px 24px rgba(40,53,46,.09), inset 0 1px 0 rgba(255,255,255,.7); }
+.catalogue-page .project-content { background: transparent; }
+.catalogue-page .project-media { border-bottom: 1px solid rgba(255,255,255,.5); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .journey-panel[aria-hidden=false] .scene-dust span { animation: fabric-drift 18s ease-in-out infinite alternate; }
+  .journey[data-active=experience] .timeline-item-card { animation: experience-surface-in .8s var(--ease) both; }
+  .journey[data-active=experience] .timeline-item-card:nth-child(2) { animation-delay: .12s; }
+  .journey[data-motion-paused=true] .scene-dust span,.journey[data-motion-paused=true] .route-path,.journey[data-hidden=true] .scene-dust span,.journey[data-hidden=true] .route-path { animation-play-state: paused; }
+}
+@keyframes fabric-drift { to { transform: translate3d(var(--drift-x),var(--drift-y),0); } }
+@keyframes experience-surface-in { from { opacity: .25; transform: perspective(1000px) rotateX(5deg) translateY(24px); } to { opacity: 1; transform: none; } }
+@media (min-width: 768px) and (max-height: 800px) {
+  .journey .hello-title { font-size: min(8.3vw,12svh); }
+  .hello-bio { margin: 10px 0 16px; font-size: .82rem; }
+  .hello-typed { margin-bottom: 16px; }
+  .interest-panel { min-height: 65px; }
+}
+@media (max-width: 1024px) {
+  .journey[data-enhanced=true] .certifications-layout { grid-template-rows: auto minmax(0,1fr); gap: 20px; }
+  .journey[data-enhanced=true] .certificate-cards-grid { height: 100%; }
+}
+@media (max-width: 767px) {
+  .journey[data-enhanced=true] .journey-dock { left: 24px; right: 24px; bottom: 16px; flex-wrap: nowrap; min-height: 56px; }
+  .journey-controls { gap: 12px; }
+  .journey-current { font-size: .68rem; }
+  .journey-scroll-cue,.motion-pause > span { display: none; }
+  .motion-pause { width: 44px; justify-content: center; }
+  .journey[data-enhanced=true] .scene-body { inset-block: 85px 90px; }
+  .dream-enter { bottom: 98px; }
+  .hello-bio { margin-block: 18px; font-size: .8rem; }
+  .hello-typed { margin: -2px 0 20px; font-size: .7rem; }
+  .canvas-relief { width: 65vw; }
+  .relief-one { right: -40%; top: 5%; }
+  .relief-two { width: 50vw; left: -30%; }
+  .atmosphere-experience .relief-one { width: 90vw; right: -60%; }
+  .scene-dust span:nth-child(n+4) { display: none; }
+  .journey[data-enhanced=true] .section-certifications { padding-top: 0; }
+  .journey[data-enhanced=true] .certification-copy h2 { font-size: 2.2rem; margin-bottom: 12px; }
+  .journey[data-enhanced=true] .certification-copy > p { font-size: .77rem; line-height: 1.65; margin-bottom: 10px; }
+  .journey[data-enhanced=true] .cert-cta-row { margin-top: 12px; }
+  .catalogue-page .project-card { -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (min-width: 768px) and (max-height: 520px) {
+  .journey[data-enhanced=true] .certifications-layout { grid-template-columns: .9fr 1.1fr; grid-template-rows: minmax(0,1fr); gap: 24px; }
+  .journey[data-enhanced=true] .certification-copy h2 { font-size: 1.7rem; margin-bottom: 8px; }
+  .journey[data-enhanced=true] .certification-copy > p { font-size: .7rem; line-height: 1.5; margin-bottom: 8px; }
+  .cert-cta-row { margin-top: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-dust span,.route-path { animation: none !important; }
+  .hello-glyph { transform: none; transition: none; }
+  .hello-typed i { display: none; }
+  .motion-pause { display: none; }
+}

@@ -7,9 +7,9 @@ export default function Certifications() {
     <section id="certifications" className="section section-certifications" aria-labelledby="certification-title">
       <div className="site-shell certifications-layout">
         <Reveal className="certification-copy">
-          <h2 id="certification-title">Kompetensi yang diuji, bukan sekadar dipelajari.</h2>
+          <h2 id="certification-title">Rasa penasaran yang terus jalan.</h2>
           <p>
-            Kredensial terverifikasi dari Google, IBM, Cisco, Oracle, MongoDB, dan Dicoding melengkapi pengalaman implementasi langsung.
+            Kursus dan sertifikasi membantu saya mengisi celah yang belum sempat dipelajari di kelas atau projek.
           </p>
           <div className="cert-cta-row">
             <a
@@ -18,12 +18,12 @@ export default function Certifications() {
               rel="noreferrer"
               className="button button-primary"
             >
-              <Award size={18} /> Verifikasi Daftar Sertifikat <ArrowUpRight size={17} strokeWidth={2} />
+              <Award size={18} /> Lihat sertifikat <ArrowUpRight size={17} strokeWidth={2} />
             </a>
           </div>
         </Reveal>
 
-        <div className="certificate-cards-grid">
+        <div className="certificate-cards-grid" tabIndex={0} role="region" aria-label="Daftar kursus dan sertifikasi">
           {certificationCategories.map((group, index) => (
             <Reveal className="cert-card-item" key={group.title} delay={index * 0.06}>
               <div className="cert-card-header">

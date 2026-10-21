@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:motion": "node scripts/check-scene-transitions.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.43.0",

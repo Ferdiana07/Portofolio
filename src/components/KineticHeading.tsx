@@ -1,73 +1,50 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import HeroStage from "./HeroStage";
 
-const phrases = [
-  "Mari bikin produk.",
-  "Ide jadi nyata.",
-  "Kode yang terasa.",
-];
+const phrases = ["Senang ngulik software.", "Penasaran sama AI.", "Belajar sampai ke cloud."];
 
 export default function KineticHeading() {
   const reduceMotion = useReducedMotion();
-  const [phraseIndex, setPhraseIndex] = useState(0);
-  const [characterCount, setCharacterCount] = useState(phrases[0].length);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const isSettled = phraseIndex === phrases.length - 1
-    && characterCount === phrases[phraseIndex].length
-    && !isDeleting;
+  const [text, setText] = useState(phrases[0]);
+  const headingRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (reduceMotion || isSettled) return;
-
-    const phrase = phrases[phraseIndex];
-    const pause = !isDeleting && characterCount === phrase.length;
-    const finishedDeleting = isDeleting && characterCount === 0;
-    const delay = pause ? 1700 : finishedDeleting ? 90 : isDeleting ? 34 : 58;
-
-    const timer = window.setTimeout(() => {
-      if (pause) {
-        setIsDeleting(true);
-        return;
-      }
-
-      if (finishedDeleting) {
-        setPhraseIndex((current) => (current + 1) % phrases.length);
-        setIsDeleting(false);
-        return;
-      }
-
-      setCharacterCount((current) => current + (isDeleting ? -1 : 1));
-    }, delay);
-
-    return () => window.clearTimeout(timer);
-  }, [characterCount, isDeleting, isSettled, phraseIndex, reduceMotion]);
-
-  const activePhrase = reduceMotion ? phrases[0] : phrases[phraseIndex].slice(0, characterCount);
+    if (reduceMotion) return;
+    let timer: number;
+    let index = 0;
+    let count = phrases[0].length;
+    let deleting = true;
+    let visible = true;
+    const tick = () => {
+      if (!visible || document.hidden) { timer = window.setTimeout(tick, 700); return; }
+      const phrase = phrases[index];
+      count += deleting ? -1 : 1;
+      setText(phrase.slice(0, count));
+      let delay = deleting ? 28 : 48;
+      if (count === 0) { index = (index + 1) % phrases.length; deleting = false; delay = 180; }
+      else if (!deleting && count === phrase.length) { deleting = true; delay = 3200; }
+      timer = window.setTimeout(tick, delay);
+    };
+    const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; });
+    if (headingRef.current) observer.observe(headingRef.current);
+    timer = window.setTimeout(tick, 4500);
+    return () => { window.clearTimeout(timer); observer.disconnect(); };
+  }, [reduceMotion]);
 
   return (
-    <h1 className="hero-heading" aria-label="Hai, saya Caesar. Mari bikin produk.">
-      <span className="hero-line-mask" aria-hidden="true">
-        <motion.span
-          initial={reduceMotion ? false : { y: "115%", rotate: 1.5 }}
-          animate={{ y: "0%", rotate: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.86, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-        >
-          Hai, saya Caesar.
-        </motion.span>
-      </span>
-      <span className="hero-line-mask hero-type-line" aria-hidden="true">
-        <motion.span
-          className="hero-highlight"
-          initial={reduceMotion ? false : { y: "115%", rotate: 1.5 }}
-          animate={{ y: "0%", rotate: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.86, delay: 0.19, ease: [0.16, 1, 0.3, 1] }}
-        >
-          {activePhrase}
-          {!reduceMotion && !isSettled && <span className="type-caret" />}
-        </motion.span>
-      </span>
-    </h1>
+    <div ref={headingRef}>
+      <div className="hero-greeting-row" aria-hidden="true">
+        <span className="hero-greeting">Hai,</span>
+        <div className="portrait-wrap"><HeroStage /></div>
+        <span className="hero-greeting">saya</span>
+      </div>
+      <h1 className="hero-heading" aria-label="Hai, saya Caesar.">
+        <span className="hero-line-mask" aria-hidden="true"><span className="hero-name">{"Caesar.".split("").map((letter, index) => <span key={index} className="name-letter">{letter}</span>)}</span></span>
+      </h1>
+      <p className="hero-typed"><span className="sr-only">{phrases.join(" ")}</span><span aria-hidden="true">{reduceMotion ? phrases[0] : text}<span className="type-caret" /></span></p>
+    </div>
   );
 }

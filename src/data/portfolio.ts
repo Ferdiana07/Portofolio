@@ -1,7 +1,7 @@
 export const profile = {
   name: "Caesar Ferdiana Suwandi",
   shortName: "Caesar",
-  role: "Informatics Student & Full-Stack / AI Developer",
+  role: "Software / AI / Cloud",
   university: "Universitas Diponegoro",
   faculty: "S1 Informatika - Semester 5",
   gpa: "3.58",
@@ -43,13 +43,13 @@ export const projects: ProjectItem[] = [
   {
     id: "seapedia",
     title: "SEAPEDIA",
-    tagline: "Marine Multi-Role Marketplace & Logistics Platform",
+    tagline: "Dari pesisir ke pembeli, dalam satu platform.",
     category: "Full-Stack Web",
     filterTag: "fullstack",
     status: "Belum Dideploy",
     isDeployed: false,
     description:
-      "Marketplace bahari multi-role (Buyer, Seller, Driver, Admin) yang menghubungkan ekosistem maritim dalam satu alur transaksi terverifikasi dengan wallet simulasi, quote checkout real-time, dan pelacakan order.",
+      "Marketplace bahari yang menghubungkan pembeli, penjual, dan pengemudi. Lengkap dengan checkout, simulasi wallet, serta pelacakan pesanan.",
     image: "/images/projects/seapedia.webp",
     imageAlt: "Pratinjau antarmuka marketplace bahari SEAPEDIA",
     logo: "/images/projects/seapedia-logo-white.png",
@@ -65,13 +65,13 @@ export const projects: ProjectItem[] = [
   {
     id: "sinauwu",
     title: "SINAUWU",
-    tagline: "AI-Powered PDF Study Companion & Interactive Quiz Generator",
+    tagline: "Materi kuliah jadi lebih gampang dipelajari.",
     category: "AI & EdTech",
     filterTag: "ai",
     status: "Live Demo",
     isDeployed: true,
     description:
-      "Asisten belajar cerdas yang mengekstrak materi kuliah dari file PDF dan mengubahnya menjadi ringkasan terstruktur, flashcards active-recall otomatis, serta kuis latihan interaktif berbasis Gemini AI.",
+      "Unggah PDF, lalu ubah materinya menjadi rangkuman, flashcard, dan kuis latihan dengan bantuan Gemini AI.",
     image: "/images/projects/sinauwu-landing.webp",
     imageAlt: "Landing page platform belajar cerdas SINAUWU",
     logo: "/images/projects/sinauwu-logo.png",
@@ -88,13 +88,13 @@ export const projects: ProjectItem[] = [
   {
     id: "docvia",
     title: "DOCVIA",
-    tagline: "MERN Healthcare Telemedicine & Clinic Scheduling Platform",
+    tagline: "Cari dokter dan atur jadwal konsultasi.",
     category: "Full-Stack Web",
     filterTag: "fullstack",
     status: "Belum Dideploy",
     isDeployed: false,
     description:
-      "Platform booking janji temu layanan kesehatan full-stack MERN yang menghubungkan pasien dengan dokter terverifikasi, dilengkapi jadwal slot aktual, rekam konsultasi, notifikasi, dan tata kelola admin.",
+      "Aplikasi pemesanan konsultasi dengan portal pasien, dokter, dan admin. Jadwal, riwayat konsultasi, dan notifikasi terhubung dalam satu alur.",
     image: "/images/projects/docvia.webp",
     imageAlt: "Tampilan direktori dokter dan booking jadwal pada DOCVIA",
     logo: "/images/projects/docvia-logo.png",
@@ -110,13 +110,13 @@ export const projects: ProjectItem[] = [
   {
     id: "ulasjujur",
     title: "ULASJUJUR",
-    tagline: "IndoBERT E-Commerce Sentiment & Anomaly Detection Engine",
+    tagline: "Saat bintang lima belum tentu berarti puas.",
     category: "AI & Machine Learning",
     filterTag: "ai",
     status: "Belum Dideploy",
     isDeployed: false,
     description:
-      "Mesin analitik sentimen berbasis NLP IndoBERT untuk mendeteksi anomali inkonsistensi rating bintang dan teks ulasan (mismatch) pada ribuan data e-commerce secara asinkron menggunakan Golang mikroservis.",
+      "Analisis sentimen ulasan berbahasa Indonesia dengan IndoBERT. Membantu menemukan ulasan yang isi dan rating bintangnya tidak sejalan.",
     image: "/images/projects/ulasjujur-landing.webp",
     imageAlt: "Landing page mesin analitik sentimen UlasJujur",
     logo: "/images/projects/ulasjujur-logo.png",
@@ -132,13 +132,13 @@ export const projects: ProjectItem[] = [
   {
     id: "himaose2",
     title: "HIMAOSE Web Portal",
-    tagline: "Official Student Association Web Platform & Event Center",
+    tagline: "Rumah digital Himpunan Mahasiswa Oseanografi UNDIP.",
     category: "Web & Organization",
     filterTag: "web",
     status: "Belum Dideploy",
     isDeployed: false,
     description:
-      "Portal web profil resmi Himpunan Mahasiswa Oseanografi Universitas Diponegoro yang menyajikan profil visi-misi, bagan struktur kepengurusan kabinet, kalender proker, dokumentasi acara, dan kontak publik.",
+      "Portal profil, kepengurusan, program kerja, dan dokumentasi kegiatan HIMA OSE. Informasi organisasi jadi lebih mudah ditemukan.",
     image: "/images/projects/himaose-landing.webp",
     imageAlt: "Landing page portal web Himpunan Mahasiswa Oseanografi HIMA OSE",
     logo: "/images/projects/himaose-logo.png",

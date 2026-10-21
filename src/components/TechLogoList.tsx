@@ -1,14 +1,14 @@
 import type { ComponentType } from "react";
+import Image from "next/image";
 import {
   Braces,
   Database,
   Feather,
-  LayoutTemplate,
+  ChartNoAxesCombined,
   MonitorSmartphone,
 } from "lucide-react";
 import {
   SiC,
-  SiChartdotjs,
   SiCss,
   SiDocker,
   SiExpress,
@@ -36,7 +36,6 @@ import {
   SiReact,
   SiSqlite,
   SiTailwindcss,
-  SiTestinglibrary,
   SiTypescript,
   SiVite,
 } from "react-icons/si";
@@ -59,7 +58,7 @@ const iconRules: Array<[RegExp, TechnologyIcon]> = [
   [/^java$/i, FaJava],
   [/^c$/i, SiC],
   [/^html/i, SiHtml5],
-  [/css/i, SiCss],
+  [/^css/i, SiCss],
   [/^laravel/i, SiLaravel],
   [/^tailwind/i, SiTailwindcss],
   [/^node/i, SiNodedotjs],
@@ -75,10 +74,9 @@ const iconRules: Array<[RegExp, TechnologyIcon]> = [
   [/gemini/i, SiGooglegemini],
   [/^golang|^go$/i, SiGo],
   [/^fastapi/i, SiFastapi],
-  [/recharts/i, SiChartdotjs],
+  [/recharts/i, ChartNoAxesCombined],
   [/docker/i, SiDocker],
   [/jwt/i, SiJsonwebtokens],
-  [/playwright/i, SiTestinglibrary],
   [/git\s*&\s*github/i, SiGithub],
   [/^git$/i, SiGit],
   [/figma/i, SiFigma],
@@ -86,7 +84,6 @@ const iconRules: Array<[RegExp, TechnologyIcon]> = [
   [/google workspace/i, SiGoogle],
   [/responsive design/i, MonitorSmartphone],
   [/feather icons/i, Feather],
-  [/canva/i, LayoutTemplate],
   [/zustand/i, Braces],
   [/^sql$/i, Database],
 ];
@@ -113,6 +110,7 @@ export default function TechLogoList({
     <div className={`tech-logo-list${large ? " tech-logo-list-large" : ""}`} aria-label={label}>
       {technologies.map((technology) => {
         const Icons = getTechnologyIcons(technology);
+        const localLogo = /^playwright/i.test(technology) ? "/icons/playwright.svg" : /^canva/i.test(technology) ? "/icons/canva.svg" : null;
 
         return (
           <span
@@ -123,7 +121,7 @@ export default function TechLogoList({
             tabIndex={0}
           >
             <span className={Icons.length > 1 ? "tech-logo-icons is-pair" : "tech-logo-icons"} aria-hidden="true">
-              {Icons.map((Icon, index) => (
+              {localLogo ? <Image src={localLogo} width={large ? 24 : 20} height={large ? 24 : 20} alt="" unoptimized className="local-tech-logo" /> : Icons.map((Icon, index) => (
                 <Icon key={`${technology}-${index}`} size={Icons.length > 1 ? (large ? 19 : 16) : (large ? 24 : 20)} />
               ))}
             </span>

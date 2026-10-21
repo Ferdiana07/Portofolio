@@ -7,9 +7,9 @@ export default function Experience() {
     <section id="experience" className="section section-experience">
       <div className="site-shell experience-layout">
         <Reveal className="experience-intro">
-          <h2>Saya juga belajar banyak dari kerja bareng tim.</h2>
+          <h2>Tumbuh bareng tim.</h2>
           <p>
-            Pengalaman di layanan publik, organisasi kampus, dan komunitas membentuk cara saya bekerja: tetap teknis, komunikatif, dan bertanggung jawab.
+            Dari magang di instansi sampai organisasi kampus, saya belajar mendengar kebutuhan orang lain dan menyelesaikan pekerjaan bareng-bareng.
           </p>
         </Reveal>
 
@@ -19,7 +19,7 @@ export default function Experience() {
             <div className="block-icon-pill">
               <Briefcase size={18} />
             </div>
-            <h3>Pengalaman Kerja & Magang Instansi</h3>
+            <h3>Kerja & magang</h3>
           </Reveal>
 
           <div className="timeline" aria-label="Pengalaman magang">
@@ -58,7 +58,7 @@ export default function Experience() {
             <div className="block-icon-pill org-icon-pill">
               <Users2 size={18} />
             </div>
-            <h3>Pengalaman Kepengurusan Organisasi</h3>
+            <h3>Organisasi & komunitas</h3>
           </Reveal>
 
           <div className="organization-grid-modern">

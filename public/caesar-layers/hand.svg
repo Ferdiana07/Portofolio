@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" fill="none">
+  <defs><pattern id="canvas-print" width="8" height="8" patternUnits="userSpaceOnUse"><path fill="#d9d8ba" d="M0 0h8v8H0z"/><path d="M0 2H8M2 0V8" stroke="#19372d" stroke-opacity=".055" stroke-width=".65"/></pattern></defs>
+  <!-- Independent left-side waving arm, pivot (285, 846) in the shared viewBox. -->
+  <g stroke="#19372d" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M147 649Q202 639 272 645L324 865Q335 927 281 963 210 1005 171 940 140 889 139 759Z" fill="#3b5444"/>
+    <path d="M154 667Q213 691 276 656L265 614Q203 608 150 631Z" fill="#eae3c9"/>
+    <path d="M173 628Q127 605 108 562L77 500Q67 476 84 465 104 453 120 477L138 503 99 422Q87 397 106 386 126 375 141 402L168 454 140 367Q134 340 155 334 180 327 190 359L213 438 206 359Q203 328 228 326 251 324 258 355L274 470 296 443Q317 421 336 436 357 453 338 480L307 536Q291 577 261 593L265 620Q217 646 173 638Z" fill="url(#canvas-print)"/>
+    <path d="M223 553Q228 514 269 492" fill="none" stroke-width="5"/>
+    <path d="M149 707Q155 827 181 888" stroke="#526c51" stroke-width="6"/>
+    <path d="M286 743q21 39 22 80" stroke="#2c4637" stroke-width="5"/>
+  </g>
+</svg>

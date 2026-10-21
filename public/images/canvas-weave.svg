@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs><pattern id="weft" width="12" height="12" patternUnits="userSpaceOnUse" fill="none">
+    <path d="M0 2Q3 1 6 2T12 2M0 8Q3 9 6 8T12 8" stroke="#172822" stroke-opacity=".12" stroke-width=".9"/>
+    <path d="M0 3Q3 2 6 3T12 3M0 9Q3 10 6 9T12 9" stroke="#fffdf6" stroke-opacity=".2" stroke-width=".8"/>
+    <path d="M3 0Q2 3 3 6T3 12M9 0Q10 3 9 6T9 12" stroke="#172822" stroke-opacity=".045" stroke-width=".8"/>
+    <path d="M4 0V5M10 6V12" stroke="#fffdf6" stroke-opacity=".085" stroke-width=".8"/>
+  </pattern></defs>
+  <path fill="url(#weft)" d="M0 0h128v128H0z"/>
+  <g fill="#172822" opacity=".065"><path d="M17 12h.8v2H17zM42 54h1v.8h-1zM99 31h.7v2h-.7zM73 86h1v1h-1zM11 106h.8v1.7H11zM112 118h.7v1h-.7zM61 21h.6v1.3H61z"/></g>
+</svg>

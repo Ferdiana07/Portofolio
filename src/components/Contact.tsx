@@ -8,15 +8,22 @@ import { profile } from "@/data/portfolio";
 
 export default function Contact() {
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState(false);
   const [submitState, setSubmitState] = useState<"idle" | "sending" | "success" | "error">("idle");
 
   const handleCopyEmail = async () => {
-    await navigator.clipboard.writeText(profile.email);
-    setCopied(true);
+    try {
+      await navigator.clipboard.writeText(profile.email);
+      setCopied(true);
+      setCopyError(false);
+    } catch {
+      setCopyError(true);
+    }
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submitState === "sending") return;
 
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -45,7 +52,8 @@ export default function Contact() {
         }),
       });
 
-      if (!response.ok) throw new Error("Pengiriman gagal");
+      const result = await response.json();
+      if (!response.ok || (result.success !== true && result.success !== "true")) throw new Error("Pengiriman gagal");
 
       setSubmitState("success");
       form.reset();
@@ -59,9 +67,9 @@ export default function Contact() {
       <div className="site-shell">
         <Reveal className="contact-box-grid">
           <div className="contact-left-card">
-            <h2>Mari membangun sesuatu yang benar-benar berguna.</h2>
+            <h2>Ada ide?<br />Ngobrol, yuk.</h2>
             <p className="contact-description">
-              Ceritakan peluang, masalah, atau ide yang ingin dikembangkan. Saya akan membalas melalui email secepatnya.
+              Mau bahas projek, peluang magang, atau sekadar kenalan? Tulis saja di sini, nanti saya balas lewat email.
             </p>
 
             <div className="contact-primary-actions">
@@ -69,7 +77,6 @@ export default function Contact() {
                 type="button"
                 onClick={handleCopyEmail}
                 className="button button-secondary"
-                aria-label="Salin alamat email"
               >
                 {copied ? (
                   <><Check size={17} /> Email tersalin</>
@@ -78,6 +85,8 @@ export default function Contact() {
                 )}
               </button>
             </div>
+
+            {copyError && <p className="copy-error" role="status">Belum bisa menyalin. Email saya: <a href={`mailto:${profile.email}`}>{profile.email}</a></p>}
 
             <div className="contact-meta-info">
               <div className="contact-meta-row">
@@ -100,8 +109,8 @@ export default function Contact() {
           >
             <div className="contact-form-heading">
               <div>
-                <h3>Kirim brief singkat</h3>
-                <p>Tulis pesannya di sini. Setelah dikirim, pesan akan langsung masuk ke email saya.</p>
+                <h3>Mulai dari pesan singkat.</h3>
+                <p>Ceritakan yang ada di pikiranmu.</p>
               </div>
               <Send size={21} aria-hidden="true" />
             </div>
@@ -152,7 +161,7 @@ export default function Contact() {
               <span>Pesan</span>
               <textarea
                 name="message"
-                placeholder="Tuliskan konteks dan kebutuhan Anda..."
+                placeholder="Hai Caesar, aku mau ngobrol soal..."
                 rows={6}
                 required
               />
