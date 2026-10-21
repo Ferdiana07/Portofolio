@@ -10,15 +10,6 @@
 .atmosphere-experience .relief-one { width: min(47vw,600px); right: -21%; top: 25%; opacity: .8; }
 .atmosphere-experience .relief-two { display: none; }
 .route-path { stroke-dasharray: 6 10; }
-.scene-dust { position: absolute; inset: 0; }
-.scene-dust span { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: .19; }
-.scene-dust span:nth-child(1) { left: 9%; top: 24%; --drift-x: 22px; --drift-y: 35px; }
-.scene-dust span:nth-child(2) { left: 84%; top: 16%; --drift-x: -30px; --drift-y: 18px; animation-delay: -7s !important; }
-.scene-dust span:nth-child(3) { left: 93%; top: 71%; --drift-x: -22px; --drift-y: -38px; animation-delay: -3s !important; }
-.scene-dust span:nth-child(4) { left: 13%; top: 82%; --drift-x: 28px; --drift-y: -30px; animation-delay: -11s !important; }
-.scene-dust span:nth-child(5) { left: 72%; top: 86%; width: 2px; height: 7px; --drift-x: 18px; --drift-y: -22px; animation-delay: -9s !important; }
-.scene-dust span:nth-child(6) { left: 31%; top: 12%; width: 2px; height: 6px; --drift-x: -17px; --drift-y: 28px; animation-delay: -14s !important; }
-.atmosphere-projects .scene-dust { display: none; }
 
 /* Progress and playback controls replace the duplicate section menu. */
 .journey[data-enhanced=true] .journey-dock { min-height: 62px; padding-top: 12px; background: transparent; }
@@ -69,12 +60,10 @@
 .catalogue-page .project-media { border-bottom: 1px solid rgba(255,255,255,.5); }
 
 @media (prefers-reduced-motion: no-preference) {
-  .journey-panel[aria-hidden=false] .scene-dust span { animation: fabric-drift 18s ease-in-out infinite alternate; }
   .journey[data-active=experience] .timeline-item-card { animation: experience-surface-in .8s var(--ease) both; }
   .journey[data-active=experience] .timeline-item-card:nth-child(2) { animation-delay: .12s; }
-  .journey[data-motion-paused=true] .scene-dust span,.journey[data-motion-paused=true] .route-path,.journey[data-hidden=true] .scene-dust span,.journey[data-hidden=true] .route-path { animation-play-state: paused; }
+  .journey[data-motion-paused=true] .route-path,.journey[data-hidden=true] .route-path { animation-play-state: paused; }
 }
-@keyframes fabric-drift { to { transform: translate3d(var(--drift-x),var(--drift-y),0); } }
 @keyframes experience-surface-in { from { opacity: .25; transform: perspective(1000px) rotateX(5deg) translateY(24px); } to { opacity: 1; transform: none; } }
 @media (min-width: 768px) and (max-height: 800px) {
   .journey .hello-title { font-size: min(8.3vw,12svh); }
@@ -100,7 +89,6 @@
   .relief-one { right: -40%; top: 5%; }
   .relief-two { width: 50vw; left: -30%; }
   .atmosphere-experience .relief-one { width: 90vw; right: -60%; }
-  .scene-dust span:nth-child(n+4) { display: none; }
   .journey[data-enhanced=true] .section-certifications { padding-top: 0; }
   .journey[data-enhanced=true] .certification-copy h2 { font-size: 2.2rem; margin-bottom: 12px; }
   .journey[data-enhanced=true] .certification-copy > p { font-size: .77rem; line-height: 1.65; margin-bottom: 10px; }
@@ -114,7 +102,7 @@
   .cert-cta-row { margin-top: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .scene-dust span,.route-path { animation: none !important; }
+  .route-path { animation: none !important; }
   .hello-glyph { transform: none; transition: none; }
   .hello-typed i { display: none; }
   .motion-pause { display: none; }

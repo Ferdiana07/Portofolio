@@ -38,12 +38,14 @@ npm run start
 - Geometri puzzle: `src/lib/canvas-puzzle.ts`; `test:puzzle` mengecek 28.800 sudut potongan, enam viewport, batas tarik dan posisi magnet. Gerakan memakai Pointer Events + MotionValues, tanpa render React per frame, loop idle, atau mesin fisika.
 - Referensi asli dan aset eksperimen lama tetap disimpan; tidak dimuat oleh hero.
 - Tekstur: SVG statis `public/images/canvas-weave.svg`, tanpa filter noise/runtime canvas.
-- Tiap bab mempunyai motif gerak berbeda: pesawat kertas, burung, orbit, prisma, kompas, bintang, dan pesan. Hanya motif aktif yang berjalan; tombol Gerak, tab tersembunyi dan reduced motion menghentikannya.
+- Pembuka memakai konstelasi 20 logo SVG (14 pada HP): AWS, Google, Gemini, ChatGPT/OpenAI, Java, HTML, MongoDB, React, Python dan lainnya. Logo memakai tinta kanvas, tiga pola drift pelan, dan posisi deterministik; bukan klaim skill tambahan.
+- Enam bab lainnya masing-masing punya enam objek dan tujuh partikel dengan bentuk/gerak berbeda: kawanan burung, orbit/node, prisma, waypoint, bintang dan pos/pesawat kertas. HP menampilkan empat objek + empat partikel. Hanya motif aktif yang berjalan; tombol Gerak, tab tersembunyi dan reduced motion menghentikannya. Tidak ada loop JavaScript untuk dekorasi.
+- Header HP/tablet menempatkan musik dan hamburger dekat sisi kanan (12px atau safe-area perangkat), tetap bertarget sentuh 44px. Catalogue menyisakan inset tambahan untuk permukaan header.
 - About me memakai bahasa personal serta loop Software / AI / Cloud: ketik, jeda, hapus, ulang. Teks lengkap tetap tersedia untuk pembaca layar.
 - Intro sekitar 3,9 detik, selesai otomatis tanpa tombol lewati, sekali per sesi. Anchor langsung, catalogue dan reduced motion melewatinya.
 - Preview projek memakai perspektif, tombol, keyboard dan swipe. Catalogue `/projects` dibuka di tab baru, dengan filter, detail, logo TechStack, status deployment sebenarnya, dan screenshot `object-fit:contain`.
 - Sertifikasi: pengantar tetap diam, daftar memiliki scroll tersendiri.
-- Stylesheet: komponen dasar di `globals.css`; panggung/katalogue di `immersive.css`; hero/Hello di `mascot-story.css` (nama legacy); material di `chapter-craft.css`; ruler/kontrol di `canvas-study.css`; navigasi dan motif di `scene-details.css`; puzzle fullscreen di `hero-puzzle.css`.
+- Stylesheet: komponen dasar di `globals.css`; panggung/katalogue di `immersive.css`; hero/Hello di `mascot-story.css` (nama legacy); material di `chapter-craft.css`; ruler/kontrol di `canvas-study.css`; navigasi dan motif dasar di `scene-details.css`; puzzle fullscreen di `hero-puzzle.css`; logo, variasi partikel dan header compact di `atmosphere-studies.css`.
 - Sistem visual: `DESIGN.md` + `.impeccable/design.json`.
 
 Tidak ada tambahan WebGL, video background, library scroll, atau dependency runtime baru.
@@ -60,3 +62,5 @@ Audit terbaru: `.impeccable/audit-2026-10-21.md`. Rincian pengujian: `.impeccabl
 Observasi referensi: `.impeccable/motion-research.md`; referensi menjadi panduan, bukan sumber kode/aset yang disalin.
 
 Remotion, Framer External Agent, TasteSkill dan REA adalah alat pengembangan, bukan dependency website. Logo Devicon di `public/icons` mengikuti `LICENSE-devicon.txt`.
+
+Logo dekoratif memakai [React Icons](https://github.com/react-icons/react-icons) yang sudah terpasang: Simple Icons, Font Awesome 6 dan Remix Icon. SVG diimpor secara lokal, tanpa font ikon atau request CDN saat runtime; merek tetap milik pemiliknya dan tidak menyiratkan afiliasi.

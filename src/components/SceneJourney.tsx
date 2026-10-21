@@ -44,6 +44,7 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
     let lastWheel = 0;
     let consumedGesture = false;
     let contentEdgeUntil = 0;
+    let cueFrame = 0;
 
     const scrollPanes = (target: EventTarget | null) => {
       const body = bodies[Math.max(0, current)];
@@ -70,6 +71,10 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
       if (cue.textContent !== text) cue.textContent = text;
       root.dataset.scrollState = remaining ? "content" : "edge";
     };
+    const queueCue = () => {
+      cancelAnimationFrame(cueFrame);
+      cueFrame = requestAnimationFrame(() => { cueFrame = 0; updateCue(); });
+    };
     const update = () => {
       const pose = sceneTransition(camera.get(), chapters.length);
       const nearest = Math.round(pose.progress);
@@ -86,7 +91,8 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
           if (pose.mix > .001 && pose.mix < .999) panel.style.willChange = "transform, clip-path";
           else panel.style.removeProperty("will-change");
         } else panel.style.removeProperty("will-change");
-        if (nearest !== current) {
+        // Only outgoing/incoming panels change state; leave dormant trees alone.
+        if (nearest !== current && (current < 0 || index === current || index === nearest)) {
           panel.style.pointerEvents = nearest === index ? "auto" : "none";
           panel.inert = nearest !== index;
           panel.setAttribute("aria-hidden", String(nearest !== index));
@@ -113,7 +119,6 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
         }
         frame.style.backgroundColor = chapter.background;
         window.dispatchEvent(new CustomEvent("portfolio:chapter", { detail: chapter.id }));
-        updateCue();
       }
     };
     const go = (index: number, focus = false, instant = false, reset = false) => {
@@ -136,7 +141,9 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
         if (focus) requestAnimationFrame(() => {
           if (bodies[target].isConnected && !bodies[target].closest("[inert]")) bodies[target].focus({ preventScroll: true });
         });
-        updateCue();
+        // Read scroll geometry on the following frame, never immediately after
+        // all panel/theme writes (which forced an expensive synchronous reflow).
+        queueCue();
       };
       if (!busy) complete();
       else animation = animate(camera, target, { duration: .68, ease: [.65, 0, .25, 1], onComplete: complete });
@@ -219,7 +226,7 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
     window.addEventListener("hashchange", followHash);
     window.addEventListener("popstate", followHash);
     return () => {
-      animation?.stop(); unsubscribe(); cancelAnimationFrame(initial);
+      animation?.stop(); unsubscribe(); cancelAnimationFrame(initial); cancelAnimationFrame(cueFrame);
       document.removeEventListener("click", anchor, true);
       document.removeEventListener("wheel", wheel);
       document.removeEventListener("keydown", keyboard);

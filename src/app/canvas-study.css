@@ -17,9 +17,6 @@
 .music-control { position: relative; }
 .sound-toggle > span { white-space: nowrap; }
 .music-control[data-enabled=false] .sound-toggle { border-radius: 999px; padding-inline: 13px; background: var(--neu-surface); box-shadow: var(--neu-flat-sm); }
-.scene-dust span { opacity: .29; }
-.atmosphere-projects .scene-dust { display: block; }
-.atmosphere-projects .scene-dust span:nth-child(n+4) { display: none; }
 
 @media (prefers-reduced-motion: no-preference) {
   .journey-panel[aria-hidden=false] .relief-one { animation: relief-drift 24s ease-in-out infinite alternate; }

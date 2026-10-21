@@ -1,0 +1,111 @@
+/* Printed background studies. No ticker, frame callbacks, filters or physics. */
+.scene-ornament.ornament-4 { left: 6%; top: 53%; width: 31px; height: 31px; }
+.scene-ornament.ornament-5 { right: 14%; bottom: 17%; width: 23px; height: 23px; }
+.scene-ornament.ornament-6 { right: 3%; top: 53%; width: 38px; height: 38px; }
+.atmosphere-hello .ornament-1 { right: 9%; top: 21%; width: 48px; height: 48px; }
+.atmosphere-hello .ornament-2 { left: 5%; bottom: 32%; width: 34px; height: 34px; }
+.atmosphere-hello .ornament-3 { left: 23%; top: 15%; width: 28px; height: 28px; }
+.atmosphere-hello .ornament-4 { top: 43%; left: 2%; width: 23px; height: 23px; }
+.atmosphere-hello .ornament-5 { bottom: 14%; right: 22%; }
+.atmosphere-about .ornament-4 { top: 65%; left: 2%; width: 42px; height: 42px; }
+.atmosphere-about .ornament-5 { right: 3%; bottom: 20%; }
+.atmosphere-about .ornament-6 { right: 24%; top: 12%; width: 17px; height: 17px; }
+.atmosphere-projects .ornament-4 { left: 3%; top: 38%; width: 30px; height: 30px; }
+.atmosphere-projects .ornament-5 { right: 12%; bottom: 16%; width: 38px; height: 38px; }
+.atmosphere-projects .ornament-6 { right: 18%; top: 14%; width: 28px; height: 28px; }
+.atmosphere-experience .ornament-1 { width: 62px; height: 62px; }
+.atmosphere-experience .ornament-2 { bottom: 18%; left: 4%; }
+.atmosphere-experience .ornament-4 { left: auto; right: 8%; top: 51%; width: 22px; height: 22px; }
+.atmosphere-experience .ornament-5 { bottom: 13%; right: 22%; width: 33px; height: 33px; }
+.atmosphere-experience .ornament-6 { right: 24%; top: 10%; width: 14px; height: 14px; }
+.atmosphere-certifications .ornament-1 { right: 7%; top: 19%; width: 43px; height: 43px; }
+.atmosphere-certifications .ornament-3 { left: 20%; top: 11%; width: 27px; height: 27px; }
+.atmosphere-certifications .ornament-4 { left: 4%; top: 49%; width: 34px; height: 34px; }
+.atmosphere-certifications .ornament-5 { right: 8%; bottom: 21%; width: 23px; height: 23px; }
+.atmosphere-contact .ornament-3 { top: 14%; left: 19%; width: 28px; height: 28px; }
+.atmosphere-contact .ornament-4 { left: 4%; top: 44%; width: 36px; height: 36px; }
+.atmosphere-contact .ornament-5 { right: 8%; bottom: 17%; width: 25px; height: 25px; }
+.atmosphere-contact .ornament-6 { right: 29%; top: 12%; width: 18px; height: 18px; }
+.constellation-trace { opacity: .14; stroke-dasharray: 2 8; }
+.message-trace { opacity: .12; stroke-dasharray: 4 8; }
+
+/* Brand glyphs are printed directly on the canvas, never in badge bubbles. */
+.scene-ornament.tech-mote { left: var(--tech-x); top: var(--tech-y); right: auto; bottom: auto; width: var(--tech-size); height: var(--tech-size); translate: -50% -50%; opacity: .22; color: #294b3a; }
+.tech-mote svg { display: block; }
+.atmosphere-particles { position: absolute; inset: 0; }
+.atmosphere-particle { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: .24; }
+.atmosphere-particle:nth-child(1) { left: 9%; top: 17%; }
+.atmosphere-particle:nth-child(2) { left: 31%; top: 9%; width: 3px; height: 3px; }
+.atmosphere-particle:nth-child(3) { right: 10%; top: 42%; width: 6px; height: 6px; }
+.atmosphere-particle:nth-child(4) { left: 4%; top: 72%; }
+.atmosphere-particle:nth-child(5) { right: 20%; bottom: 18%; width: 3px; height: 3px; }
+.atmosphere-particle:nth-child(6) { left: 24%; bottom: 13%; }
+.atmosphere-particle:nth-child(7) { right: 4%; top: 26%; width: 3px; height: 3px; }
+.particles-hello .atmosphere-particle { width: 2px; height: 7px; border-radius: 100%; }
+.particles-about .atmosphere-particle { background: transparent; width: 6px; height: 6px; border: 1px solid currentColor; }
+.particles-projects .atmosphere-particle { border-radius: 1px; width: 5px; height: 5px; }
+.particles-experience .atmosphere-particle { width: 8px; height: 2px; border-radius: 1px; }
+.particles-certifications .atmosphere-particle { width: 3px; height: 3px; }
+.particles-contact .atmosphere-particle { background: transparent; border: 1px solid currentColor; width: 5px; height: 5px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .scene-ornament.tech-mote { animation-duration: var(--tech-duration); animation-delay: var(--tech-delay); animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-direction: alternate; animation-play-state: paused; }
+  .tech-mote.tech-drift-0 { animation-name: tech-drift-one; }
+  .tech-mote.tech-drift-1 { animation-name: tech-drift-two; }
+  .tech-mote.tech-drift-2 { animation-name: tech-drift-three; }
+  .scene-ornament.ornament-4 { animation-delay: -11s; animation-duration: 27s; }
+  .scene-ornament.ornament-5 { animation-delay: -5s; animation-duration: 18s; }
+  .scene-ornament.ornament-6 { animation-delay: -16s; animation-duration: 34s; }
+  .atmosphere-hello .ornament-3 { animation-name: feather-fall; }
+  .atmosphere-hello .ornament-6 { animation-name: breeze-sway; }
+  .atmosphere-about .ornament-2,.atmosphere-about .ornament-3,.atmosphere-about .ornament-5 { animation-name: node-breathe; animation-duration: 18s; }
+  .atmosphere-projects .ornament-4,.atmosphere-projects .ornament-6 { animation-direction: alternate-reverse; }
+  .atmosphere-experience .ornament-4,.atmosphere-experience .ornament-6 { animation-name: waypoint-breathe; animation-duration: 8s; }
+  .atmosphere-contact .ornament-1,.atmosphere-contact .ornament-4 { animation-name: paper-flight; animation-duration: 26s; }
+  .atmosphere-particle { animation: pollen-drift 22s ease-in-out infinite alternate paused; animation-delay: var(--particle-phase); }
+  .particles-about .atmosphere-particle { animation-name: node-drift; animation-duration: 30s; }
+  .particles-projects .atmosphere-particle { animation-name: prism-drift; animation-duration: 26s; }
+  .particles-experience .atmosphere-particle { animation-name: route-drift; animation-duration: 25s; }
+  .particles-certifications .atmosphere-particle { animation-name: star-glimmer; animation-duration: 9s; }
+  .particles-contact .atmosphere-particle { animation-name: message-rise; animation-duration: 28s; }
+  .journey-panel[aria-hidden=false] .tech-mote,.journey-panel[aria-hidden=false] .atmosphere-particle { animation-play-state: running; }
+  .journey[data-motion-paused=true] .scene-atmosphere *,.journey[data-hidden=true] .scene-atmosphere * { animation-play-state: paused !important; }
+}
+@keyframes tech-drift-one { from { transform: translate3d(-9px,12px,0) rotate(var(--tech-tilt)); } to { transform: translate3d(15px,-20px,0) rotate(calc(var(--tech-tilt) + 12deg)); } }
+@keyframes tech-drift-two { from { transform: translate3d(12px,-9px,0) rotate(var(--tech-tilt)); } to { transform: translate3d(-14px,17px,0) rotate(calc(var(--tech-tilt) - 13deg)); } }
+@keyframes tech-drift-three { 0% { transform: translate3d(-10px,-6px,0) rotate(var(--tech-tilt)); } 50% { transform: translate3d(7px,-18px,0) rotate(3deg); } 100% { transform: translate3d(16px,9px,0) rotate(calc(var(--tech-tilt) + 9deg)); } }
+@keyframes feather-fall { to { transform: translate3d(18px,28px,0) rotate(24deg); } }
+@keyframes breeze-sway { to { transform: translate3d(-25px,4px,0) scaleX(.9); } }
+@keyframes node-breathe { 50% { transform: translate3d(0,-12px,0) scale(.91); } }
+@keyframes waypoint-breathe { 50% { transform: scale(.8); opacity: .13; } }
+@keyframes paper-flight { 0% { transform: translate3d(-12px,16px,0) rotate(-9deg); } 50% { transform: translate3d(12px,-8px,0) rotate(6deg); } 100% { transform: translate3d(28px,-20px,0) rotate(-4deg); } }
+@keyframes pollen-drift { to { transform: translate3d(15px,-24px,0) rotate(38deg); } }
+@keyframes node-drift { to { transform: translate3d(-14px,14px,0) scale(.78); } }
+@keyframes prism-drift { to { transform: translate3d(-14px,-18px,0) rotate(140deg); } }
+@keyframes route-drift { to { transform: translate3d(22px,-16px,0); } }
+@keyframes star-glimmer { from { opacity: .13; transform: scale(.75); } to { opacity: .38; transform: scale(1.2); } }
+@keyframes message-rise { to { transform: translate3d(13px,-26px,0) scale(.8); } }
+
+@media (max-width: 1024px) {
+  /* Reclaim the nested .site-shell inset; the action group now reaches the edge. */
+  .site-nav { left: max(20px,env(safe-area-inset-left)); right: max(12px,env(safe-area-inset-right)); width: auto; max-width: none; transform: none; }
+  .site-nav .nav-inner { width: 100%; margin: 0; padding: 0; }
+  .site-nav .header-sound { margin-left: auto; margin-right: 8px; }
+  .site-nav .menu-button { flex: 0 0 44px; }
+  .site-nav[data-surface=catalogue] { padding-inline: 8px; }
+}
+@media (max-width: 767px) {
+  .scene-ornament.tech-mote { display: block; left: clamp(34px,var(--tech-mobile-x),calc(100% - 34px)); top: var(--tech-mobile-y); width: calc(var(--tech-size) * .7); height: calc(var(--tech-size) * .7); opacity: .2; }
+  .tech-mote:nth-child(n+15) { display: none; }
+  .scene-ornament.ornament-4 { left: 2%; top: 56%; width: 22px; height: 22px; }
+  .scene-ornament.ornament-5 { right: 4%; bottom: 18%; width: 18px; height: 18px; }
+  .scene-ornament.ornament-6 { display: none; }
+  .atmosphere-hello .ornament-1 { right: 3%; top: 24%; width: 30px; height: 30px; }
+  .atmosphere-about .ornament-1 { width: 38px; height: 38px; }
+  .atmosphere-experience .ornament-4 { left: auto; right: 3%; }
+  .atmosphere-particle:nth-child(n+5) { display: none; }
+  .constellation-trace,.message-trace { opacity: .09; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-atmosphere .scene-ornament,.scene-atmosphere .atmosphere-particle { animation: none !important; }
+}
