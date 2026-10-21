@@ -1,22 +1,7 @@
 /* Folded canvas replaces the character; all relief is static painted CSS. */
 .paper-study { position: absolute; z-index: 3; left: 50%; bottom: 112px; width: min(52vw,640px); height: min(56svh,560px); transform: translateX(-50%); }
-.paper-float,.paper-sculpture { width: 100%; height: 100%; }
-.paper-sculpture { position: relative; display: block; border: 0; padding: 0; background: transparent; color: #19372d; perspective: 1200px; }
-.paper-composition { position: absolute; inset: 0; perspective: 1200px; }
-.paper-leaf { position: absolute; top: 16%; width: 31%; height: 65%; display: flex; justify-content: center; align-items: center; transform-origin: 50% 80%; border-radius: 3px 3px 18px 3px; background-image: var(--canvas-weave); background-size: 90px; box-shadow: 12px 20px 25px rgba(25,55,45,.2), inset 1px 1px 0 rgba(255,253,233,.55); transition: transform .9s cubic-bezier(.16,1,.3,1); }
-.paper-leaf > span { font-family: var(--font-display),Georgia,serif; font-size: clamp(4rem,8.5vw,8rem); font-weight: 500; line-height: 1; }
-.paper-leaf::after { content: ""; position: absolute; inset: 0 0 0 56%; background: linear-gradient(90deg,rgba(25,55,45,.16),rgba(255,255,240,.09)); border-left: 1px solid rgba(255,255,235,.22); border-radius: inherit; }
-.paper-leaf i { position: absolute; width: 35%; height: 1px; bottom: 13%; left: 17%; background: currentColor; opacity: .35; }
-.paper-leaf-one { left: 10%; z-index: 1; background-color: #294b3a; color: #e7e0c7; transform: rotateY(-20deg) rotateZ(-17deg) translateY(16px); }
-.paper-leaf-two { left: 36%; z-index: 3; background-color: #e8dfc4; transform: rotateY(12deg) rotateZ(6deg) translateY(-20px); }
-.paper-leaf-three { left: 60%; z-index: 2; background-color: #a9bea0; transform: rotateY(-16deg) rotateZ(23deg) translateY(22px); }
-.paper-sculpture[data-open=true] .paper-leaf-one { transform: rotateY(14deg) rotateZ(-29deg) translate(-12px,8px); }
-.paper-sculpture[data-open=true] .paper-leaf-two { transform: rotateY(-15deg) rotateZ(-7deg) translateY(-34px); }
-.paper-sculpture[data-open=true] .paper-leaf-three { transform: rotateY(24deg) rotateZ(35deg) translate(15px,18px); }
 .paper-action { position: absolute; bottom: 4%; left: 50%; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 10px 15px; transform: translateX(-50%); border-radius: 999px; background: #d5dfc9; box-shadow: var(--neu-flat-sm); font-size: .7rem; }
 .paper-action svg { transition: transform .7s var(--ease); }
-.paper-sculpture:hover .paper-action svg { transform: rotate(90deg); }
-.paper-sculpture:focus-visible { outline: 2px solid #19372d; outline-offset: -8px; border-radius: 24px; }
 
 /* A ruler of major/minor ticks reads as a physical navigation instrument. */
 .journey[data-enhanced=true] .journey-dock { border-top: 0; padding-top: 26px; }
@@ -32,50 +17,39 @@
 .music-control { position: relative; }
 .sound-toggle > span { white-space: nowrap; }
 .music-control[data-enabled=false] .sound-toggle { border-radius: 999px; padding-inline: 13px; background: var(--neu-surface); box-shadow: var(--neu-flat-sm); }
-.music-hint { position: absolute; top: calc(100% + 1px); right: 5px; display: inline-flex; gap: 3px; align-items: center; font-size: .59rem; color: inherit; white-space: nowrap; pointer-events: none; }
 .scene-dust span { opacity: .29; }
 .atmosphere-projects .scene-dust { display: block; }
 .atmosphere-projects .scene-dust span:nth-child(n+4) { display: none; }
 
 @media (prefers-reduced-motion: no-preference) {
-  .journey[data-active=top] .paper-composition { animation: canvas-mobile 12s ease-in-out infinite alternate; }
   .journey-panel[aria-hidden=false] .relief-one { animation: relief-drift 24s ease-in-out infinite alternate; }
   .journey[data-active=projects] .atmosphere-projects .atmosphere-linework { animation: contour-drift 26s ease-in-out infinite alternate; }
   .journey[data-motion-paused=true] .ambient-loop,.journey[data-hidden=true] .ambient-loop { animation-play-state: paused !important; }
 }
-@keyframes canvas-mobile { to { translate: 0 -8px; rotate: 1deg; } }
 @keyframes relief-drift { to { transform: translate3d(-16px,18px,0); } }
 @keyframes contour-drift { to { transform: translate3d(0,-9px,0) scale(1.025); } }
 @media (min-width: 768px) and (max-height: 800px) {
   .paper-study { height: 50svh; bottom: 112px; }
-  .paper-leaf { top: 18%; height: 67%; }
   .paper-action { bottom: 0; }
 }
 @media (min-width: 768px) and (max-width: 1024px) and (min-height: 801px) {
   .paper-study { width: 72vw; height: 43svh; bottom: 112px; }
-  .paper-leaf > span { font-size: 7rem; }
 }
 @media (max-width: 767px) {
   .paper-study { width: min(90vw,420px); height: 40svh; bottom: 94px; }
-  .paper-leaf > span { font-size: 4.2rem; }
   .paper-action { left: 14%; bottom: 0; transform: none; font-size: .65rem; padding: 8px 12px; }
-  .music-hint { font-size: .55rem; top: calc(100% - 3px); right: 2px; }
   .music-control[data-enabled=false] .sound-toggle { padding-inline: 9px; }
-  .paper-leaf { box-shadow: 7px 12px 16px rgba(25,55,45,.2), inset 1px 1px 0 rgba(255,253,233,.55); }
   .journey-rail,.journey-rail svg { height: 19px; }
 }
 @media (max-width: 767px) and (max-height: 740px) {
   .paper-study { height: 35svh; }
-  .paper-leaf > span { font-size: 3.2rem; }
 }
 @media (min-width: 768px) and (max-height: 520px) {
   .paper-study { width: 35vw; height: 50svh; bottom: 105px; left: 62%; }
-  .paper-leaf > span { font-size: 3.8rem; }
   .paper-action { bottom: 0; font-size: .6rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ambient-loop { animation: none !important; }
-  .paper-leaf { transition: none; }
   .paper-study { bottom: 120px; }
 }
 @media (max-width: 360px) {

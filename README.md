@@ -1,6 +1,6 @@
 # Caesar Ferdiana Suwandi — Portfolio
 
-Portofolio Software / AI / Cloud dengan pengalaman fullscreen, komposisi kanvas CFS, warna mineral, dan permukaan kanvas bertekstur.
+Portofolio Software / AI / Cloud: panggung fullscreen, warna mineral, tekstur kanvas, dan kontrol taktil.
 
 ## Menjalankan
 
@@ -11,7 +11,7 @@ npm ci
 npm run dev
 ```
 
-Buka http://localhost:3000. Untuk versi produksi lokal:
+Buka http://localhost:3000. Untuk pengujian produksi:
 
 ```bash
 npm run lint
@@ -20,56 +20,41 @@ npm run build
 npm run start
 ```
 
-## Konten dan aset
+## Navigasi yang baru
 
-- Profil, CV, lima projek, skill, pengalaman, sertifikasi: `src/data/portfolio.ts`.
-- Warna tujuh bab: `src/data/journey.ts`.
-- Screenshot projek: `public/images/projects`; semua gambar memakai `object-fit: contain`.
-- Komposisi pembuka: `src/components/CanvasStudy.tsx`, tiga lembar kanvas CFS berbasis CSS; tombol “Susun ulang” mengubah susunannya.
-- Maskot tidak lagi dirender. Referensi asli di `public/caesar-layers` tetap disimpan sebagai arsip pengguna.
-- Tekstur: `public/images/canvas-weave.svg`, tile geometri serat yang statis. Tidak memakai filter noise atau canvas runtime.
-- Sistem visual: `DESIGN.md` dan `.impeccable/design.json`.
-- Stylesheet: `globals.css` untuk komponen dasar, `immersive.css` untuk panggung/katalogue, `mascot-story.css` untuk hero, dan `chapter-craft.css` untuk relief, kontrol progres, serta interaksi tiap bab. `canvas-study.css` mengatur komposisi CFS, penggaris progres, dan petunjuk musik.
+- Desktop: scroll menghabiskan isi section terlebih dahulu. Gerakan berikutnya di ujung isi baru memindahkan satu section. Momentum trackpad tidak melompati beberapa section.
+- HP/tablet (lebar maksimal 1024px atau pointer utama coarse): scroll hanya untuk isi. Pindah section lewat panah kanan bawah atau menu.
+- Transisi iris, curtain dan arch berjalan 680ms, tanpa runway scroll panjang atau delay spring. Link menu yang melompati beberapa section langsung membuka tujuan.
+- Reduced motion: perpindahan instan dan dekorasi/ketikan diam. Tanpa JavaScript: semua isi tetap tersedia sebagai dokumen linear.
+- Menu pendek/landscape punya batas tinggi dan scroll sendiri. Fokus keyboard berpindah ke section setelah menu ditutup.
 
-Aset robot dan maskot dari eksperimen sebelumnya masih disimpan, tetapi tidak dipakai atau dimuat oleh hero terkini.
+## Konten dan visual
 
-## Navigasi dan motion
+- Data CV, profil, lima projek, skill, pengalaman dan sertifikasi: `src/data/portfolio.ts`.
+- Warna tiap bab: `src/data/journey.ts`.
+- Pose transisi: `src/lib/scene-transition.ts`; regresinya: `scripts/check-scene-transitions.mjs`.
+- Hero: `CanvasStudy.tsx`, monogram CFS berlapis tiga pita dengan perspektif CSS, tilt mouse terbatas, dan tombol “Susun ulang”. Tidak ada puzzle, Acak, atau maskot.
+- Referensi asli dan aset eksperimen lama tetap disimpan; tidak dimuat oleh hero.
+- Tekstur: SVG statis `public/images/canvas-weave.svg`, tanpa filter noise/runtime canvas.
+- Tiap bab mempunyai motif gerak berbeda: pesawat kertas, burung, orbit, prisma, kompas, bintang, dan pesan. Hanya motif aktif yang berjalan; tombol Gerak, tab tersembunyi dan reduced motion menghentikannya.
+- About me memakai bahasa personal serta loop Software / AI / Cloud: ketik, jeda, hapus, ulang. Teks lengkap tetap tersedia untuk pembaca layar.
+- Intro sekitar 3,9 detik, selesai otomatis tanpa tombol lewati, sekali per sesi. Anchor langsung, catalogue dan reduced motion melewatinya.
+- Preview projek memakai perspektif, tombol, keyboard dan swipe. Catalogue `/projects` dibuka di tab baru, dengan filter, detail, logo TechStack, status deployment sebenarnya, dan screenshot `object-fit:contain`.
+- Sertifikasi: pengantar tetap diam, daftar memiliki scroll tersendiri.
+- Stylesheet: komponen dasar di `globals.css`; panggung/katalogue di `immersive.css`; hero/Hello di `mascot-story.css` (nama legacy); material di `chapter-craft.css`; ruler/kontrol di `canvas-study.css`; navigasi baru, seal dan motif di `scene-details.css`.
+- Sistem visual: `DESIGN.md` + `.impeccable/design.json`.
 
-Homepage memiliki tujuh bab: Kenalan, About me, Profil, Projek, Jejak, Belajar, dan Ngobrol. Desktop dan HP memakai panggung fullscreen. Navigasi utama ada di header, dengan Profil sebelum Projek. Bagian bawah menampilkan penggaris 61 takik vertikal dengan isi mengikuti progres, nama bab saat ini, tombol sebelumnya/berikutnya, dan jeda gerakan latar—tanpa menu bagian yang berulang.
+Tidak ada tambahan WebGL, video background, library scroll, atau dependency runtime baru.
 
-Scroll browser tetap native. Framer Motion `useScroll` dan `useSpring` menggerakkan tiga variasi mask: iris lingkaran, sapuan samping, dan bukaan lengkung dari bawah. Dua lapisan tetap opak; tidak ada perubahan susunan berdasarkan arah scroll. Jarak dan jeda baca diatur di `src/lib/journey-timing.ts`: 3,2 viewport per bab, 42% pertama sebagai jeda, lalu transisi bertahap. Pose di `src/lib/scene-transition.ts` hanya bergantung pada posisi sehingga scroll naik membalik pose scroll turun. Residual floating-point di batas bab di-snap; bab di luar pasangan transisi disembunyikan. `npm run test:motion` memeriksa 1.201 posisi, kesetaraan arah, batas, dan variasi. Hanya bab terdekat yang interaktif; bab lain memakai `inert` dan `aria-hidden`.
+## Musik dan email
 
-Komposisi CFS mengganti seluruh maskot. Tiga lembar bergeser perlahan dengan transform CSS pada bab pembuka; tombol interaksinya tetap diam agar mudah diklik. Pada About me, huruf merespons mouse secara terbatas dan tag minat diketik sekali saat masuk. Tidak ada loop JavaScript saat diam.
+Musik lokal dari `public/music/3 Minute Timer with Relaxing Lofi Music.mp 3`: off saat awal, tanpa source/request sebelum opt-in, volume 18%, loop dan pause ketika tab tersembunyi. Tombol “Nyalakan musik” tetap ada; teks “Lofi untuk menemani” dihapus.
 
-Relief dan linework latar adalah geometri SVG/CSS. Satu relief bergeser perlahan pada bab aktif; kontur projek bergerak dalam siklus 26 detik. Maksimal enam serat kecil bergerak melalui transform CSS pada bab aktif (tiga di HP). Tombol Gerak, tab tersembunyi, dan reduced motion menghentikan gerakan latar. Profil dan Jejak memakai relief neumorphism lebih tegas. Pada Belajar, pengantar serta tombol sertifikat tetap diam sementara daftar sertifikat memiliki scroll sendiri; mode linear tetap memakai alur dokumen biasa.
+FormSubmit mengirim ke ferdianacaesar@gmail.com setelah pemilik menyelesaikan aktivasi layanan. Tes memakai respons simulasi untuk sukses/gagal, tidak mengirim email sungguhan.
 
-Intro CFS sekitar 4,1 detik, bisa dilewati, sekali per sesi. Anchor langsung, /projects, dan reduced motion melewati intro. Tanpa JavaScript/reduced motion, isi tetap tersedia sebagai halaman linear.
+## Audit dan referensi
 
-Preview projek memakai perspektif CSS, tombol, keyboard kiri/kanan, dan swipe horizontal. Tidak ada autoplay. “Lihat semua projek” membuka `/projects` di tab baru. Catalogue memuat filter, detail, logo TechStack, dan status deployment yang sebenarnya.
+Audit terbaru: `.impeccable/audit-2026-10-21.md`. Rincian pengujian: `.impeccable/verification.md`.
+Observasi referensi: `.impeccable/motion-research.md`; referensi menjadi panduan, bukan sumber kode/aset yang disalin.
 
-Tidak ada tambahan WebGL, video background, atau library scroll. Tekstur dan bayangan tidak dianimasikan. Kartu catalogue memakai glass blur 7px yang terbatas pada kartu; layar kecil memakai transparansi tanpa blur. Performa tetap bergantung pada perangkat; ukur kembali saat menambah aset atau efek.
-
-## Musik
-
-Saat mati, tombol bertuliskan “Nyalakan musik” dengan petunjuk lofi; petunjuk hilang setelah diputar. Tombol Musik memutar `public/music/3 Minute Timer with Relaxing Lofi Music.mp3` dari folder pengguna. Audio off saat awal, tanpa source/request sampai pengunjung menekan putar. Volume 18%, loop, dapat dihentikan kapan saja, dan otomatis pause ketika tab tersembunyi. File diputar melalui HTMLAudio, tanpa library audio tambahan.
-
-## Form email
-
-FormSubmit mengirim pesan ke **ferdianacaesar@gmail.com**. Pemilik email harus menyelesaikan aktivasi FormSubmit agar pesan produksi dapat diterima. Status sukses hanya muncul setelah layanan mengonfirmasi keberhasilan.
-
-Tes lokal menggunakan respons simulasi untuk kondisi sukses dan gagal; tidak mengirim email sungguhan.
-
-## Referensi dan tools desain
-
-Observasi referensi dan adaptasinya dicatat di `.impeccable/motion-research.md`:
-
-- https://nesilnoble.com/
-- https://kelvin.8b.com/
-- https://onlines.com.ar/
-- https://dribbble.com/search/neumorphism-web
-
-Referensi menjadi panduan ritme dan interaksi; kode serta aset situs-situs tersebut tidak disalin ke portofolio.
-
-Remotion skills, Framer External Agent, TasteSkill, dan REA dipasang sebagai alat pengembangan di lingkungan Codex, bukan dependency runtime website. Animasi website tetap memakai Motion dan CSS yang sudah tersedia.
-
-Logo Playwright dan Canva di `public/icons` berasal dari https://github.com/devicons/devicon. Lisensi ada di `public/icons/LICENSE-devicon.txt`.
+Remotion, Framer External Agent, TasteSkill dan REA adalah alat pengembangan, bukan dependency website. Logo Devicon di `public/icons` mengikuti `LICENSE-devicon.txt`.

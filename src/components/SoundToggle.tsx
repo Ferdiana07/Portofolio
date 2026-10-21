@@ -50,7 +50,7 @@ export default function SoundToggle() {
       <audio ref={playerRef} preload="none" loop playsInline hidden aria-hidden="true" onError={() => {
         enabledRef.current = false; setEnabled(false); setUnavailable(true);
       }} />
-      <button type="button" className="sound-toggle" aria-pressed={enabled} aria-label={enabled ? "Musik on, matikan musik" : unavailable ? "Musik belum tersedia, coba lagi" : "Musik off, putar musik lofi"} onClick={toggle} title={unavailable ? "Musik belum bisa dimuat. Klik untuk mencoba lagi." : "Lofi dari koleksi Caesar"}>
+      <button type="button" className="sound-toggle" aria-pressed={enabled} aria-label={enabled ? "Musik on, matikan musik" : unavailable ? "Coba putar lagi, musik belum tersedia" : "Nyalakan musik lofi"} onClick={toggle} title={unavailable ? "Musik belum bisa dimuat. Klik untuk mencoba lagi." : "Lofi dari koleksi Caesar"}>
         {enabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
         <span>{enabled ? "Musik on" : unavailable ? "Coba putar lagi" : "Nyalakan musik"}</span>
       </button>

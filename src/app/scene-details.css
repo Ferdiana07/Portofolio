@@ -1,0 +1,90 @@
+/* A contained kinetic letterpress object, without a renderer or physics. */
+html[data-journey=on],html[data-journey=on] body { height: 100%; overflow: hidden; }
+html[data-journey=on] .footer { display: none; }
+.journey[data-enhanced=true] { height: 100svh; }
+.journey[data-enhanced=true] .journey-frame { position: fixed; inset: 0; height: 100svh; }
+.journey[data-enhanced=true] .scene-body,.certificate-cards-grid { overscroll-behavior-y: contain; }
+.mobile-nav { max-height: calc(100svh - 110px); overflow-y: auto; overscroll-behavior: contain; }
+.journey-scroll-cue { display: inline-flex; align-items: center; gap: 7px; }
+.journey[data-navigation=arrows] .journey-status { flex-direction: column; align-items: flex-start; gap: 3px; }
+.journey[data-navigation=arrows] .journey-scroll-cue { display: flex; font-size: .57rem; }
+.journey[data-navigation=arrows] .journey-scroll-cue > svg { display: none; }
+.intro-screen { animation: intro-exit .65s var(--ease) 3.25s forwards; }
+.intro-rule > span { animation-duration: 3.15s; }
+.seal-study { perspective: 1100px; }
+.seal-sculpture { position: absolute; inset: 0 0 14%; pointer-events: none; }
+.seal-mobile { position: absolute; left: 16%; top: 10%; width: 68%; height: 80%; }
+.seal-object { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(var(--seal-tilt-x,0deg)) rotateY(var(--seal-tilt-y,0deg)) rotateZ(var(--seal-view,0deg)); transition: transform .65s cubic-bezier(.16,1,.3,1); }
+.seal-band { position: absolute; left: 1%; top: 13%; width: 98%; height: 67%; border: clamp(19px,3.5vw,37px) solid; border-radius: 50%; box-shadow: 10px 15px 23px rgba(25,55,45,.18), inset 2px 2px 3px rgba(255,255,240,.34); transition: transform .8s var(--ease); }
+.seal-band-forest { border-color: #294b3a; transform: rotateZ(-39deg) rotateY(26deg); }
+.seal-band-cream { border-color: #e8dfc4; transform: rotateZ(33deg) rotateY(-24deg) translateZ(24px); }
+.seal-band-sage { border-color: #a9bea0; transform: rotateZ(92deg) rotateY(12deg) translateZ(-12px); }
+.seal-imprint { position: absolute; left: 32%; top: 28%; width: 36%; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: #d3dec5 var(--canvas-weave); background-size: 72px; color: #294b3a; transform: translateZ(45px) rotate(-9deg); box-shadow: 8px 12px 20px rgba(25,55,45,.19), inset 3px 3px 7px rgba(255,255,237,.6), inset -4px -4px 8px rgba(25,55,45,.15); }
+.seal-imprint > span { font-family: var(--font-display),Georgia,serif; font-size: clamp(2rem,4vw,3.8rem); letter-spacing: -.04em; text-shadow: 1px 1px 0 rgba(255,255,240,.6); }
+.seal-imprint i { position: absolute; bottom: 18%; width: 23%; height: 1px; background: currentColor; opacity: .4; }
+.seal-floor { position: absolute; width: 44%; height: 4%; border-radius: 50%; left: 28%; bottom: 2%; background: rgba(25,55,45,.08); box-shadow: 0 8px 18px rgba(25,55,45,.12); }
+.seal-study[data-arrangement="1"] .seal-band-forest { transform: rotateZ(-19deg) rotateY(34deg); }
+.seal-study[data-arrangement="1"] .seal-band-cream { transform: rotateZ(59deg) rotateY(-15deg) translateZ(24px); }
+.seal-study[data-arrangement="2"] .seal-band-sage { transform: rotateZ(65deg) rotateY(27deg) translateZ(-12px); }
+.paper-action { z-index: 30; border: 0; color: #19372d; cursor: pointer; white-space: nowrap; }
+.paper-action:hover svg { transform: rotate(90deg); }
+.paper-action:focus-visible { outline: 2px solid #19372d; outline-offset: 4px; }
+@media (prefers-reduced-motion: no-preference) {
+  .journey[data-active=top] .seal-mobile { animation: seal-float 14s ease-in-out infinite alternate; }
+}
+@keyframes seal-float { to { translate: 0 -9px; rotate: 2deg; } }
+@media (max-width: 767px) {
+  .seal-imprint > span { font-size: 2.2rem; }
+  .journey[data-navigation=arrows] .journey-scroll-cue { font-size: .53rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .seal-object,.seal-band { transition: none; }
+}
+
+/* Background print marks stay at the edges; no pointer handlers or render loop. */
+.scene-ornaments { position: absolute; inset: 0; }
+.scene-ornament { position: absolute; display: block; width: 40px; height: 40px; opacity: .24; animation-play-state: paused; }
+.scene-ornament svg { width: 100%; height: 100%; }
+.ornament-1 { top: 23%; right: 5%; }
+.ornament-2 { bottom: 18%; left: 3%; width: 25px; height: 25px; }
+.ornament-3 { top: 14%; left: 19%; width: 18px; height: 18px; }
+.atmosphere-top .ornament-1 { top: 40%; right: 3%; }
+.atmosphere-top .ornament-2 { bottom: 36%; left: 2%; }
+.atmosphere-hello .ornament-1 { top: 28%; right: 12%; width: 46px; height: 46px; }
+.atmosphere-hello .ornament-2 { bottom: 29%; left: 8%; width: 31px; height: 31px; }
+.atmosphere-about .ornament-1 { top: 15%; right: 5%; width: 60px; height: 60px; opacity: .16; }
+.atmosphere-projects .ornament-1 { top: 32%; right: 3%; }
+.atmosphere-experience .ornament-1 { top: 16%; right: 7%; width: 52px; height: 52px; }
+.atmosphere-certifications .ornament-1 { top: 18%; right: 3%; }
+.atmosphere-certifications .ornament-2 { bottom: 24%; left: 2%; }
+.atmosphere-contact .ornament-1 { top: 36%; right: 2%; }
+.atmosphere-contact .ornament-2 { bottom: 20%; left: 3%; }
+@media (prefers-reduced-motion: no-preference) {
+  .atmosphere-top .scene-ornament { animation: paper-glide 24s ease-in-out infinite alternate paused; }
+  .atmosphere-hello .scene-ornament { animation: bird-glide 19s ease-in-out infinite alternate paused; }
+  .atmosphere-about .scene-ornament { animation: ink-orbit 32s linear infinite paused; }
+  .atmosphere-projects .scene-ornament { animation: prism-turn 22s ease-in-out infinite alternate paused; }
+  .atmosphere-experience .scene-ornament { animation: compass-sway 25s ease-in-out infinite alternate paused; }
+  .atmosphere-certifications .scene-ornament { animation: star-breathe 9s ease-in-out infinite alternate paused; }
+  .atmosphere-contact .scene-ornament { animation: message-drift 21s ease-in-out infinite alternate paused; }
+  .scene-ornament.ornament-2 { animation-delay: -7s; }
+  .scene-ornament.ornament-3 { animation-delay: -12s; }
+  .journey-panel[aria-hidden=false] .scene-ornament { animation-play-state: running; }
+  .journey[data-motion-paused=true] .scene-ornament,.journey[data-hidden=true] .scene-ornament { animation-play-state: paused !important; }
+}
+@keyframes paper-glide { from { transform: translate3d(-10px,9px,0) rotate(-12deg); } to { transform: translate3d(12px,-19px,0) rotate(6deg); } }
+@keyframes bird-glide { 0% { transform: translate3d(-15px,8px,0) rotate(-8deg); } 50% { transform: translate3d(6px,-12px,0) rotate(4deg); } 100% { transform: translate3d(25px,2px,0) rotate(-4deg); } }
+@keyframes ink-orbit { to { transform: rotate(360deg); } }
+@keyframes prism-turn { to { transform: translate3d(-12px,14px,0) rotate(32deg); } }
+@keyframes compass-sway { 50% { transform: rotate(17deg); } 100% { transform: rotate(-12deg) translate3d(7px,-9px,0); } }
+@keyframes star-breathe { from { transform: scale(.82) rotate(-8deg); opacity: .15; } to { transform: scale(1.07) rotate(8deg); opacity: .32; } }
+@keyframes message-drift { to { transform: translate3d(13px,-26px,0) rotate(-12deg); } }
+@media (max-width: 767px) {
+  .scene-ornament { opacity: .2; width: 29px; height: 29px; }
+  .scene-ornament.ornament-3 { display: none; }
+  .atmosphere-hello .ornament-1 { right: 3%; top: 39%; width: 30px; height: 30px; }
+  .atmosphere-about .ornament-1 { width: 38px; height: 38px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-ornament { animation: none !important; }
+}

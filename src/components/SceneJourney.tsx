@@ -1,206 +1,242 @@
 "use client";
 
 import { Children, useEffect, useId, useRef, useState, type ReactNode } from "react";
-import { useScroll, useSpring } from "framer-motion";
+import { animate, useMotionValue } from "framer-motion";
 import { ArrowDown, ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
 import { chapters } from "@/data/journey";
-import { CHAPTER_VIEWPORTS, scenePosition } from "@/lib/journey-timing";
 import SceneAtmosphere from "./SceneAtmosphere";
 import { sceneTransition } from "@/lib/scene-transition";
 
 const rulerTicks = Array.from({ length: 61 }, (_, i) => `M${i * 1000 / 60} ${i % 5 === 0 ? 1 : 8}V${i % 5 === 0 ? 23 : 19}`).join(" ");
 
-/** Native page scroll drives a single stage, without a wheel hijack. */
+/** Scroll content first. Desktop wheel advances at an edge; touch layouts use arrows. */
 export default function SceneJourney({ children }: { children: ReactNode }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [motionPaused, setMotionPaused] = useState(false);
   const rulerId = useId().replaceAll(":", "");
   const navigateRef = useRef<(index: number, focus?: boolean) => void>(() => {});
-  const { scrollY } = useScroll();
-  const cameraY = useSpring(scrollY, { stiffness: 90, damping: 26, mass: 0.8, restDelta: 0.5 });
+  const camera = useMotionValue(0);
 
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+    const compact = matchMedia("(max-width: 1024px), (pointer: coarse)");
     const panels = [...root.querySelectorAll<HTMLElement>(".journey-panel")];
     const bodies = [...root.querySelectorAll<HTMLElement>(".scene-body")];
     const frame = root.querySelector<HTMLElement>(".journey-frame")!;
     const rail = root.querySelector<SVGRectElement>(".journey-rail rect");
     const progressBar = root.querySelector<HTMLElement>(".journey-rail");
+    const cue = root.querySelector<HTMLElement>(".journey-cue-text");
     const chrome = [...document.querySelectorAll<HTMLElement>(".site-nav, .journey-dock")];
-    const html = document.documentElement;
-    let top = 0;
-    let distance = 1;
+    // Each scene owns its material tones. Never invalidate the entire stage's
+    // inherited variables at the midpoint of a transition.
+    panels.forEach((panel, index) => {
+      const chapter = chapters[index];
+      for (const [name, value] of Object.entries({ "--chapter-ground": chapter.background, "--chapter-ink": chapter.ink, "--chapter-accent": chapter.accent, "--chapter-glow": chapter.glow, "--neu-light": chapter.neuLight, "--neu-dark": chapter.neuDark, "--neu-surface": chapter.surface })) panel.style.setProperty(name, value);
+    });
     let current = -1;
-    let enabled = false;
-    let pendingFocus = -1;
-    let lastPercent = -1;
+    let goal = 0;
+    let busy = false;
+    let animation: { stop: () => void } | undefined;
+    let wheelAmount = 0;
+    let lastWheel = 0;
+    let consumedGesture = false;
+    let contentEdgeUntil = 0;
 
+    const scrollPanes = (target: EventTarget | null) => {
+      const body = bodies[Math.max(0, current)];
+      const candidates: HTMLElement[] = [];
+      let node = target instanceof HTMLElement && body.contains(target) ? target : null;
+      while (node && body.contains(node)) {
+        if (node.scrollHeight > node.clientHeight + 2 && /auto|scroll/.test(getComputedStyle(node).overflowY)) candidates.push(node);
+        if (node === body) break;
+        node = node.parentElement;
+      }
+      const list = body.querySelector<HTMLElement>(".certificate-cards-grid");
+      for (const pane of [list, body]) {
+        if (pane && !candidates.includes(pane) && pane.scrollHeight > pane.clientHeight + 2 && /auto|scroll/.test(getComputedStyle(pane).overflowY)) candidates.push(pane);
+      }
+      return candidates;
+    };
+    const canScroll = (pane: HTMLElement, direction: number) => direction > 0
+      ? pane.scrollTop + pane.clientHeight < pane.scrollHeight - 2 : pane.scrollTop > 2;
+    const updateCue = () => {
+      if (!cue) return;
+      const panes = scrollPanes(null);
+      const remaining = panes.some(pane => canScroll(pane, 1));
+      const text = compact.matches ? "Pindah pakai panah" : remaining ? "Scroll isi terlebih dulu" : panes.length ? "Ujung isi · scroll untuk pindah" : "Scroll atau panah untuk pindah";
+      if (cue.textContent !== text) cue.textContent = text;
+      root.dataset.scrollState = remaining ? "content" : "edge";
+    };
     const update = () => {
-      if (!enabled) return;
-      const raw = Math.max(0, Math.min(chapters.length - 1, (cameraY.get() - top) / distance * (chapters.length - 1)));
-      const pose = sceneTransition(scenePosition(raw, chapters.length), chapters.length);
-      const progress = pose.progress;
-      const nearest = Math.round(progress);
+      const pose = sceneTransition(camera.get(), chapters.length);
+      const nearest = Math.round(pose.progress);
       root.dataset.transition = pose.kind;
       panels.forEach((panel, index) => {
         const base = index === pose.from;
         const overlay = index === pose.to && pose.mix > 0;
+        panel.style.visibility = base || overlay ? "visible" : "hidden";
+        panel.style.opacity = base || overlay ? "1" : "0";
         if (base || overlay) {
-          panel.style.opacity = "1";
-          panel.style.visibility = "visible";
           panel.style.zIndex = overlay ? "2" : "1";
           panel.style.transform = overlay ? pose.transform : pose.baseTransform;
           panel.style.clipPath = overlay ? pose.clip : "none";
           if (pose.mix > .001 && pose.mix < .999) panel.style.willChange = "transform, clip-path";
           else panel.style.removeProperty("will-change");
-        } else if (panel.style.visibility !== "hidden") {
-          panel.style.opacity = "0"; panel.style.visibility = "hidden"; panel.style.transform = "none";
-          panel.style.removeProperty("will-change");
-        }
+        } else panel.style.removeProperty("will-change");
         if (nearest !== current) {
           panel.style.pointerEvents = nearest === index ? "auto" : "none";
           panel.inert = nearest !== index;
-          panel.toggleAttribute("inert", nearest !== index);
           panel.setAttribute("aria-hidden", String(nearest !== index));
         }
       });
-      if (rail) rail.setAttribute("width", String(raw / (chapters.length - 1) * 1000));
-      const percent = Math.round(raw / (chapters.length - 1) * 100);
-      if (percent !== lastPercent) { progressBar?.setAttribute("aria-valuenow", String(percent)); lastPercent = percent; }
+      const progress = pose.progress / (chapters.length - 1);
+      rail?.setAttribute("width", String(progress * 1000));
+      progressBar?.setAttribute("aria-valuenow", String(Math.round(progress * 100)));
       if (nearest !== current) {
         const focused = document.activeElement;
         if (focused instanceof HTMLElement && panels.some((panel, index) => index !== nearest && panel.contains(focused))) focused.blur();
         current = nearest;
         setActive(nearest);
         root.dataset.active = chapters[nearest].id;
-        // Theme changes stay local: avoid restyling every descendant on scroll.
-        frame.style.backgroundColor = chapters[nearest].background;
-        frame.style.setProperty("--chapter-ground", chapters[nearest].background);
-        frame.style.setProperty("--chapter-ink", chapters[nearest].ink);
-        frame.style.setProperty("--chapter-accent", chapters[nearest].accent);
-        frame.style.setProperty("--chapter-glow", chapters[nearest].glow);
-        frame.style.setProperty("--neu-light", chapters[nearest].neuLight);
-        frame.style.setProperty("--neu-dark", chapters[nearest].neuDark);
-        frame.style.setProperty("--neu-surface", chapters[nearest].surface);
-        chrome.forEach((element) => {
-          element.style.setProperty("--chapter-ground", chapters[nearest].background);
-          element.style.setProperty("--chapter-ink", chapters[nearest].ink);
-          element.style.setProperty("--chapter-accent", chapters[nearest].accent);
-          element.style.setProperty("--chapter-glow", chapters[nearest].glow);
-          element.style.setProperty("--neu-light", chapters[nearest].neuLight);
-          element.style.setProperty("--neu-dark", chapters[nearest].neuDark);
-          element.style.setProperty("--neu-surface", chapters[nearest].surface);
-        });
-        window.dispatchEvent(new CustomEvent("portfolio:chapter", { detail: chapters[nearest].id }));
-      }
-      if (pendingFocus === nearest && Math.abs(progress - nearest) < .06) {
-        const body = bodies[pendingFocus]; pendingFocus = -1;
-        requestAnimationFrame(() => { if (body?.isConnected && !body.closest('[inert]')) body.focus({ preventScroll: true }); });
+        const chapter = chapters[nearest];
+        for (const element of chrome) {
+          element.style.setProperty("--chapter-ground", chapter.background);
+          element.style.setProperty("--chapter-ink", chapter.ink);
+          element.style.setProperty("--chapter-accent", chapter.accent);
+          element.style.setProperty("--chapter-glow", chapter.glow);
+          element.style.setProperty("--neu-light", chapter.neuLight);
+          element.style.setProperty("--neu-dark", chapter.neuDark);
+          element.style.setProperty("--neu-surface", chapter.surface);
+        }
+        frame.style.backgroundColor = chapter.background;
+        window.dispatchEvent(new CustomEvent("portfolio:chapter", { detail: chapter.id }));
+        updateCue();
       }
     };
-
-    const go = (index: number, focus = false, instant = false) => {
+    const go = (index: number, focus = false, instant = false, reset = false) => {
       const target = Math.max(0, Math.min(chapters.length - 1, index));
-      pendingFocus = focus ? target : -1;
-      if (enabled) {
-        const destination = top + distance * target / (chapters.length - 1);
-        window.scrollTo({ top: destination, behavior: instant ? "instant" : "smooth" });
-        if (instant) { cameraY.jump(destination); update(); }
-        else update();
-      } else panels[target]?.scrollIntoView({ behavior: "instant", block: "start" });
-      if (focus && !enabled) requestAnimationFrame(() => bodies[target]?.focus({ preventScroll: true }));
+      if (target === goal && busy) return;
+      animation?.stop();
+      if (reset) {
+        bodies[target].scrollTop = 0;
+        bodies[target].querySelector<HTMLElement>(".certificate-cards-grid")?.scrollTo({ top: 0, behavior: "instant" });
+      }
+      const direct = instant || reduce.matches || Math.abs(target - current) > 1;
+      goal = target;
+      busy = !direct && Math.abs(camera.get() - target) > .00001;
+      root.dataset.transitioning = String(busy);
+      const complete = () => {
+        camera.set(target);
+        update();
+        busy = false;
+        root.dataset.transitioning = "false";
+        if (focus) requestAnimationFrame(() => {
+          if (bodies[target].isConnected && !bodies[target].closest("[inert]")) bodies[target].focus({ preventScroll: true });
+        });
+        updateCue();
+      };
+      if (!busy) complete();
+      else animation = animate(camera, target, { duration: .68, ease: [.65, 0, .25, 1], onComplete: complete });
     };
     navigateRef.current = go;
-
-    const configure = () => {
-      const nextEnabled = !reduce.matches;
-      if (nextEnabled !== enabled) current = -1;
-      enabled = nextEnabled;
-      root.dataset.enhanced = String(enabled);
-      html.dataset.journey = enabled ? "on" : "off";
-      if (enabled) {
-        const height = frame.clientHeight || window.innerHeight;
-        root.style.height = `${height * (1 + (chapters.length - 1) * CHAPTER_VIEWPORTS)}px`;
-        top = root.getBoundingClientRect().top + window.scrollY;
-        distance = root.offsetHeight - height;
-        panels.forEach((panel, index) => {
-          panel.inert = index !== 0;
-          panel.toggleAttribute("inert", index !== 0);
-          panel.setAttribute("aria-hidden", String(index !== 0));
-        });
-        cameraY.jump(window.scrollY);
-        current = -1;
-        update();
-      } else {
-        root.style.removeProperty("height");
-        panels.forEach((panel) => {
-          panel.removeAttribute("style");
-          panel.removeAttribute("aria-hidden");
-          panel.removeAttribute("inert");
-          panel.inert = false;
-        });
-      }
-    };
-
     const followHash = () => {
-      const index = chapters.findIndex((chapter) => `#${chapter.id}` === window.location.hash);
+      const index = chapters.findIndex(chapter => `#${chapter.id}` === location.hash);
       if (index >= 0) go(index, false, true);
     };
-    const interceptAnchor = (event: MouseEvent) => {
+    const anchor = (event: MouseEvent) => {
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      const anchor = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>("a[href]") : null;
-      if (!anchor || anchor.target === "_blank" || anchor.hasAttribute("download")) return;
-      const url = new URL(anchor.href, window.location.href);
+      const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>("a[href]") : null;
+      if (!link || link.target === "_blank" || link.hasAttribute("download")) return;
+      const url = new URL(link.href, location.href);
       if (url.origin !== location.origin || url.pathname !== location.pathname) return;
-      const index = chapters.findIndex((chapter) => `#${chapter.id}` === url.hash);
+      const index = chapters.findIndex(chapter => `#${chapter.id}` === url.hash);
       if (index < 0) return;
       event.preventDefault();
       history.pushState(null, "", url.hash);
-      go(index, true);
+      go(index, true, false, true);
     };
-
-    const resize = () => {
-      const progress = enabled ? (window.scrollY - top) / distance : 0;
-      configure();
-      if (enabled && progress >= 0 && progress <= 1) {
-        const destination = top + distance * progress;
-        window.scrollTo({ top: destination, behavior: "instant" }); cameraY.jump(destination); update();
+    const wheel = (event: WheelEvent) => {
+      if (compact.matches || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || root.closest("[inert]") || document.documentElement.dataset.intro === "playing") return;
+      event.preventDefault();
+      const now = performance.now();
+      if (now - lastWheel > 180) { consumedGesture = false; wheelAmount = 0; }
+      lastWheel = now;
+      if (busy || consumedGesture) return;
+      const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? innerHeight : 1);
+      if (!delta) return;
+      const pane = scrollPanes(event.target).find(candidate => canScroll(candidate, delta));
+      if (pane) {
+        pane.scrollTop += delta;
+        contentEdgeUntil = now + 140;
+        wheelAmount = 0;
+        updateCue();
+        return; // Never transfer a leftover delta into a transition.
       }
+      if (now < contentEdgeUntil) return;
+      if (Math.sign(wheelAmount) !== Math.sign(delta)) wheelAmount = 0;
+      wheelAmount += delta;
+      if (Math.abs(wheelAmount) < 48) return;
+      const next = current + Math.sign(wheelAmount);
+      wheelAmount = 0;
+      if (next < 0 || next >= chapters.length) return;
+      consumedGesture = true;
+      go(next);
     };
-    const onVisibility = () => { root.dataset.hidden = String(document.hidden); };
+    const keyboard = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || root.closest("[inert]") || document.documentElement.dataset.intro === "playing") return;
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (target?.closest("input,textarea,select,button,a,[contenteditable=true],[role=tab]")) return;
+      if (!["PageDown", "PageUp", " "].includes(event.key)) return;
+      event.preventDefault();
+      if (busy) return;
+      const direction = event.key === "PageUp" || event.shiftKey ? -1 : 1;
+      const pane = scrollPanes(event.target).find(candidate => canScroll(candidate, direction));
+      if (pane) { pane.scrollTop += direction * pane.clientHeight * .8; updateCue(); }
+      else if (!compact.matches) go(current + direction, true);
+    };
+    const configure = () => {
+      root.dataset.enhanced = "true";
+      root.dataset.navigation = compact.matches ? "arrows" : "scroll";
+      document.documentElement.dataset.journey = "on";
+      updateCue();
+    };
+    const visibility = () => { root.dataset.hidden = String(document.hidden); };
     configure();
-    // Direct links work on the first render and after browser back/forward.
-    const hashFrame = requestAnimationFrame(followHash);
-    const unsubscribeCamera = cameraY.on("change", update);
-    window.addEventListener("resize", resize, { passive: true });
+    update();
+    const initial = requestAnimationFrame(followHash);
+    const unsubscribe = camera.on("change", update);
+    document.addEventListener("click", anchor, true);
+    document.addEventListener("wheel", wheel, { passive: false });
+    document.addEventListener("keydown", keyboard);
+    document.addEventListener("visibilitychange", visibility);
+    root.addEventListener("scroll", updateCue, { passive: true, capture: true });
+    compact.addEventListener("change", configure);
+    const reducedChange = () => { if (reduce.matches) go(goal, false, true); };
+    reduce.addEventListener("change", reducedChange);
     window.addEventListener("hashchange", followHash);
     window.addEventListener("popstate", followHash);
-    document.addEventListener("click", interceptAnchor, true);
-    document.addEventListener("visibilitychange", onVisibility);
-    reduce.addEventListener("change", configure);
     return () => {
-      cancelAnimationFrame(hashFrame);
-      unsubscribeCamera();
-      window.removeEventListener("resize", resize);
+      animation?.stop(); unsubscribe(); cancelAnimationFrame(initial);
+      document.removeEventListener("click", anchor, true);
+      document.removeEventListener("wheel", wheel);
+      document.removeEventListener("keydown", keyboard);
+      document.removeEventListener("visibilitychange", visibility);
+      root.removeEventListener("scroll", updateCue, true);
+      compact.removeEventListener("change", configure);
+      reduce.removeEventListener("change", reducedChange);
       window.removeEventListener("hashchange", followHash);
       window.removeEventListener("popstate", followHash);
-      document.removeEventListener("click", interceptAnchor, true);
-      document.removeEventListener("visibilitychange", onVisibility);
-      reduce.removeEventListener("change", configure);
-      delete html.dataset.journey;
-      chrome.forEach((element) => {
-        element.style.removeProperty("--chapter-ground"); element.style.removeProperty("--chapter-ink");
-      });
+      delete document.documentElement.dataset.journey;
+      chrome.forEach(element => { element.style.removeProperty("--chapter-ground"); element.style.removeProperty("--chapter-ink"); });
     };
-  }, [cameraY]);
+  }, [camera]);
 
   return (
     <div ref={rootRef} className="journey" data-active="top" data-motion-paused={motionPaused}>
       <div className="journey-frame">
-        <div className="journey-geometry" aria-hidden="true"><span /><span /></div>
         {Children.toArray(children).map((child, index) => (
           <div key={chapters[index].id} className="journey-panel" data-scene={chapters[index].id}>
             <SceneAtmosphere chapter={chapters[index].id} />
@@ -210,14 +246,14 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
         <div className="journey-dock" role="group" aria-label="Kontrol perjalanan">
           <div className="journey-status">
             <span className="journey-current">{chapters[active].label}</span>
-            <span className="journey-scroll-cue"><ArrowDown size={13} /> Scroll untuk menjelajah</span>
+            <span className="journey-scroll-cue"><ArrowDown size={13} /><span className="journey-cue-text">Scroll isi terlebih dulu</span></span>
           </div>
           <div className="journey-controls">
             <button type="button" className="motion-pause" aria-pressed={motionPaused} aria-label={motionPaused ? "Lanjutkan animasi latar" : "Jeda animasi latar"} onClick={() => setMotionPaused(value => !value)}>{motionPaused ? <Play size={14} /> : <Pause size={14} />}<span>Gerak {motionPaused ? "off" : "on"}</span></button>
-          <div className="chapter-arrows">
-            <button type="button" onClick={() => navigateRef.current(active - 1, true)} disabled={active === 0} aria-label="Bab sebelumnya"><ArrowLeft size={17} /></button>
-            <button type="button" onClick={() => navigateRef.current(active + 1, true)} disabled={active === chapters.length - 1} aria-label="Bab berikutnya"><ArrowRight size={17} /></button>
-          </div>
+            <div className="chapter-arrows">
+              <button type="button" onClick={() => navigateRef.current(active - 1, true)} disabled={active === 0} aria-label="Bab sebelumnya"><ArrowLeft size={17} /></button>
+              <button type="button" onClick={() => navigateRef.current(active + 1, true)} disabled={active === chapters.length - 1} aria-label="Bab berikutnya"><ArrowRight size={17} /></button>
+            </div>
           </div>
           <span className="journey-rail" role="progressbar" aria-label="Progres portofolio" aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}>
             <svg viewBox="0 0 1000 24" preserveAspectRatio="none" aria-hidden="true">

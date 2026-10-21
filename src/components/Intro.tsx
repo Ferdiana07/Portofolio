@@ -5,13 +5,14 @@ import { usePathname } from "next/navigation";
 
 export default function Intro() {
   const introRef = useRef<HTMLDivElement>(null);
-  const skipRef = useRef<HTMLButtonElement>(null);
   const releaseRef = useRef<() => void>(() => {});
   const pathname = usePathname();
   const finish = useCallback(() => {
+    const focusedIntro = introRef.current?.contains(document.activeElement);
     releaseRef.current();
     if (introRef.current) introRef.current.hidden = true;
     document.documentElement.dataset.intro = "done";
+    if (focusedIntro) document.querySelector<HTMLElement>(".brand")?.focus({ preventScroll: true });
     try { sessionStorage.setItem("cfs-intro", "seen"); } catch { /* Storage is optional. */ }
   }, []);
 
@@ -29,18 +30,17 @@ export default function Intro() {
     surfaces.forEach(({ element }) => { element.inert = true; });
     const release = () => surfaces.forEach(({ element, wasInert }) => { element.inert = wasInert; });
     releaseRef.current = release;
-    skipRef.current?.focus({ preventScroll: true });
-    const timer = window.setTimeout(finish, 4100);
+    introRef.current?.focus({ preventScroll: true });
+    const timer = window.setTimeout(finish, 3900);
     return () => { window.clearTimeout(timer); release(); releaseRef.current = () => {}; };
   }, [pathname, finish]);
 
   return (
-    <div ref={introRef} className="intro-screen" hidden={pathname !== "/"}>
+    <div ref={introRef} className="intro-screen" tabIndex={-1} aria-label="Membuka portofolio Caesar" hidden={pathname !== "/"}>
       <div className="intro-wordmark" role="img" aria-label="CFS">
         {"CFS".split("").map((letter, index) => <span key={letter} style={{ animationDelay: `${index * 180}ms` }}>{letter}</span>)}<span className="intro-period">.</span>
       </div>
       <div className="intro-rule" aria-hidden="true"><span /></div>
-      <button ref={skipRef} type="button" className="intro-skip" onClick={finish}>Lewati intro ↗</button>
     </div>
   );
 }

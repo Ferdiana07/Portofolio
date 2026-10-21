@@ -16,9 +16,8 @@ function loadSource(path) {
 }
 
 const { sceneTransition, transitionKinds } = loadSource("../src/lib/scene-transition.ts");
-const { scenePosition } = loadSource("../src/lib/journey-timing.ts");
 const count = 7;
-const pose = raw => sceneTransition(scenePosition(raw, count), count);
+const pose = raw => sceneTransition(raw, count);
 const samples = Array.from({ length: 1201 }, (_, index) => index / 200);
 const down = samples.map(raw => JSON.stringify(pose(raw)));
 const up = [...samples].reverse().map(raw => JSON.stringify(pose(raw))).reverse();

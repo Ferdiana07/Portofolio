@@ -4,9 +4,9 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { ArrowUpRight, Code2, Cloud, ScanText } from "lucide-react";
 
 const interests = [
-  { name: "Software", Icon: Code2, text: "Saya suka merangkai tampilan, API, dan database jadi produk yang bisa dipakai. Rasanya seru saat bagian-bagian kecil itu akhirnya bekerja bersama." },
-  { name: "AI", Icon: ScanText, text: "Lewat UlasJujur dan DOCVIA, saya mencoba membawa AI ke kebutuhan sehari-hari: membaca ulasan dan mencari jawaban dari dokumen." },
-  { name: "Cloud", Icon: Cloud, text: "Saya juga mendalami cloud. Setelah produknya jadi, masih ada hal menarik berikutnya: membuatnya berjalan dengan baik dan bisa diakses orang lain." },
+  { name: "Software", Icon: Code2, text: "Aku suka merangkai tampilan, API, dan database sampai jadi satu produk yang utuh. Bagian favoritku: saat sesuatu yang tadinya cuma ide akhirnya bisa diklik dan dipakai." },
+  { name: "AI", Icon: ScanText, text: "Di UlasJujur dan DOCVIA, aku bereksperimen dengan AI untuk membaca ulasan dan mencari jawaban dari dokumen. Aku penasaran sejauh mana AI bisa benar-benar membantu, bukan sekadar jadi fitur tambahan." },
+  { name: "Cloud", Icon: Cloud, text: "Cloud lagi aku dalami juga. Setelah aplikasinya jadi, aku ingin paham cara membuatnya tetap berjalan dengan baik dan bisa diakses orang lain. Masih banyak yang perlu dipelajari, dan itu justru menarik." },
 ];
 
 function TypedInterests() {
@@ -15,21 +15,39 @@ function TypedInterests() {
   useEffect(() => {
     let timer = 0;
     const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+    const root = document.querySelector<HTMLElement>(".journey");
     const start = () => {
       clearTimeout(timer);
-      if (reduce.matches || document.hidden) { setLength(text.length); return; }
+      if (reduce.matches || document.hidden || root?.dataset.motionPaused === "true") { setLength(text.length); return; }
       let count = 0; setLength(0);
-      const type = () => { setLength(++count); if (count < text.length) timer = window.setTimeout(type, 65); };
+      let deleting = false;
+      const type = () => {
+        count += deleting ? -1 : 1;
+        setLength(count);
+        let delay = deleting ? 38 : 70;
+        if (count === text.length) { deleting = true; delay = 1450; }
+        else if (count === 0) { deleting = false; delay = 500; }
+        timer = window.setTimeout(type, delay);
+      };
       timer = window.setTimeout(type, 250);
     };
     const chapter = (event: Event) => {
       if ((event as CustomEvent<string>).detail === "hello") start();
       else clearTimeout(timer);
     };
-    const visibility = () => { if (document.hidden) { clearTimeout(timer); setLength(text.length); } };
+    const sync = () => {
+      clearTimeout(timer);
+      if (root?.dataset.active === "hello" && root.dataset.motionPaused !== "true" && !document.hidden && !reduce.matches) start();
+      else setLength(text.length);
+    };
+    const observer = new MutationObserver(sync);
+    if (root) observer.observe(root, { attributes: true, attributeFilter: ["data-motion-paused"] });
+    const visibility = sync;
     window.addEventListener("portfolio:chapter", chapter);
     document.addEventListener("visibilitychange", visibility);
-    return () => { clearTimeout(timer); window.removeEventListener("portfolio:chapter", chapter); document.removeEventListener("visibilitychange", visibility); };
+    reduce.addEventListener("change", sync);
+    sync();
+    return () => { clearTimeout(timer); observer.disconnect(); reduce.removeEventListener("change", sync); window.removeEventListener("portfolio:chapter", chapter); document.removeEventListener("visibilitychange", visibility); };
   }, []);
   return <p className="hello-typed"><span className="sr-only">{text}</span><span aria-hidden="true">{text.slice(0, length)}<i className={length < text.length ? "is-typing" : undefined} /></span></p>;
 }
@@ -76,7 +94,7 @@ export default function HelloScene() {
         <span className="hello-line" aria-hidden="true">{"Hi, aku".split("").map((letter, i) => <span className="hello-letter" key={i} style={{ "--letter": i } as CSSProperties}><span className="hello-glyph">{letter === " " ? "\u00a0" : letter}</span></span>)}</span>
         <span className="hello-line hello-line-name" aria-hidden="true">{"Caesar.".split("").map((letter, i) => <span className="hello-letter" key={i} style={{ "--letter": i + 7 } as CSSProperties}><span className="hello-glyph">{letter}</span></span>)}</span>
       </h2>
-      <p className="hello-bio">Saya Caesar Ferdiana Suwandi, mahasiswa Informatika UNDIP yang sedang mendalami full-stack dan AI terapan. Saya senang belajar lewat projek, diskusi, dan mencoba hal baru.</p>
+      <p className="hello-bio">Aku Caesar, mahasiswa Informatika UNDIP. Aku suka ngulik: dari merangkai aplikasi full-stack sampai mencoba AI untuk hal yang dekat dengan keseharian. Buatku, cara belajar paling seru itu bikin sesuatu, mentok sebentar, lalu nemu jalan keluarnya.</p>
       <TypedInterests />
       <div className="hello-explore">
         <div className="interest-tabs" role="tablist" aria-label="Minat Caesar">

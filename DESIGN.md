@@ -89,16 +89,16 @@ components:
 
 **Creative North Star: "A personal workshop on woven canvas"**
 
-The portfolio feels personal, elegant, and a little playful. Muted fabric-like grounds, an original folded CFS canvas composition, and large Bodoni lettering give it an identity connected to its owner. Professional information stays readable in Manrope, with friendly Indonesian copy rather than advertising slogans.
+The portfolio feels personal, elegant, and a little playful. Muted fabric-like grounds, an original interwoven CFS letterpress seal, and large Bodoni lettering give it an identity connected to its owner. Professional information stays readable in Manrope, with friendly Indonesian copy rather than advertising slogans.
 
-Texture is a clearly woven, static material; motion supplies the changing point of view. Fullscreen chapters provide room to read before reversible iris, side-curtain, and rounded-arch reveals, while controls and selected information panels feel raised or pressed into their surroundings. Sparse vector linework, drifting fibres, and shallow relief move slowly without covering the work. The folded canvas is code-native geometry, not a rendered person or mascot.
+Texture is a clearly woven, static material; motion supplies the changing point of view. Fullscreen chapters provide room to read before reversible iris, side-curtain, and rounded-arch reveals, while controls and selected information panels feel raised or pressed into their surroundings. Sparse vector linework, drifting fibres, and shallow relief move slowly without covering the work. The seal is code-native geometry with a small, bounded pointer response, not a rendered person or mascot.
 
 **Key Characteristics:**
 
 - Woven canvas and muted chapter colors.
 - Expressive serif display type with clear sans-serif information.
 - Tactile controls and selectively moulded information panels.
-- Folded CFS canvas leaves with a stable rearrange control.
+- A kinetic CFS letterpress seal with a stable rearrange control.
 - Fullscreen exploration with accessible content fallbacks.
 
 ## Colors
@@ -152,11 +152,11 @@ The broad serif name and italic greeting provide expression. Manrope handles the
 
 ## Layout
 
-The enhanced landing page uses seven fullscreen chapters in one sticky stage. Native document scroll drives that stage; long chapter content can scroll inside its body. The desktop content shell reaches a maximum width of 1240px. Non-hero chapter bodies reserve a bottom inset (110px) for the fixed journey controls; the hero keeps its own composition and is excluded from that rule. The learning chapter holds its introduction in place while the certificate pane scrolls independently; linear fallback restores normal document flow.
+The enhanced landing page uses seven fullscreen chapters in one fixed stage. Desktop wheel input is routed to the active chapter's scrollable content first. A separate gesture at the boundary advances one chapter; leftover deltas and trackpad momentum never spill into repeated transitions. Compact layouts (up to 1024px or a coarse primary pointer) use arrows or the header menu, never scrolling, to change chapters. Content itself keeps native touch scrolling. The desktop content shell reaches a maximum width of 1240px. Non-hero chapter bodies reserve a bottom inset (110px) for the fixed journey controls; the hero keeps its own composition and is excluded from that rule. The learning chapter holds its introduction in place while the certificate pane scrolls independently; linear fallback restores normal document flow.
 
-The opening composition centers three printed CFS canvas leaves beneath the oversized first name, with smaller copy around them. It is a specific opening arrangement, not a required layout for every future surface. On short laptops, the canvas art uses a viewport-relative height (50svh), a bottom offset (112px), and its action at the composition's bottom edge; short landscape uses a bottom offset (105px). The greeting is centered; factual chapters use content grids and lists. The separate project catalogue uses a two-column grid that becomes a single column on smaller screens.
+The opening composition centers three interwoven paper bands around an embossed CFS imprint beneath the oversized first name, with smaller copy around it. It is a specific opening arrangement, not a required layout for every future surface. On short laptops, the canvas art uses a viewport-relative height (50svh), a bottom offset (112px), and its action at the composition's bottom edge; short landscape uses a bottom offset (105px). The greeting is centered; factual chapters use content grids and lists. The separate project catalogue uses a two-column grid that becomes a single column on smaller screens.
 
-Responsive rules adapt at 1100px, 1024px, and 767px, with additional short-height treatments. On phones, the bottom controls retain the current chapter, previous/next arrows, and an icon-only background-motion toggle. Long content stays reachable. With reduced motion or without enhancement, chapters return to a linear document instead of trapping content in a stage.
+Responsive rules adapt at 1100px, 1024px, and 767px, with additional short-height treatments. On phones, the bottom controls retain the current chapter, previous/next arrows, and an icon-only background-motion toggle. Long content stays reachable. Reduced motion keeps the navigable stage but changes chapters instantly, suppressing decorative movement and looping type. Without JavaScript, all chapters remain in a readable linear document.
 
 ## Elevation & Depth
 
@@ -175,7 +175,7 @@ Neumorphism expresses the material of both controls and selected information pan
 
 ## Shapes
 
-Pills and circles signal actions. Fields have gently curved corners; project media and factual panels use broader but restrained corners. Thin borders or moulded edges provide separation without nested decorative frames. Circular reliefs and low-contrast SVG linework sit behind selected chapters. The woven tile is shared by chapter grounds, the intro, catalogue, and footer. Three overlapping rectangular canvas leaves carry C, F, and S, with asymmetric folded corners, CSS perspective, printed fold shading, and static cast shadows. No illustrated person, wave, or pupil layers remain in the composition.
+Pills and circles signal actions. Fields have gently curved corners; project media and factual panels use broader but restrained corners. Thin borders or moulded edges provide separation without nested decorative frames. Circular reliefs and low-contrast SVG linework sit behind selected chapters. The woven tile is shared by chapter grounds, the intro, catalogue, and footer. Three elliptical paper bands surround a tactile CFS imprint, with CSS perspective and static cast/inset shadows. No illustrated person, wave, or pupil layers remain in the composition.
 
 ## Components
 
@@ -199,19 +199,19 @@ Fields use pale surfaces, a visible fine border, shallow inset depth, and persis
 
 ### Navigation
 
-The fixed header follows the chapter's ground and ink, with About me and Profil & Skill before Projek. Its active link gains an underline. The bottom group shows the current chapter, a segmented ruler of vertical ticks (61, every fifth tick taller), previous/next arrows, and a background-motion pause button; it does not repeat the header's chapter menu. The ruler spans the bottom horizontally, fills with native scroll progress, and exposes its percentage as a labelled progressbar. Mobile uses a menu and compact journey controls.
+The fixed header follows the chapter's ground and ink, with About me and Profil & Skill before Projek. Its active link gains an underline. The bottom group shows the current chapter, a segmented ruler of vertical ticks (61, every fifth tick taller), previous/next arrows, and a background-motion pause button; it does not repeat the header's chapter menu. The ruler spans the bottom horizontally, fills with native scroll progress, and exposes its percentage as a labelled progressbar. Mobile uses a scrollable, height-bounded menu and compact journey controls. The dock explicitly says to use arrows; desktop cues distinguish reading content from moving to another chapter.
 
-Music is off by default, with a visible “Nyalakan musik” action and “Lofi untuk menemani” hint; the hint disappears during playback. The visitor's explicit play action attaches the supplied lofi track to an HTML audio element; it has no source before that action and uses `preload="none"`. Playback loops at a quiet volume (18%). Music pauses when the page is hidden and resumes only if the visitor had enabled it. Playback failure has a clear retry label.
+Music is off by default, with a visible “Nyalakan musik” action. There is no additional lofi hint. The visitor's explicit play action attaches the supplied lofi track to an HTML audio element; it has no source before that action and uses `preload="none"`. Playback loops at a quiet volume (18%). Music pauses when the page is hidden and resumes only if the visitor had enabled it. Playback failure has a clear retry label.
 
-### Folded canvas and staged motion
+### Letterpress and staged motion
 
-The folded canvas uses CSS geometry and perspective, with painted fold shading and static shadows rather than a renderer or image payload. A stable “Susun ulang” button reversibly rearranges the three leaves; its pressed state is exposed. Only the inner composition floats slowly (12s), so the action stays still and reachable. In the greeting, nearby glyphs gently repel a fine pointer and return when it leaves. Software / AI / Cloud types once each time that chapter is entered, with the complete accessible text always available.
+The seal uses CSS geometry and perspective, with static shadows rather than a renderer or image payload. A stable “Susun ulang” button cycles three band arrangements. A fine pointer tilts the object within 7–9 degrees; leaving or changing chapters resets it. Only the inner object floats slowly (14s), so the action stays still. There is no puzzle or shuffle control. In the greeting, nearby glyphs gently repel a fine pointer. Software / AI / Cloud loops through typing, a reading hold, deleting and retyping (70ms type, 38ms delete, 1450ms hold, 500ms empty pause); complete accessible text remains available. Hidden, paused, inactive and reduced-motion states stop the loop.
 
-Each scroll segment retains the native-scroll spring and initial reading hold before a quintic-eased transition. The six boundaries use iris, curtain, arch, curtain, iris, arch in that order. Iris adds a small scale; curtain and arch use restrained horizontal and vertical translation respectively, not a full scene slide. Poses depend only on scroll position, so the same position looks the same in either direction; a tiny boundary snap removes endpoint residue. The outgoing base and incoming clipped overlay remain opaque. Only those nearby scenes are visible, and inactive content is inert.
+Explicit chapter changes start a single 680ms eased animation immediately, without a long scroll runway or chained camera spring. The six boundaries use iris, curtain, arch, curtain, iris, arch in that order. Iris adds a small scale; curtain and arch use restrained horizontal and vertical translation respectively, not a full scene slide. Poses depend only on scroll position, so the same position looks the same in either direction; a tiny boundary snap removes endpoint residue. The outgoing base and incoming clipped overlay remain opaque. Only those nearby scenes are visible, and inactive content is inert.
 
-Slow CSS fibres run only in an active atmospheric chapter (18s; six fibres, reduced to three on phones and in projects). One shallow relief drifts (24s); project contour linework moves gently (26s). Hidden pages, the manual background pause, and reduced motion stop these ambient loops and the inner canvas float. Texture and shadows stay static, with no canvas runtime or new runtime package.
+Slow CSS fibres run only in an active atmospheric chapter (18s; six fibres, reduced to three on phones and in projects). One shallow relief drifts (24s); project contour linework moves gently (26s). Each chapter also has its own edge motifs: paper gliders, birds, orbits, prisms, compass marks, stars, or messages, with seven distinct slow motion patterns. Inactive motifs are paused. Hidden pages, the manual background pause, and reduced motion stop these ambient loops and the inner seal float. Texture and shadows stay static, with no canvas runtime or new runtime package.
 
-The CFS opening is dismissible and shown once per session. Honor reduced motion throughout, including a linear layout, fixed greeting glyphs, complete interest text, and a skipped animated opening.
+The CFS opening completes automatically in about 3.9 seconds, once per session, with no skip button. Direct links, the catalogue and reduced motion bypass it. Keyboard focus and inert surfaces are restored after completion; CSS also exits without hydration.
 
 ## Do's and Don'ts
 

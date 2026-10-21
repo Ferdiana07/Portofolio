@@ -1,4 +1,5 @@
 import { Bird, Box, Compass, Feather, Mail, Orbit, Send, Sparkle, Star } from "lucide-react";
+import { memo } from "react";
 
 const ornaments = {
   top: [Send, Feather],
@@ -11,7 +12,7 @@ const ornaments = {
 };
 
 /** Tiny printed marks: each chapter has its own quiet movement vocabulary. */
-export default function SceneAtmosphere({ chapter }: { chapter: string }) {
+export default memo(function SceneAtmosphere({ chapter }: { chapter: string }) {
   const marks = ornaments[chapter as keyof typeof ornaments];
   if (!marks) return null;
   const hasRelief = ["hello", "about", "projects", "experience"].includes(chapter);
@@ -28,4 +29,4 @@ export default function SceneAtmosphere({ chapter }: { chapter: string }) {
       {hasRelief && <div className="scene-dust">{Array.from({ length: 6 }, (_, i) => <span key={i} />)}</div>}
     </div>
   );
-}
+});

@@ -43,3 +43,6 @@ next-env.d.ts
 # Local visual QA captures, not production assets.
 /.impeccable/review/
 /scratch/
+
+.vercel
+.env*

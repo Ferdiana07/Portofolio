@@ -8,7 +8,7 @@ import "./immersive.css";
 import "./mascot-story.css";
 import "./chapter-craft.css";
 import "./canvas-study.css";
-import "./puzzle-atmosphere.css";
+import "./scene-details.css";
 
 const geist = Manrope({
   variable: "--font-geist",
