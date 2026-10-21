@@ -16,6 +16,7 @@ Buka http://localhost:3000. Untuk pengujian produksi:
 ```bash
 npm run lint
 npm run test:motion
+npm run test:puzzle
 npm run build
 npm run start
 ```
@@ -33,7 +34,8 @@ npm run start
 - Data CV, profil, lima projek, skill, pengalaman dan sertifikasi: `src/data/portfolio.ts`.
 - Warna tiap bab: `src/data/journey.ts`.
 - Pose transisi: `src/lib/scene-transition.ts`; regresinya: `scripts/check-scene-transitions.mjs`.
-- Hero: `CanvasStudy.tsx`, monogram CFS berlapis tiga pita dengan perspektif CSS, tilt mouse terbatas, dan tombol “Susun ulang”. Tidak ada puzzle, Acak, atau maskot.
+- Hero: `CanvasStudy.tsx`, tiga lembar kertas C/F/S yang bisa dipecah menjadi 12 potongan ke seluruh layar. Tarik ke bayangannya untuk menempel, atau pilih potongan lalu tekan “Pasang”. Ada putar, keyboard (panah/R/Home), dan “Susun ulang” otomatis. Tidak ada tombol Acak atau maskot.
+- Geometri puzzle: `src/lib/canvas-puzzle.ts`; `test:puzzle` mengecek 28.800 sudut potongan, enam viewport, batas tarik dan posisi magnet. Gerakan memakai Pointer Events + MotionValues, tanpa render React per frame, loop idle, atau mesin fisika.
 - Referensi asli dan aset eksperimen lama tetap disimpan; tidak dimuat oleh hero.
 - Tekstur: SVG statis `public/images/canvas-weave.svg`, tanpa filter noise/runtime canvas.
 - Tiap bab mempunyai motif gerak berbeda: pesawat kertas, burung, orbit, prisma, kompas, bintang, dan pesan. Hanya motif aktif yang berjalan; tombol Gerak, tab tersembunyi dan reduced motion menghentikannya.
@@ -41,7 +43,7 @@ npm run start
 - Intro sekitar 3,9 detik, selesai otomatis tanpa tombol lewati, sekali per sesi. Anchor langsung, catalogue dan reduced motion melewatinya.
 - Preview projek memakai perspektif, tombol, keyboard dan swipe. Catalogue `/projects` dibuka di tab baru, dengan filter, detail, logo TechStack, status deployment sebenarnya, dan screenshot `object-fit:contain`.
 - Sertifikasi: pengantar tetap diam, daftar memiliki scroll tersendiri.
-- Stylesheet: komponen dasar di `globals.css`; panggung/katalogue di `immersive.css`; hero/Hello di `mascot-story.css` (nama legacy); material di `chapter-craft.css`; ruler/kontrol di `canvas-study.css`; navigasi baru, seal dan motif di `scene-details.css`.
+- Stylesheet: komponen dasar di `globals.css`; panggung/katalogue di `immersive.css`; hero/Hello di `mascot-story.css` (nama legacy); material di `chapter-craft.css`; ruler/kontrol di `canvas-study.css`; navigasi dan motif di `scene-details.css`; puzzle fullscreen di `hero-puzzle.css`.
 - Sistem visual: `DESIGN.md` + `.impeccable/design.json`.
 
 Tidak ada tambahan WebGL, video background, library scroll, atau dependency runtime baru.

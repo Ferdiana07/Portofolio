@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-21T16:42:01Z",
+  "generatedAt": "2026-10-21T17:10:41Z",
   "title": "Design System: Caesar Ferdiana Suwandi",
   "extensions": {
     "colorMeta": {
@@ -223,9 +223,9 @@
         "purpose": "Bounded translucent catalogue cards, with desktop blur limited to 7px."
       },
       {
-        "name": "letterpress-band",
-        "value": "10px 15px 23px rgba(25,55,45,.18), inset 2px 2px 3px rgba(255,255,240,.34)",
-        "purpose": "Static ring depth; the imprint adds tactile cast/inset relief."
+        "name": "paper-fragment",
+        "value": "5px 9px 15px rgba(25,55,45,.23)",
+        "purpose": "Static cast shadow while playing; assembled sheets use a shared 10px17px25px cast shadow. No animated shadow or renderer."
       }
     ],
     "motion": [
@@ -285,14 +285,14 @@
         "purpose": "Active atmospheric scenes only; pauses when hidden or manually paused, and is absent under reduced motion."
       },
       {
-        "name": "seal-float",
-        "value": "14s ease-in-out infinite alternate;translateY(-9px);rotate(2deg)",
-        "purpose": "Active inner letterpress seal only; stable action. Hidden/manual/reduced safeguards apply."
+        "name": "puzzle-scatter",
+        "value": "620ms cubic-bezier(.16,1,.3,1);12ms stagger;12 fragments",
+        "purpose": "Explicit break action only; pieces spread across the hero with rotated viewport bounds. No idle puzzle motion. Reduced motion places immediately."
       },
       {
-        "name": "seal-rearrange",
-        "value": "650ms object;800ms band transforms",
-        "purpose": "Three explicit band arrangements and bounded7–9degree fine-pointer tilt. No puzzle or physics."
+        "name": "puzzle-reassemble",
+        "value": "620ms reset;320ms snap;180ms rotation;30–56px snap radius",
+        "purpose": "Manual drag/drop, selected-piece rotate/place, keyboard and stable Susun ulang. Pointer capture is cancelled on blur/chapter/hidden; in-flight movement finishes consistently. No physics or Acak."
       },
       {
         "name": "relief-drift",
@@ -410,11 +410,11 @@
       "css": ".ds-journey-controls{position:relative;display:flex;align-items:center;justify-content:space-between;gap:24px;width:min(100%,650px);min-height:62px;padding-top:26px;color:var(--chapter-ink,#19372d);font-family:var(--font-geist,Manrope,sans-serif)}.ds-current{font-size:.75rem;font-weight:600}.ds-controls{display:flex;align-items:center;gap:8px}.ds-controls button{display:inline-flex;align-items:center;justify-content:center;border:0;color:inherit;cursor:pointer;min-height:44px}.ds-pause{gap:7px;padding:8px 12px 8px 0;background:transparent;font:inherit;font-size:.65rem}.ds-arrow{width:44px;height:44px;border-radius:50%;background:var(--neu-surface,#bdd0b6);box-shadow:3px 4px 7px var(--neu-dark,rgba(25,55,45,.13)),-2px -2px 5px var(--neu-light,rgba(255,255,245,.36))}.ds-controls button:hover{opacity:.8}.ds-arrow:active{box-shadow:inset 2px 2px 4px var(--neu-dark,rgba(25,55,45,.13)),inset -2px -2px 4px var(--neu-light,rgba(255,255,245,.36))}.ds-pause:active{transform:translateY(1px)}.ds-controls button:focus-visible{outline:2px solid var(--chapter-ink,#19372d);outline-offset:5px}.ds-progress{position:absolute;top:-4px;left:0;right:0;height:24px}.ds-progress svg{display:block;width:100%;height:24px;overflow:visible}.ds-progress path{fill:none;stroke:currentColor;stroke-width:1.4;vector-effect:non-scaling-stroke}.ds-ruler-track{opacity:.4}.ds-ruler-fill{opacity:.9}@media(max-width:767px){.ds-pause>span{display:none}.ds-pause{width:44px;padding:0}.ds-current{font-size:.68rem}.ds-progress,.ds-progress svg{height:19px}}"
     },
     {
-      "name": "Kinetic CFS Letterpress",
+      "name": "CFS Paper Puzzle",
       "kind": "custom",
-      "description": "Three CSS paper bands and embossed CFS imprint, with static shadows. Preview responds on hover/focus; production cycles arrangements with a separate stable button and supports bounded fine-pointer tilt. No puzzle.",
-      "html": "<button class=\"ds-seal\" aria-label=\"Susun ulang komposisi CFS\"><span class=\"ds-seal-art\" aria-hidden=\"true\"><i class=\"ds-band ds-band-forest\"></i><i class=\"ds-band ds-band-cream\"></i><i class=\"ds-band ds-band-sage\"></i><span class=\"ds-imprint\">CFS</span></span><span class=\"ds-seal-action\">Susun ulang</span></button>",
-      "css": ".ds-seal{position:relative;width:min(100%,420px);height:350px;padding:0;border:0;background:transparent;color:#19372d;perspective:1100px;cursor:pointer}.ds-seal-art{position:absolute;inset:12% 14% 24%;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.16,1,.3,1)}.ds-band{position:absolute;left:1%;top:13%;width:98%;height:67%;box-sizing:border-box;border:26px solid;border-radius:50%;box-shadow:10px 15px 23px rgba(25,55,45,.18),inset 2px 2px 3px rgba(255,255,240,.34)}.ds-band-forest{border-color:#294b3a;transform:rotate(-39deg) rotateY(26deg)}.ds-band-cream{border-color:#e8dfc4;transform:rotate(33deg) rotateY(-24deg) translateZ(24px)}.ds-band-sage{border-color:#a9bea0;transform:rotate(92deg) rotateY(12deg) translateZ(-12px)}.ds-imprint{position:absolute;left:32%;top:28%;width:36%;aspect-ratio:1;display:grid;place-items:center;border-radius:50%;background:#d3dec5;color:#294b3a;font:500 2.3rem var(--font-display,Georgia,serif);letter-spacing:-.04em;transform:translateZ(45px) rotate(-9deg);box-shadow:8px 12px 20px rgba(25,55,45,.19),inset 3px 3px 7px rgba(255,255,237,.6),inset -4px -4px 8px rgba(25,55,45,.15)}.ds-seal-action{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);padding:12px 18px;border-radius:999px;background:#d5dfc9;font:.7rem var(--font-geist,Manrope,sans-serif);box-shadow:3px 4px 7px rgba(25,55,45,.1),-2px -2px 5px rgba(255,255,245,.32)}.ds-seal:hover .ds-seal-art,.ds-seal:focus-visible .ds-seal-art{transform:rotate(18deg)}.ds-seal:focus-visible{outline:2px solid currentColor;outline-offset:4px}.ds-seal:active .ds-seal-action{box-shadow:inset 2px 2px 4px rgba(25,55,45,.15)}@media(prefers-reduced-motion:reduce){.ds-seal-art{transition:none}}"
+      "description": "Compact visual sample of the assembled C/F/S sheets. Production splits them into 12 draggable quarters across the full hero, with magnetic home guides, rotation, click-to-place, keyboard, actual progress and a stable reset. No idle physics or shuffle control.",
+      "html": "<button class=\"ds-paper-puzzle\" aria-label=\"Pecah puzzle CFS\"><span class=\"ds-paper-sheets\" aria-hidden=\"true\"><i>C</i><i>F</i><i>S</i></span><span class=\"ds-paper-action\">Susun ulang</span></button>",
+      "css": ".ds-paper-puzzle{position:relative;width:min(100%,420px);height:350px;padding:0;border:0;background:transparent;color:#19372d;cursor:pointer}.ds-paper-sheets{position:absolute;inset:8% 5% 22%;display:flex;align-items:center;justify-content:center}.ds-paper-sheets i{display:grid;place-items:center;width:31%;height:88%;background:#294b3a;color:#e8dfc4;border-radius:5px;box-shadow:8px 13px 20px rgba(25,55,45,.18);font:500 9rem var(--font-display,Georgia,serif);transition:transform .62s cubic-bezier(.16,1,.3,1);transform:rotate(-14deg)}.ds-paper-sheets i:nth-child(2){background:#e8dfc4;color:#294b3a;transform:rotate(4deg)}.ds-paper-sheets i:nth-child(3){background:#a9bea0;color:#19372d;transform:rotate(17deg)}.ds-paper-puzzle:hover i:first-child,.ds-paper-puzzle:focus-visible i:first-child{transform:translate(-16px,-12px) rotate(-23deg)}.ds-paper-puzzle:hover i:last-child,.ds-paper-puzzle:focus-visible i:last-child{transform:translate(18px,10px) rotate(25deg)}.ds-paper-action{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);padding:12px 18px;border-radius:999px;background:#d5dfc9;font:.7rem var(--font-geist,Manrope,sans-serif);box-shadow:3px 4px 7px rgba(25,55,45,.1),-2px -2px 5px rgba(255,255,245,.32)}.ds-paper-puzzle:focus-visible{outline:2px solid currentColor;outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-paper-sheets i{transition:none}}"
     },
     {
       "name": "Music Invitation",
@@ -426,12 +426,12 @@
   ],
   "narrative": {
     "northStar": "A personal workshop on woven canvas",
-    "overview": "The portfolio feels personal, elegant, and a little playful. Muted fabric-like grounds, an original interwoven CFS letterpress seal, and large Bodoni lettering give it an identity connected to its owner. Professional information stays readable in Manrope, with friendly Indonesian copy rather than advertising slogans.\n\nTexture is a clearly woven, static material; motion supplies the changing point of view. Fullscreen chapters provide room to read before reversible iris, side-curtain, and rounded-arch reveals, while controls and selected information panels feel raised or pressed into their surroundings. Sparse vector linework, drifting fibres, and shallow relief move slowly without covering the work. The seal is code-native geometry with a small, bounded pointer response, not a rendered person or mascot.",
+    "overview": "The portfolio feels personal, elegant, and a little playful. Muted fabric-like grounds, a tactile C/F/S paper puzzle, and large Bodoni lettering give it an identity connected to its owner. Professional information stays readable in Manrope, with friendly Indonesian copy rather than advertising slogans.\n\nTexture is a clearly woven, static material; motion supplies the changing point of view. Fullscreen chapters provide room to read before reversible iris, side-curtain, and rounded-arch reveals, while controls and selected information panels feel raised or pressed into their surroundings. Sparse vector linework, drifting fibres, and shallow relief move slowly without covering the work. The opening puzzle is code-native paper geometry, not a rendered person or mascot. Its twelve fragments scatter across the hero only after an explicit action.",
     "keyCharacteristics": [
       "Woven canvas and muted chapter colors.",
       "Expressive serif display type with clear sans-serif information.",
       "Tactile controls and selectively moulded information panels.",
-      "A kinetic CFS letterpress seal with a stable rearrange control.",
+      "A fullscreen C/F/S paper puzzle with manual assembly and a stable reset control.",
       "Fullscreen exploration with accessible content fallbacks."
     ],
     "rules": [

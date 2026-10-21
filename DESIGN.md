@@ -89,16 +89,16 @@ components:
 
 **Creative North Star: "A personal workshop on woven canvas"**
 
-The portfolio feels personal, elegant, and a little playful. Muted fabric-like grounds, an original interwoven CFS letterpress seal, and large Bodoni lettering give it an identity connected to its owner. Professional information stays readable in Manrope, with friendly Indonesian copy rather than advertising slogans.
+The portfolio feels personal, elegant, and a little playful. Muted fabric-like grounds, a tactile C/F/S paper puzzle, and large Bodoni lettering give it an identity connected to its owner. Professional information stays readable in Manrope, with friendly Indonesian copy rather than advertising slogans.
 
-Texture is a clearly woven, static material; motion supplies the changing point of view. Fullscreen chapters provide room to read before reversible iris, side-curtain, and rounded-arch reveals, while controls and selected information panels feel raised or pressed into their surroundings. Sparse vector linework, drifting fibres, and shallow relief move slowly without covering the work. The seal is code-native geometry with a small, bounded pointer response, not a rendered person or mascot.
+Texture is a clearly woven, static material; motion supplies the changing point of view. Fullscreen chapters provide room to read before reversible iris, side-curtain, and rounded-arch reveals, while controls and selected information panels feel raised or pressed into their surroundings. Sparse vector linework, drifting fibres, and shallow relief move slowly without covering the work. The opening puzzle is code-native paper geometry, not a rendered person or mascot. Its twelve fragments scatter across the hero only after an explicit action.
 
 **Key Characteristics:**
 
 - Woven canvas and muted chapter colors.
 - Expressive serif display type with clear sans-serif information.
 - Tactile controls and selectively moulded information panels.
-- A kinetic CFS letterpress seal with a stable rearrange control.
+- A fullscreen C/F/S paper puzzle with manual assembly and a stable reset control.
 - Fullscreen exploration with accessible content fallbacks.
 
 ## Colors
@@ -154,7 +154,7 @@ The broad serif name and italic greeting provide expression. Manrope handles the
 
 The enhanced landing page uses seven fullscreen chapters in one fixed stage. Desktop wheel input is routed to the active chapter's scrollable content first. A separate gesture at the boundary advances one chapter; leftover deltas and trackpad momentum never spill into repeated transitions. Compact layouts (up to 1024px or a coarse primary pointer) use arrows or the header menu, never scrolling, to change chapters. Content itself keeps native touch scrolling. The desktop content shell reaches a maximum width of 1240px. Non-hero chapter bodies reserve a bottom inset (110px) for the fixed journey controls; the hero keeps its own composition and is excluded from that rule. The learning chapter holds its introduction in place while the certificate pane scrolls independently; linear fallback restores normal document flow.
 
-The opening composition centers three interwoven paper bands around an embossed CFS imprint beneath the oversized first name, with smaller copy around it. It is a specific opening arrangement, not a required layout for every future surface. On short laptops, the canvas art uses a viewport-relative height (50svh), a bottom offset (112px), and its action at the composition's bottom edge; short landscape uses a bottom offset (105px). The greeting is centered; factual chapters use content grids and lists. The separate project catalogue uses a two-column grid that becomes a single column on smaller screens.
+The opening composition centers three tilted C/F/S paper sheets beneath the oversized first name, with smaller copy around them. Clicking the sheets scatters twelve quarters across the entire hero, leaving header and dock accessible. Faint assembled guides support manual placement; the stable reset reconstructs the original composition. The project CTA is temporarily hidden while playing and returns after assembly. On short laptops, the home area uses a viewport-relative height (50svh), a bottom offset (112px), and its action at the composition's bottom edge; short landscape uses a bottom offset (105px). The greeting is centered; factual chapters use content grids and lists. The separate project catalogue uses a two-column grid that becomes a single column on smaller screens.
 
 Responsive rules adapt at 1100px, 1024px, and 767px, with additional short-height treatments. On phones, the bottom controls retain the current chapter, previous/next arrows, and an icon-only background-motion toggle. Long content stays reachable. Reduced motion keeps the navigable stage but changes chapters instantly, suppressing decorative movement and looping type. Without JavaScript, all chapters remain in a readable linear document.
 
@@ -175,7 +175,7 @@ Neumorphism expresses the material of both controls and selected information pan
 
 ## Shapes
 
-Pills and circles signal actions. Fields have gently curved corners; project media and factual panels use broader but restrained corners. Thin borders or moulded edges provide separation without nested decorative frames. Circular reliefs and low-contrast SVG linework sit behind selected chapters. The woven tile is shared by chapter grounds, the intro, catalogue, and footer. Three elliptical paper bands surround a tactile CFS imprint, with CSS perspective and static cast/inset shadows. No illustrated person, wave, or pupil layers remain in the composition.
+Pills and circles signal actions. Fields have gently curved corners; project media and factual panels use broader but restrained corners. Thin borders or moulded edges provide separation without nested decorative frames. Circular reliefs and low-contrast SVG linework sit behind selected chapters. The woven tile is shared by chapter grounds, the intro, catalogue, footer and C/F/S sheets. The paper sheets have lightly rounded outer corners, a printed serif initial and a static folded highlight. No illustrated person, wave, or pupil layers remain in the composition.
 
 ## Components
 
@@ -203,13 +203,15 @@ The fixed header follows the chapter's ground and ink, with About me and Profil 
 
 Music is off by default, with a visible “Nyalakan musik” action. There is no additional lofi hint. The visitor's explicit play action attaches the supplied lofi track to an HTML audio element; it has no source before that action and uses `preload="none"`. Playback loops at a quiet volume (18%). Music pauses when the page is hidden and resumes only if the visitor had enabled it. Playback failure has a clear retry label.
 
-### Letterpress and staged motion
+### Paper puzzle and staged motion
 
-The seal uses CSS geometry and perspective, with static shadows rather than a renderer or image payload. A stable “Susun ulang” button cycles three band arrangements. A fine pointer tilts the object within 7–9 degrees; leaving or changing chapters resets it. Only the inner object floats slowly (14s), so the action stays still. There is no puzzle or shuffle control. In the greeting, nearby glyphs gently repel a fine pointer. Software / AI / Cloud loops through typing, a reading hold, deleting and retyping (70ms type, 38ms delete, 1450ms hold, 500ms empty pause); complete accessible text remains available. Hidden, paused, inactive and reduced-motion states stop the loop.
+The three sheets split into twelve independent quarters. A finite 620ms scatter with at most 132ms stagger reaches the whole hero, not just the central art box. Pointer capture and direct MotionValue updates support mouse/touch dragging without React renders per move. Rotated bounds keep fragments on screen; dropping within 30–56px of home magnetically aligns the fragment. Selected pieces offer Putar and Pasang, a single-click alternative to dragging. Arrow keys move, Shift increases the step, R rotates and Home places a piece. Progress reports actual assembled pieces. “Susun ulang” restores all sheets; there is no Acak button. Manual completion restores the break control and keyboard focus. Resize reflows the play area; blur, hidden pages and chapter changes cancel capture and finish in-flight movements at a consistent destination. Reduced motion makes placement/scatter immediate, without removing the game. No idle puzzle loop, physics, WebGL or new runtime package is used. Without JavaScript the assembled paper art stays visible and inert custom controls are hidden.
+
+In the greeting, nearby glyphs gently repel a fine pointer. Software / AI / Cloud loops through typing, a reading hold, deleting and retyping (70ms type, 38ms delete, 1450ms hold, 500ms empty pause); complete accessible text remains available. Hidden, paused, inactive and reduced-motion states stop the loop.
 
 Explicit chapter changes start a single 680ms eased animation immediately, without a long scroll runway or chained camera spring. The six boundaries use iris, curtain, arch, curtain, iris, arch in that order. Iris adds a small scale; curtain and arch use restrained horizontal and vertical translation respectively, not a full scene slide. Poses depend only on scroll position, so the same position looks the same in either direction; a tiny boundary snap removes endpoint residue. The outgoing base and incoming clipped overlay remain opaque. Only those nearby scenes are visible, and inactive content is inert.
 
-Slow CSS fibres run only in an active atmospheric chapter (18s; six fibres, reduced to three on phones and in projects). One shallow relief drifts (24s); project contour linework moves gently (26s). Each chapter also has its own edge motifs: paper gliders, birds, orbits, prisms, compass marks, stars, or messages, with seven distinct slow motion patterns. Inactive motifs are paused. Hidden pages, the manual background pause, and reduced motion stop these ambient loops and the inner seal float. Texture and shadows stay static, with no canvas runtime or new runtime package.
+Slow CSS fibres run only in an active atmospheric chapter (18s; six fibres, reduced to three on phones and in projects). One shallow relief drifts (24s); project contour linework moves gently (26s). Each chapter also has its own edge motifs: paper gliders, birds, orbits, prisms, compass marks, stars, or messages, with seven distinct slow motion patterns. Inactive motifs are paused. Hidden pages, the manual background pause, and reduced motion stop these ambient loops. Texture and shadows stay static, with no canvas runtime or new runtime package.
 
 The CFS opening completes automatically in about 3.9 seconds, once per session, with no skip button. Direct links, the catalogue and reduced motion bypass it. Keyboard focus and inert surfaces are restored after completion; CSS also exits without hydration.
 
