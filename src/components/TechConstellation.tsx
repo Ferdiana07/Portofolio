@@ -31,6 +31,6 @@ const technologies = [
 /** Decorative only: these marks are not an additional claim of proficiency. */
 export default function TechConstellation() {
   return <div className="scene-ornaments tech-constellation">
-    {technologies.map(({ name, Icon, x, y, mx, my, size }, index) => <span key={name} className={`scene-ornament tech-mote tech-drift-${index % 3} ambient-loop`} data-tech={name} style={{ "--tech-x": `${x}%`, "--tech-y": `${y}%`, "--tech-mobile-x": `${mx}%`, "--tech-mobile-y": `${my}%`, "--tech-size": `${size}px`, "--tech-tilt": `${index % 2 ? 7 : -9}deg`, "--tech-duration": `${24 + index % 6 * 4}s`, "--tech-delay": `${-index * 2.7}s` } as CSSProperties}><Icon focusable="false" /></span>)}
+    {technologies.map(({ name, Icon, x, y, mx, my, size }, index) => <span key={name} className={`scene-ornament tech-mote tech-drift-${index % 3} ambient-loop`} data-tech={name} style={{ "--tech-x": `${x}%`, "--tech-y": `${y}%`, "--tech-mobile-x": `${mx}%`, "--tech-mobile-y": `${my}%`, "--tech-size": `${size}px`, "--tech-tilt": `${index % 2 ? 7 : -9}deg`, "--tech-duration": `${14 + index % 6 * 2.2}s`, "--tech-delay": `${-index * 2.7}s` } as CSSProperties}><Icon focusable="false" /></span>)}
   </div>;
 }

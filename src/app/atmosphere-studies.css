@@ -53,21 +53,21 @@
   .tech-mote.tech-drift-0 { animation-name: tech-drift-one; }
   .tech-mote.tech-drift-1 { animation-name: tech-drift-two; }
   .tech-mote.tech-drift-2 { animation-name: tech-drift-three; }
-  .scene-ornament.ornament-4 { animation-delay: -11s; animation-duration: 27s; }
-  .scene-ornament.ornament-5 { animation-delay: -5s; animation-duration: 18s; }
-  .scene-ornament.ornament-6 { animation-delay: -16s; animation-duration: 34s; }
+  .scene-ornament.ornament-4 { animation-delay: -11s; animation-duration: 15.5s; }
+  .scene-ornament.ornament-5 { animation-delay: -5s; animation-duration: 10.5s; }
+  .scene-ornament.ornament-6 { animation-delay: -16s; animation-duration: 19.5s; }
   .atmosphere-hello .ornament-3 { animation-name: feather-fall; }
   .atmosphere-hello .ornament-6 { animation-name: breeze-sway; }
-  .atmosphere-about .ornament-2,.atmosphere-about .ornament-3,.atmosphere-about .ornament-5 { animation-name: node-breathe; animation-duration: 18s; }
+  .atmosphere-about .ornament-2,.atmosphere-about .ornament-3,.atmosphere-about .ornament-5 { animation-name: node-breathe; animation-duration: 10.5s; }
   .atmosphere-projects .ornament-4,.atmosphere-projects .ornament-6 { animation-direction: alternate-reverse; }
-  .atmosphere-experience .ornament-4,.atmosphere-experience .ornament-6 { animation-name: waypoint-breathe; animation-duration: 8s; }
-  .atmosphere-contact .ornament-1,.atmosphere-contact .ornament-4 { animation-name: paper-flight; animation-duration: 26s; }
-  .atmosphere-particle { animation: pollen-drift 22s ease-in-out infinite alternate paused; animation-delay: var(--particle-phase); }
-  .particles-about .atmosphere-particle { animation-name: node-drift; animation-duration: 30s; }
-  .particles-projects .atmosphere-particle { animation-name: prism-drift; animation-duration: 26s; }
-  .particles-experience .atmosphere-particle { animation-name: route-drift; animation-duration: 25s; }
-  .particles-certifications .atmosphere-particle { animation-name: star-glimmer; animation-duration: 9s; }
-  .particles-contact .atmosphere-particle { animation-name: message-rise; animation-duration: 28s; }
+  .atmosphere-experience .ornament-4,.atmosphere-experience .ornament-6 { animation-name: waypoint-breathe; animation-duration: 5s; }
+  .atmosphere-contact .ornament-1,.atmosphere-contact .ornament-4 { animation-name: paper-flight; animation-duration: 15s; }
+  .atmosphere-particle { animation: pollen-drift 12.5s ease-in-out infinite alternate paused; animation-delay: var(--particle-phase); }
+  .particles-about .atmosphere-particle { animation-name: node-drift; animation-duration: 17s; }
+  .particles-projects .atmosphere-particle { animation-name: prism-drift; animation-duration: 15s; }
+  .particles-experience .atmosphere-particle { animation-name: route-drift; animation-duration: 14s; }
+  .particles-certifications .atmosphere-particle { animation-name: star-glimmer; animation-duration: 5.5s; }
+  .particles-contact .atmosphere-particle { animation-name: message-rise; animation-duration: 16s; }
   .journey-panel[aria-hidden=false] .tech-mote,.journey-panel[aria-hidden=false] .atmosphere-particle { animation-play-state: running; }
   .journey[data-motion-paused=true] .scene-atmosphere *,.journey[data-hidden=true] .scene-atmosphere * { animation-play-state: paused !important; }
 }

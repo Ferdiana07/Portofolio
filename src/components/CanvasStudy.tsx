@@ -152,6 +152,85 @@ export default function CanvasStudy() {
   const instructions = useId();
   const targets = useMemo(() => frame ? broken ? scatterPoses(frame, revision * 7919 + 107) : Array.from({ length: PUZZLE_COUNT }, (_, i) => homePose(i, frame)) : [], [frame, broken, revision]);
 
+  // Translate intact sheets, independently of the puzzle's home and drag poses.
+  useEffect(() => {
+    const element = root.current;
+    const hero = element?.closest<HTMLElement>(".dream-hero");
+    if (!element || !hero || !frame || broken) return;
+    const preference = matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
+    const journey = element.closest<HTMLElement>(".journey");
+    const sheets = cards.map((_, card) => [...element.querySelectorAll<HTMLElement>(`.puzzle-guide.puzzle-card-${card},.puzzle-sheet.puzzle-card-${card}`)]);
+    const offsets = ["", "", ""];
+    let tick = 0;
+    let bounds: DOMRect | null = null;
+    let point = { x: 0, y: 0 };
+    let allowed = false;
+    const clear = () => {
+      cancelAnimationFrame(tick); tick = 0; bounds = null;
+      sheets.forEach((sheet, card) => {
+        if (offsets[card]) sheet.forEach(node => node.style.removeProperty("translate"));
+        offsets[card] = "";
+      });
+    };
+    const sync = () => {
+      allowed = preference.matches && !document.hidden && journey?.dataset.motionPaused !== "true" && journey?.dataset.hidden !== "true"
+        && (!journey || journey.dataset.active === "top") && document.documentElement.dataset.intro !== "playing";
+      if (!allowed) clear();
+    };
+    const paint = () => {
+      tick = 0;
+      if (!allowed || !bounds) return;
+      const radius = Math.max(210, Math.min(330, frame.home.width * .52));
+      const origin = bounds;
+      sheets.forEach((sheet, card) => {
+        const dx = point.x - (origin.left + frame.home.x + frame.home.width * (.255 + card * .25));
+        const dy = point.y - (origin.top + frame.home.y + frame.home.height * .42);
+        const proximity = Math.max(0, 1 - Math.hypot(dx, dy) / radius);
+        const x = ((card - 1) * 18 + dx / radius * 10) * proximity;
+        const y = (-18 + dy / radius * 8) * proximity;
+        const offset = proximity > 0 ? `${x.toFixed(2)}px ${y.toFixed(2)}px` : "";
+        if (offset !== offsets[card]) {
+          sheet.forEach(node => { if (offset) node.style.translate = offset; else node.style.removeProperty("translate"); });
+          offsets[card] = offset;
+        }
+      });
+    };
+    const move = (event: globalThis.PointerEvent) => {
+      if (!allowed) return;
+      if (event.pointerType !== "mouse" || event.buttons || journey?.dataset.transitioning === "true") { clear(); return; }
+      // One geometry read on entry, never interleaved reads/writes each frame.
+      bounds ??= element.getBoundingClientRect();
+      point = { x: event.clientX, y: event.clientY };
+      if (!tick) tick = requestAnimationFrame(paint);
+    };
+    const chapter = () => { clear(); sync(); };
+    const observer = new MutationObserver(sync);
+    if (journey) observer.observe(journey, { attributes: true, attributeFilter: ["data-motion-paused", "data-hidden"] });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-intro"] });
+    sync();
+    hero.addEventListener("pointermove", move, { passive: true });
+    hero.addEventListener("pointerleave", clear);
+    hero.addEventListener("pointerdown", clear, { passive: true });
+    window.addEventListener("blur", clear);
+    window.addEventListener("keydown", clear);
+    window.addEventListener("resize", clear, { passive: true });
+    window.addEventListener("portfolio:chapter", chapter);
+    document.addEventListener("visibilitychange", sync);
+    preference.addEventListener("change", sync);
+    return () => {
+      clear(); observer.disconnect();
+      hero.removeEventListener("pointermove", move);
+      hero.removeEventListener("pointerleave", clear);
+      hero.removeEventListener("pointerdown", clear);
+      window.removeEventListener("blur", clear);
+      window.removeEventListener("keydown", clear);
+      window.removeEventListener("resize", clear);
+      window.removeEventListener("portfolio:chapter", chapter);
+      document.removeEventListener("visibilitychange", sync);
+      preference.removeEventListener("change", sync);
+    };
+  }, [broken, frame]);
+
   useLayoutEffect(() => {
     const measure = () => {
       if (!root.current || !home.current) return;
@@ -198,7 +277,12 @@ export default function CanvasStudy() {
         {cards.map((letter, card) => <div key={letter} className={`puzzle-guide puzzle-card-${card}`} style={{ left: `${10 + card * 25}%`, "--card-angle": `${CARD_ANGLES[card]}deg` } as CSSProperties}><PaperPrint card={card} /></div>)}
       </div>
       <div className="puzzle-field" role="group" aria-label="Puzzle kertas CFS">
-        {frame && targets.map((target, index) => <PuzzlePiece key={index} index={index} frame={frame} target={target} revision={revision} broken={broken} selected={selected === index} locked={locked.includes(index)} instructions={instructions} pieceRef={handle => { handles.current[index] = handle; }} onSelect={setSelected} onSettle={settle} />)}
+        {frame && cards.map((letter, card) => <div key={letter} className={`puzzle-sheet puzzle-card-${card}`}>
+          {targets.slice(card * 4, card * 4 + 4).map((target, part) => {
+            const index = card * 4 + part;
+            return <PuzzlePiece key={index} index={index} frame={frame} target={target} revision={revision} broken={broken} selected={selected === index} locked={locked.includes(index)} instructions={instructions} pieceRef={handle => { handles.current[index] = handle; }} onSelect={setSelected} onSettle={settle} />;
+          })}
+        </div>)}
       </div>
       <div className="paper-study puzzle-overlay">
         <button ref={breaker} type="button" className="puzzle-break" aria-label="Pecah puzzle CFS" onClick={scatter} hidden={broken}><span>Klik CFS untuk bermain</span></button>

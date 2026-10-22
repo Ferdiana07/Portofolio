@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="36" viewBox="0 0 32 36">
+  <defs><clipPath id="paper"><path d="m3 3 23 19-11 1-4 10-4-2 4-11-8 4Z"/></clipPath></defs>
+  <path d="m5 5 23 19-11 1-4 10-4-2 4-11-8 4Z" fill="#19372d" opacity=".23"/>
+  <path d="m3 3 23 19-11 1-4 10-4-2 4-11-8 4Z" fill="#f0e8d1" stroke="#294b3a" stroke-width="1.3" stroke-linejoin="round"/>
+  <g clip-path="url(#paper)" stroke="#75876b" stroke-width=".5" opacity=".55"><path d="M0 8h30M0 12h30M0 16h30M0 20h30M0 24h30M0 28h30M0 32h30M7 0v36M11 0v36M15 0v36M19 0v36M23 0v36"/></g>
+  <path d="m5 8 15 12-7 1" fill="none" stroke="#fffdf2" stroke-width="1.2" stroke-linecap="round"/>
+</svg>

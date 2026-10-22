@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>CFS</title>
+  <rect width="64" height="64" rx="13" fill="#19372d"/>
+  <!-- Three separate outlined letters: no font download or merged monogram. -->
+  <g fill="none" stroke="#e8dfc4" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 23C19 18 10 18 10 27V37C10 46 19 46 22 41"/>
+    <path d="M29 45V19H39M29 31H37"/>
+    <path d="M55 23C52 18 44 19 44 26C44 32 55 31 55 38C55 45 47 47 43 41"/>
+  </g>
+</svg>

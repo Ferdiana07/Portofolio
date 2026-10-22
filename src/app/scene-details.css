@@ -37,13 +37,13 @@ html[data-journey=on] .footer { display: none; }
 .atmosphere-contact .ornament-1 { top: 36%; right: 2%; }
 .atmosphere-contact .ornament-2 { bottom: 20%; left: 3%; }
 @media (prefers-reduced-motion: no-preference) {
-  .atmosphere-top .scene-ornament { animation: paper-glide 24s ease-in-out infinite alternate paused; }
-  .atmosphere-hello .scene-ornament { animation: bird-glide 19s ease-in-out infinite alternate paused; }
-  .atmosphere-about .scene-ornament { animation: ink-orbit 32s linear infinite paused; }
-  .atmosphere-projects .scene-ornament { animation: prism-turn 22s ease-in-out infinite alternate paused; }
-  .atmosphere-experience .scene-ornament { animation: compass-sway 25s ease-in-out infinite alternate paused; }
-  .atmosphere-certifications .scene-ornament { animation: star-breathe 9s ease-in-out infinite alternate paused; }
-  .atmosphere-contact .scene-ornament { animation: message-drift 21s ease-in-out infinite alternate paused; }
+  .atmosphere-top .scene-ornament { animation: paper-glide 14s ease-in-out infinite alternate paused; }
+  .atmosphere-hello .scene-ornament { animation: bird-glide 11s ease-in-out infinite alternate paused; }
+  .atmosphere-about .scene-ornament { animation: ink-orbit 18s linear infinite paused; }
+  .atmosphere-projects .scene-ornament { animation: prism-turn 12.5s ease-in-out infinite alternate paused; }
+  .atmosphere-experience .scene-ornament { animation: compass-sway 14s ease-in-out infinite alternate paused; }
+  .atmosphere-certifications .scene-ornament { animation: star-breathe 5.5s ease-in-out infinite alternate paused; }
+  .atmosphere-contact .scene-ornament { animation: message-drift 12s ease-in-out infinite alternate paused; }
   .scene-ornament.ornament-2 { animation-delay: -7s; }
   .scene-ornament.ornament-3 { animation-delay: -12s; }
   .journey-panel[aria-hidden=false] .scene-ornament { animation-play-state: running; }

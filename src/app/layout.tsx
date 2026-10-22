@@ -3,6 +3,7 @@ import { Bodoni_Moda, Manrope, Geist_Mono } from "next/font/google";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Intro from "@/components/Intro";
+import CursorInk from "@/components/CursorInk";
 import "./globals.css";
 import "./immersive.css";
 import "./mascot-story.css";
@@ -11,6 +12,7 @@ import "./canvas-study.css";
 import "./scene-details.css";
 import "./hero-puzzle.css";
 import "./atmosphere-studies.css";
+import "./cursor-ink.css";
 
 const geist = Manrope({
   variable: "--font-geist",
@@ -45,6 +47,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Navbar />
         <main>{children}</main>
         <Footer />
+        <CursorInk />
       </body>
     </html>
   );

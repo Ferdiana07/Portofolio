@@ -312,7 +312,7 @@
       {
         "name": "ornament-variants",
         "value": "Six objects + seven particles in each non-hero chapter; four + four on phones",
-        "purpose": "Birds/feathers, orbit/code nodes, prisms, compass/route waypoints, stars/constellation, or post/paper planes. Particle paths differ by chapter. Only active motifs run; hidden/manual pause and reduced motion stop them."
+        "purpose": "Birds/feathers, orbit/code nodes, prisms, compass/route waypoints, stars/constellation, or post/paper planes. Particle paths differ by chapter, now about 20% faster than the prior accelerated pass without additional objects. Only active motifs run; hidden/manual pause and reduced motion stop them."
       },
       {
         "name": "intro",
@@ -321,8 +321,18 @@
       },
       {
         "name": "technology-constellation",
-        "value": "20 inline SVG brand marks;14 on phones;24–44s;three transform drift paths",
+        "value": "20 inline SVG brand marks;14 on phones;14–25s;three transform drift paths",
         "purpose": "Unframed forest-ink technology logos behind the hero, deterministic desktop/mobile positions and negative phases. No pointer handlers, runtime network assets, physics or JS animation loop. Decorative only, not additional skill claims. Permanently inert/aria-hidden. Chapter particles replace the previous generic fibre layer rather than adding a duplicate layer."
+      },
+      {
+        "name": "cursor-ink",
+        "value": "Native woven SVG arrow + 36px seam head;8 fibres at480ms;one360ms impression;56ms/12px emission gates",
+        "purpose": "Chapter-tinted, textured neumorphic pointer; action target changes seam scale and SVG variant. Native browser hotspot remains instant. No idle loop, per-move React state, layout reads, full-screen filters or dependencies. Fields retain caret; puzzle retains grab. No fibres on header/dock; no follower while dragging. Pause/hidden/intro/reduced/coarse suppression and route cleanup."
+      },
+      {
+        "name": "paper-proximity",
+        "value": "Up to roughly20px translation;200ms response;fine mouse/intact sheets only",
+        "purpose": "All four quarters and guide move together, separately from puzzle home/drag transforms. Cached entry geometry; local event-driven frame; unchanged offsets not rewritten. No idle loop or React state. Reset on exit/keyboard/blur/pause/hidden/reduced. Disabled during split, touch and chapter transitions; stationary click target preserves break behavior."
       }
     ],
     "breakpoints": [

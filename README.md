@@ -33,6 +33,7 @@ npm run start
 
 - Data CV, profil, lima projek, skill, pengalaman dan sertifikasi: `src/data/portfolio.ts`.
 - Warna tiap bab: `src/data/journey.ts`.
+- Ikon tab browser: `src/app/icon.svg`, tulisan CFS krem di atas hijau tua, tanpa ketergantungan font. Fallback `favicon.ico` memuat ukuran 16/32/48/64px; ekspor ulang dengan `node scripts/generate-favicon.mjs` setelah mengedit SVG.
 - Pose transisi: `src/lib/scene-transition.ts`; regresinya: `scripts/check-scene-transitions.mjs`.
 - Hero: `CanvasStudy.tsx`, tiga lembar kertas C/F/S yang bisa dipecah menjadi 12 potongan ke seluruh layar. Tarik ke bayangannya untuk menempel, atau pilih potongan lalu tekan “Pasang”. Ada putar, keyboard (panah/R/Home), dan “Susun ulang” otomatis. Tidak ada tombol Acak atau maskot.
 - Geometri puzzle: `src/lib/canvas-puzzle.ts`; `test:puzzle` mengecek 28.800 sudut potongan, enam viewport, batas tarik dan posisi magnet. Gerakan memakai Pointer Events + MotionValues, tanpa render React per frame, loop idle, atau mesin fisika.
@@ -40,12 +41,15 @@ npm run start
 - Tekstur: SVG statis `public/images/canvas-weave.svg`, tanpa filter noise/runtime canvas.
 - Pembuka memakai konstelasi 20 logo SVG (14 pada HP): AWS, Google, Gemini, ChatGPT/OpenAI, Java, HTML, MongoDB, React, Python dan lainnya. Logo memakai tinta kanvas, tiga pola drift pelan, dan posisi deterministik; bukan klaim skill tambahan.
 - Enam bab lainnya masing-masing punya enam objek dan tujuh partikel dengan bentuk/gerak berbeda: kawanan burung, orbit/node, prisma, waypoint, bintang dan pos/pesawat kertas. HP menampilkan empat objek + empat partikel. Hanya motif aktif yang berjalan; tombol Gerak, tab tersembunyi dan reduced motion menghentikannya. Tidak ada loop JavaScript untuk dekorasi.
+- Gerak objek/partikel dipercepat lagi sekitar 20% dari versi sebelumnya, tanpa menambah jumlah atau jarak lintasan. Logo hero sekarang 14–25 detik per lintasan; kecepatan transisi antarbab tidak berubah.
+- Kartu CFS utuh merespons kedekatan mouse dengan sedikit membuka dan terangkat. Empat kuartal tiap lembar bergerak bersama; posisi asli puzzle tidak diubah. Efek berhenti saat pecah, keyboard, jeda, tab tersembunyi, reduced motion dan perangkat sentuh. Klik tetap memecah, dan Susun ulang/manual snap tetap memakai geometri yang sama.
+- `CursorInk.tsx` memakai pointer SVG lokal bertema kain (`canvas-cursor.svg` / `canvas-cursor-action.svg`), keping timbul berjahitan yang merespons tombol, delapan jejak serat (480ms), dan satu bekas tekan (360ms). Frame hanya diminta saat mouse bergerak, bukan loop idle; tanpa render React per gerakan. Form mempertahankan caret teks; puzzle mempertahankan grab/grabbing. Header/dock tidak mendapat jejak serat. Semua efek/pointer kustom nonaktif pada touch/reduced motion, intro, tab tersembunyi dan jeda Gerak; cursor browser menjadi fallback.
 - Header HP/tablet menempatkan musik dan hamburger dekat sisi kanan (12px atau safe-area perangkat), tetap bertarget sentuh 44px. Catalogue menyisakan inset tambahan untuk permukaan header.
 - About me memakai bahasa personal serta loop Software / AI / Cloud: ketik, jeda, hapus, ulang. Teks lengkap tetap tersedia untuk pembaca layar.
 - Intro sekitar 3,9 detik, selesai otomatis tanpa tombol lewati, sekali per sesi. Anchor langsung, catalogue dan reduced motion melewatinya.
 - Preview projek memakai perspektif, tombol, keyboard dan swipe. Catalogue `/projects` dibuka di tab baru, dengan filter, detail, logo TechStack, status deployment sebenarnya, dan screenshot `object-fit:contain`.
 - Sertifikasi: pengantar tetap diam, daftar memiliki scroll tersendiri.
-- Stylesheet: komponen dasar di `globals.css`; panggung/katalogue di `immersive.css`; hero/Hello di `mascot-story.css` (nama legacy); material di `chapter-craft.css`; ruler/kontrol di `canvas-study.css`; navigasi dan motif dasar di `scene-details.css`; puzzle fullscreen di `hero-puzzle.css`; logo, variasi partikel dan header compact di `atmosphere-studies.css`.
+- Stylesheet: komponen dasar di `globals.css`; panggung/katalogue di `immersive.css`; hero/Hello di `mascot-story.css` (nama legacy); material di `chapter-craft.css`; ruler/kontrol di `canvas-study.css`; navigasi dan motif dasar di `scene-details.css`; puzzle fullscreen di `hero-puzzle.css`; logo, variasi partikel dan header compact di `atmosphere-studies.css`; jejak cursor di `cursor-ink.css`.
 - Sistem visual: `DESIGN.md` + `.impeccable/design.json`.
 
 Tidak ada tambahan WebGL, video background, library scroll, atau dependency runtime baru.
