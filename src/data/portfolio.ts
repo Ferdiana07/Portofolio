@@ -4,7 +4,7 @@ export const profile = {
   role: "Software / AI / Cloud",
   university: "Universitas Diponegoro",
   faculty: "S1 Informatika - Semester 5",
-  gpa: "3.58",
+  gpa: "N/A",
   location: "Tegal, Jawa Tengah, Indonesia",
   email: "ferdianacaesar@gmail.com",
   github: "https://github.com/Ferdiana07",
@@ -15,7 +15,7 @@ export const profile = {
 };
 
 export const highlights = [
-  { value: "3.58", label: "IPK S1 Informatika UNDIP" },
+  { value: "N/A", label: "IPK S1 Informatika UNDIP" },
   { value: "5", label: "Projek Unggulan (Web & AI)" },
   { value: "2", label: "Pengalaman Magang (Diskominfo & BPN)" },
   { value: "25+", label: "Sertifikasi AI, Web & Cyber" },

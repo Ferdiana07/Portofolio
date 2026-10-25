@@ -125,6 +125,9 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
       const target = Math.max(0, Math.min(chapters.length - 1, index));
       if (target === goal && busy) return;
       animation?.stop();
+      const origin = camera.get();
+      if (Math.abs(target - origin) > .00001) root.dataset.direction = target > origin ? "forward" : "backward";
+      root.dataset.target = chapters[target].id;
       if (reset) {
         bodies[target].scrollTop = 0;
         bodies[target].querySelector<HTMLElement>(".certificate-cards-grid")?.scrollTo({ top: 0, behavior: "instant" });
@@ -242,7 +245,7 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
   }, [camera]);
 
   return (
-    <div ref={rootRef} className="journey" data-active="top" data-motion-paused={motionPaused}>
+    <div ref={rootRef} className="journey" data-active="top" data-target="top" data-direction="forward" data-motion-paused={motionPaused}>
       <div className="journey-frame">
         {Children.toArray(children).map((child, index) => (
           <div key={chapters[index].id} className="journey-panel" data-scene={chapters[index].id}>

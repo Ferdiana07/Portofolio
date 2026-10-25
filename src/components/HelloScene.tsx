@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { getImageProps } from "next/image";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { ArrowUpRight, Code2, Cloud, ScanText } from "lucide-react";
 
 const interests = [
@@ -8,6 +9,43 @@ const interests = [
   { name: "AI", Icon: ScanText, text: "Di UlasJujur dan DOCVIA, aku bereksperimen dengan AI untuk membaca ulasan dan mencari jawaban dari dokumen. Aku penasaran sejauh mana AI bisa benar-benar membantu, bukan sekadar jadi fitur tambahan." },
   { name: "Cloud", Icon: Cloud, text: "Cloud lagi aku dalami juga. Setelah aplikasinya jadi, aku ingin paham cara membuatnya tetap berjalan dengan baik dan bisa diakses orang lain. Masih banyak yang perlu dipelajari, dan itu justru menarik." },
 ];
+
+const desktopPortraitImage = "/caesar-layers/tanpa pupi.png";
+const compactPortraitImage = "/caesar-layers/Ilustrasi Pria Muda Berpose Berpikir.png";
+const portraitSizes = "(max-width: 767px) 32vw, (max-width: 1024px) 34vw, 455px";
+const desktopPortraitProps = getImageProps({
+  src: desktopPortraitImage,
+  alt: "",
+  width: 1129,
+  height: 1393,
+  sizes: portraitSizes,
+  loading: "eager",
+}).props;
+const compactPortraitProps = getImageProps({
+  src: compactPortraitImage,
+  alt: "",
+  width: 1122,
+  height: 1402,
+  sizes: portraitSizes,
+  loading: "eager",
+}).props;
+
+function PortraitAsset({ className, alt }: { className: string; alt: string }) {
+  const { src, ...fallbackProps } = desktopPortraitProps;
+  return (
+    <picture className="hello-portrait-picture">
+      <source
+        media="(max-width: 1024px), (hover: none), (pointer: coarse)"
+        srcSet={compactPortraitProps.srcSet}
+        sizes={compactPortraitProps.sizes}
+        width={1122}
+        height={1402}
+      />
+      {/* getImageProps keeps both responsive sources optimized while picture prevents a double download. */}
+      <img src={src} {...fallbackProps} className={className} alt={alt} draggable={false} />
+    </picture>
+  );
+}
 
 function TypedInterests() {
   const text = "Software / AI / Cloud";
@@ -55,6 +93,7 @@ function TypedInterests() {
 export default function HelloScene() {
   const [interest, setInterest] = useState(0);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const portraitRef = useRef<HTMLElement>(null);
   useEffect(() => {
     const heading = headingRef.current;
     if (!heading) return;
@@ -88,29 +127,153 @@ export default function HelloScene() {
     window.addEventListener("portfolio:chapter", reset);
     return () => { reset(); heading.removeEventListener("pointerenter", measure); heading.removeEventListener("pointermove", move); heading.removeEventListener("pointerleave", reset); window.removeEventListener("blur", reset); window.removeEventListener("portfolio:chapter", reset); };
   }, []);
+  useLayoutEffect(() => {
+    const portrait = portraitRef.current;
+    if (!portrait) return;
+    const root = portrait.closest<HTMLElement>(".journey");
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+    const interactiveGaze = matchMedia("(min-width: 1025px) and (hover: hover) and (pointer: fine)");
+    const compactPortrait = matchMedia("(max-width: 1024px), (hover: none), (pointer: coarse)");
+    let frame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    let bounds: Pick<DOMRect, "left" | "top" | "width" | "height"> = portrait.getBoundingClientRect();
+    let measureFrame = 0;
+    let centered = true;
+    let measuredFrame: Pick<DOMRect, "width" | "height"> | null = null;
+
+    const measure = () => {
+      const frameBounds = portrait.getBoundingClientRect();
+      const cssWidth = portrait.clientWidth;
+      const cssHeight = portrait.clientHeight;
+      const sizeChanged = !measuredFrame || Math.abs(cssWidth - measuredFrame.width) >= .5 || Math.abs(cssHeight - measuredFrame.height) >= .5;
+      measuredFrame = { width: cssWidth, height: cssHeight };
+      const imageRatio = compactPortrait.matches ? 1122 / 1402 : 1129 / 1393;
+      const fitWidth = Math.min(cssWidth, cssHeight * imageRatio);
+      const fitHeight = fitWidth / imageRatio;
+      if (sizeChanged) {
+        portrait.style.setProperty("--portrait-fit-width", `${fitWidth.toFixed(2)}px`);
+        portrait.style.setProperty("--portrait-fit-height", `${fitHeight.toFixed(2)}px`);
+      }
+      bounds = {
+        left: frameBounds.left + (frameBounds.width - fitWidth) / 2,
+        top: frameBounds.bottom - fitHeight,
+        width: fitWidth,
+        height: fitHeight,
+      };
+    };
+    const reset = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      if (centered) return;
+      portrait.style.setProperty("--gaze-x", "0px");
+      portrait.style.setProperty("--gaze-y", "0px");
+      centered = true;
+    };
+    const paint = () => {
+      frame = 0;
+      const eyeX = bounds.left + bounds.width * .51;
+      const eyeY = bounds.top + bounds.height * .30;
+      const dx = pointerX - eyeX;
+      const dy = pointerY - eyeY;
+      const distance = Math.max(1, Math.hypot(dx, dy));
+      const intent = Math.min(1, distance / 210);
+      const travelX = Math.min(4.2, bounds.width * .0095);
+      const travelY = Math.min(3.1, bounds.width * .007);
+      portrait.style.setProperty("--gaze-x", `${(dx / distance * travelX * intent).toFixed(2)}px`);
+      portrait.style.setProperty("--gaze-y", `${(dy / distance * travelY * intent).toFixed(2)}px`);
+      centered = false;
+    };
+    const move = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      if (!interactiveGaze.matches || reduce.matches || document.hidden || root?.dataset.active !== "hello" || root.dataset.motionPaused === "true") {
+        reset();
+        return;
+      }
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      if (!frame) frame = requestAnimationFrame(paint);
+    };
+    const leave = (event: PointerEvent | MouseEvent) => { if (!event.relatedTarget) reset(); };
+    const chapter = () => {
+      reset();
+      cancelAnimationFrame(measureFrame);
+      measureFrame = requestAnimationFrame(() => { measureFrame = 0; measure(); });
+    };
+    const visibility = () => { if (document.hidden) reset(); };
+    const resize = new ResizeObserver(measure);
+    measure();
+    resize.observe(portrait);
+    document.addEventListener("pointermove", move, { passive: true });
+    document.addEventListener("pointerout", leave, { passive: true });
+    document.addEventListener("visibilitychange", visibility);
+    window.addEventListener("blur", reset);
+    window.addEventListener("portfolio:chapter", chapter);
+    reduce.addEventListener("change", reset);
+    interactiveGaze.addEventListener("change", reset);
+    compactPortrait.addEventListener("change", chapter);
+    return () => {
+      reset();
+      cancelAnimationFrame(measureFrame);
+      resize.disconnect();
+      document.removeEventListener("pointermove", move);
+      document.removeEventListener("pointerout", leave);
+      document.removeEventListener("visibilitychange", visibility);
+      window.removeEventListener("blur", reset);
+      window.removeEventListener("portfolio:chapter", chapter);
+      reduce.removeEventListener("change", reset);
+      interactiveGaze.removeEventListener("change", reset);
+      compactPortrait.removeEventListener("change", chapter);
+      portrait.style.removeProperty("--portrait-fit-width");
+      portrait.style.removeProperty("--portrait-fit-height");
+    };
+  }, []);
   return (
     <section id="hello" className="hello-scene" aria-labelledby="hello-title">
-      <h2 ref={headingRef} id="hello-title" className="hello-title" aria-label="Hi, aku Caesar.">
-        <span className="hello-line" aria-hidden="true">{"Hi, aku".split("").map((letter, i) => <span className="hello-letter" key={i} style={{ "--letter": i } as CSSProperties}><span className="hello-glyph">{letter === " " ? "\u00a0" : letter}</span></span>)}</span>
-        <span className="hello-line hello-line-name" aria-hidden="true">{"Caesar.".split("").map((letter, i) => <span className="hello-letter" key={i} style={{ "--letter": i + 7 } as CSSProperties}><span className="hello-glyph">{letter}</span></span>)}</span>
-      </h2>
-      <p className="hello-bio">Aku Caesar, mahasiswa Informatika UNDIP. Aku suka ngulik: dari merangkai aplikasi full-stack sampai mencoba AI untuk hal yang dekat dengan keseharian. Buatku, cara belajar paling seru itu bikin sesuatu, mentok sebentar, lalu nemu jalan keluarnya.</p>
-      <TypedInterests />
-      <div className="hello-explore">
-        <div className="interest-tabs" role="tablist" aria-label="Minat Caesar">
-          {interests.map(({ name, Icon }, i) => <button key={name} type="button" role="tab" id={`interest-${i}`} aria-controls="interest-panel" aria-selected={interest === i} tabIndex={interest === i ? 0 : -1} onClick={() => setInterest(i)} onKeyDown={(event) => {
-            let next = i;
-            if (event.key === "ArrowRight") next = (i + 1) % interests.length;
-            else if (event.key === "ArrowLeft") next = (i + interests.length - 1) % interests.length;
-            else if (event.key === "Home") next = 0;
-            else if (event.key === "End") next = interests.length - 1;
-            else return;
-            event.preventDefault(); setInterest(next); document.getElementById(`interest-${next}`)?.focus();
-          }}><Icon size={17} aria-hidden="true" />{name}</button>)}
+      <figure ref={portraitRef} className="hello-portrait">
+        <span className="hello-portrait-relief" aria-hidden="true" />
+        <span className="hello-portrait-fold" aria-hidden="true" />
+        <div className="hello-portrait-reveal">
+          <div className="hello-portrait-float">
+            <div className="hello-portrait-position">
+            <div className="hello-portrait-art">
+              <PortraitAsset className="hello-portrait-image" alt="Ilustrasi Caesar setengah badan sedang berpikir" />
+              <span className="hello-hair-layer" aria-hidden="true">
+                <PortraitAsset className="hello-hair-image" alt="" />
+              </span>
+              <span className="hello-eye-layer" aria-hidden="true">
+                <span className="hello-eye hello-eye-left"><i /></span>
+                <span className="hello-eye hello-eye-right"><i /></span>
+              </span>
+            </div>
+            </div>
+          </div>
         </div>
-        <div id="interest-panel" role="tabpanel" aria-labelledby={`interest-${interest}`} tabIndex={0} className="interest-panel"><p key={interest}>{interests[interest].text}</p></div>
+        <span className="hello-portrait-ground" aria-hidden="true" />
+      </figure>
+      <div className="hello-copy">
+        <h2 ref={headingRef} id="hello-title" className="hello-title" aria-label="Hi, aku Caesar.">
+          <span className="hello-line" aria-hidden="true">{"Hi, aku".split("").map((letter, i) => <span className="hello-letter" key={i} style={{ "--letter": i } as CSSProperties}><span className="hello-glyph">{letter === " " ? "\u00a0" : letter}</span></span>)}</span>
+          <span className="hello-line hello-line-name" aria-hidden="true">{"Caesar.".split("").map((letter, i) => <span className="hello-letter" key={i} style={{ "--letter": i + 7 } as CSSProperties}><span className="hello-glyph">{letter}</span></span>)}</span>
+        </h2>
+        <p className="hello-bio">Aku Caesar, mahasiswa Informatika UNDIP. Aku suka ngulik: dari merangkai aplikasi full-stack sampai mencoba AI untuk hal yang dekat dengan keseharian. Buatku, cara belajar paling seru itu bikin sesuatu, mentok sebentar, lalu nemu jalan keluarnya.</p>
+        <TypedInterests />
+        <div className="hello-explore">
+          <div className="interest-tabs" role="tablist" aria-label="Minat Caesar">
+            {interests.map(({ name, Icon }, i) => <button key={name} type="button" role="tab" id={`interest-${i}`} aria-controls="interest-panel" aria-selected={interest === i} tabIndex={interest === i ? 0 : -1} onClick={() => setInterest(i)} onKeyDown={(event) => {
+              let next = i;
+              if (event.key === "ArrowRight") next = (i + 1) % interests.length;
+              else if (event.key === "ArrowLeft") next = (i + interests.length - 1) % interests.length;
+              else if (event.key === "Home") next = 0;
+              else if (event.key === "End") next = interests.length - 1;
+              else return;
+              event.preventDefault(); setInterest(next); document.getElementById(`interest-${next}`)?.focus();
+            }}><Icon size={17} aria-hidden="true" />{name}</button>)}
+          </div>
+          <div id="interest-panel" role="tabpanel" aria-labelledby={`interest-${interest}`} tabIndex={0} className="interest-panel"><p key={interest}>{interests[interest].text}</p></div>
+        </div>
+        <a href="#about" className="hello-next">Lihat profil & skill <ArrowUpRight size={19} /></a>
       </div>
-      <a href="#about" className="hello-next">Lihat profil & skill <ArrowUpRight size={19} /></a>
     </section>
   );
 }
