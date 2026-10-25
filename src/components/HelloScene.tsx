@@ -179,7 +179,7 @@ export default function HelloScene() {
       const distance = Math.max(1, Math.hypot(dx, dy));
       const intent = Math.min(1, distance / 210);
       const travelX = Math.min(4.2, bounds.width * .0095);
-      const travelY = Math.min(3.1, bounds.width * .007);
+      const travelY = Math.min(2.15, bounds.width * .0049);
       portrait.style.setProperty("--gaze-x", `${(dx / distance * travelX * intent).toFixed(2)}px`);
       portrait.style.setProperty("--gaze-y", `${(dy / distance * travelY * intent).toFixed(2)}px`);
       centered = false;

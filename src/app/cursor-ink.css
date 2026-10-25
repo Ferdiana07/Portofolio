@@ -1,20 +1,14 @@
-/* Native SVG keeps the hit point instant. Follow-up movement is bounded DOM. */
-.cursor-ink { display: none; position: fixed; inset: 0; z-index: 80; overflow: hidden; pointer-events: none; contain: strict; color: #19372d; --cursor-paper: #bdd0b6; }
-.cursor-seam { position: absolute; top: 0; left: 0; width: 0; height: 0; opacity: 0; }
-.cursor-seam > i { position: absolute; top: -18px; left: -18px; width: 36px; height: 36px; border-radius: 11px; background: var(--cursor-paper) var(--canvas-weave); background-size: 54px; box-shadow: 3px 4px 7px #12271c25,-2px -2px 5px #fffdf55e,inset 1px 1px 1px #fffef765; transform: rotate(-18deg) scale(.75); opacity: .6; transition: transform .18s cubic-bezier(.16,1,.3,1),opacity .12s; }
-.cursor-seam > i::after { content: ""; position: absolute; inset: 5px; border: 1px dashed currentColor; border-radius: 7px; opacity: .65; }
-.cursor-ink[data-visible=true] .cursor-seam { opacity: 1; }
-.cursor-ink[data-action=true] .cursor-seam > i { transform: rotate(0) scale(1.2); opacity: .75; }
-.cursor-impression { position: absolute; left: 0; top: 0; width: 36px; height: 36px; border: 1px dashed currentColor; border-radius: 11px; opacity: 0; }
-.cursor-fibre { position: absolute; top: 0; left: 0; width: 32px; height: 12px; opacity: 0; transform-origin: left center; }
-.cursor-fibre svg { display: block; width: 100%; height: 100%; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; }
+/* Canvas cursor with a short, split clear-water wake behind its path. */
+.cursor-water { display: none; position: fixed; z-index: 80; inset: 0; overflow: hidden; pointer-events: none; contain: strict; --cursor-ink: #19372d; }
+.cursor-water-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .cursor-ink { display: block; }
-  html[data-cursor=canvas],html[data-cursor=canvas] body { cursor: url('/images/canvas-cursor.svg') 3 3,auto; }
-  html[data-cursor=canvas] :where(a[href],button,[role=button],[role=tab],summary,label) { cursor: url('/images/canvas-cursor-action.svg') 3 3,pointer; }
-  html[data-cursor=canvas] :where(input,textarea,[contenteditable]:not([contenteditable=false])) { cursor: text; }
-  html[data-cursor=canvas] :where(select) { cursor: default; }
-  html[data-cursor=canvas] .puzzle-piece { cursor: grab; }
-  html[data-cursor=canvas] .puzzle-piece[data-dragging=true] { cursor: grabbing; }
-  html[data-cursor=canvas] :where(button:disabled,[aria-disabled=true]) { cursor: not-allowed; }
+  .cursor-water { display: block; }
+  html[data-cursor=water-wake],html[data-cursor=water-wake] body { cursor: url('/images/canvas-cursor.svg') 3 3,auto; }
+  html[data-cursor=water-wake] :where(a[href],button,[role=button],[role=tab],summary,label) { cursor: url('/images/canvas-cursor-action.svg') 7 2,pointer; }
+  html[data-cursor=water-wake] :where(input,textarea,[contenteditable]:not([contenteditable=false])) { cursor: text; }
+  html[data-cursor=water-wake] select { cursor: default; }
+  html[data-cursor=water-wake] .puzzle-piece { cursor: grab; }
+  html[data-cursor=water-wake] .puzzle-piece[data-dragging=true] { cursor: grabbing; }
+  html[data-cursor=water-wake] :where(button:disabled,[aria-disabled=true]) { cursor: not-allowed; }
 }
