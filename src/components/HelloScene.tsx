@@ -11,7 +11,6 @@ const interests = [
 ];
 
 const desktopPortraitImage = "/caesar-layers/tanpa pupi.png";
-const compactPortraitImage = "/caesar-layers/Ilustrasi Pria Muda Berpose Berpikir.png";
 const portraitSizes = "(max-width: 767px) 32vw, (max-width: 1024px) 34vw, 455px";
 const desktopPortraitProps = getImageProps({
   src: desktopPortraitImage,
@@ -22,27 +21,20 @@ const desktopPortraitProps = getImageProps({
   loading: "eager",
 }).props;
 const compactPortraitProps = getImageProps({
-  src: compactPortraitImage,
+  src: "/caesar-layers/Ilustrasi Pria Muda Berpose Berpikir.png",
   alt: "",
-  width: 1122,
-  height: 1402,
+  width: 1129,
+  height: 1393,
   sizes: portraitSizes,
   loading: "eager",
 }).props;
 
 function PortraitAsset({ className, alt }: { className: string; alt: string }) {
-  const { src, ...fallbackProps } = desktopPortraitProps;
+  const { src, srcSet, ...fallbackProps } = desktopPortraitProps;
   return (
     <picture className="hello-portrait-picture">
-      <source
-        media="(max-width: 1024px), (hover: none), (pointer: coarse)"
-        srcSet={compactPortraitProps.srcSet}
-        sizes={compactPortraitProps.sizes}
-        width={1122}
-        height={1402}
-      />
-      {/* getImageProps keeps both responsive sources optimized while picture prevents a double download. */}
-      <img src={src} {...fallbackProps} className={className} alt={alt} draggable={false} />
+      <source media="(max-width: 1024px)" srcSet={compactPortraitProps.srcSet} sizes={portraitSizes} />
+      <img src={src} srcSet={srcSet} {...fallbackProps} className={className} alt={alt} draggable={false} />
     </picture>
   );
 }
@@ -148,7 +140,7 @@ export default function HelloScene() {
       const cssHeight = portrait.clientHeight;
       const sizeChanged = !measuredFrame || Math.abs(cssWidth - measuredFrame.width) >= .5 || Math.abs(cssHeight - measuredFrame.height) >= .5;
       measuredFrame = { width: cssWidth, height: cssHeight };
-      const imageRatio = compactPortrait.matches ? 1122 / 1402 : 1129 / 1393;
+      const imageRatio = 1129 / 1393;
       const fitWidth = Math.min(cssWidth, cssHeight * imageRatio);
       const fitHeight = fitWidth / imageRatio;
       if (sizeChanged) {

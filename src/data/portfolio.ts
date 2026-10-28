@@ -135,8 +135,8 @@ export const projects: ProjectItem[] = [
     tagline: "Rumah digital Himpunan Mahasiswa Oseanografi UNDIP.",
     category: "Web & Organization",
     filterTag: "web",
-    status: "Belum Dideploy",
-    isDeployed: false,
+    status: "Live Demo",
+    isDeployed: true,
     description:
       "Portal profil, kepengurusan, program kerja, dan dokumentasi kegiatan HIMA OSE. Informasi organisasi jadi lebih mudah ditemukan.",
     image: "/images/projects/himaose-landing.webp",
@@ -144,6 +144,7 @@ export const projects: ProjectItem[] = [
     logo: "/images/projects/himaose-logo.png",
     stack: ["HTML5", "CSS3 / Modern Layout", "JavaScript (ES6+)", "Responsive Design", "Feather Icons"],
     source: "https://github.com/Ferdiana07/HimaOSE2",
+    demo: "https://himaose.web.id/",
     features: [
       "Profil lengkap visi, misi, dan nilai-nilai organisasi HIMA OSE UNDIP",
       "Struktur kepengurusan interaktif (Organogram) Kabinet Resonansi Asa",

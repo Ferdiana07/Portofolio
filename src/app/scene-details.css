@@ -9,6 +9,7 @@ html[data-journey=on] .footer { display: none; }
 .journey[data-navigation=arrows] .journey-status { flex-direction: column; align-items: flex-start; gap: 3px; }
 .journey[data-navigation=arrows] .journey-scroll-cue { display: flex; font-size: .57rem; }
 .journey[data-navigation=arrows] .journey-scroll-cue > svg { display: none; }
+.journey[data-transitioning=true] .journey-panel { backface-visibility: hidden; }
 .intro-screen { animation: intro-exit .65s var(--ease) 3.25s forwards; }
 .intro-rule > span { animation-duration: 3.15s; }
 .paper-action { z-index: 30; border: 0; color: #19372d; cursor: pointer; white-space: nowrap; }
@@ -37,6 +38,12 @@ html[data-journey=on] .footer { display: none; }
 .atmosphere-contact .ornament-1 { top: 36%; right: 2%; }
 .atmosphere-contact .ornament-2 { bottom: 20%; left: 3%; }
 @media (prefers-reduced-motion: no-preference) {
+  .journey[data-transitioning=true] .journey-panel[data-transition-role=incoming] .scene-body > * { --scene-enter-x: 0px; --scene-enter-y: 0px; animation: scene-content-arrive .58s cubic-bezier(.16,1,.3,1) both; }
+  .journey[data-transitioning=true][data-transition=iris] .journey-panel[data-transition-role=incoming] .scene-body > * { --scene-enter-y: 16px; }
+  .journey[data-transitioning=true][data-transition=curtain][data-direction=forward] .journey-panel[data-transition-role=incoming] .scene-body > * { --scene-enter-x: 20px; }
+  .journey[data-transitioning=true][data-transition=curtain][data-direction=backward] .journey-panel[data-transition-role=incoming] .scene-body > * { --scene-enter-x: -20px; }
+  .journey[data-transitioning=true][data-transition=arch][data-direction=forward] .journey-panel[data-transition-role=incoming] .scene-body > * { --scene-enter-y: 22px; }
+  .journey[data-transitioning=true][data-transition=arch][data-direction=backward] .journey-panel[data-transition-role=incoming] .scene-body > * { --scene-enter-y: -22px; }
   .atmosphere-top .scene-ornament { animation: paper-glide 14s ease-in-out infinite alternate paused; }
   .atmosphere-hello .scene-ornament { animation: bird-glide 11s ease-in-out infinite alternate paused; }
   .atmosphere-about .scene-ornament { animation: ink-orbit 18s linear infinite paused; }
@@ -49,6 +56,7 @@ html[data-journey=on] .footer { display: none; }
   .journey-panel[aria-hidden=false] .scene-ornament { animation-play-state: running; }
   .journey[data-motion-paused=true] .scene-ornament,.journey[data-hidden=true] .scene-ornament { animation-play-state: paused !important; }
 }
+@keyframes scene-content-arrive { from { opacity: .68; transform: translate3d(var(--scene-enter-x),var(--scene-enter-y),0) scale(.992); } to { opacity: 1; transform: translate3d(0,0,0) scale(1); } }
 @keyframes paper-glide { from { transform: translate3d(-10px,9px,0) rotate(-12deg); } to { transform: translate3d(12px,-19px,0) rotate(6deg); } }
 @keyframes bird-glide { 0% { transform: translate3d(-15px,8px,0) rotate(-8deg); } 50% { transform: translate3d(6px,-12px,0) rotate(4deg); } 100% { transform: translate3d(25px,2px,0) rotate(-4deg); } }
 @keyframes ink-orbit { to { transform: rotate(360deg); } }

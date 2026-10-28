@@ -27,7 +27,8 @@ for (const raw of samples) {
   const state = pose(raw);
   assert.ok(state.from >= 0 && state.to < count && state.to >= state.from);
   assert.ok(state.mix >= 0 && state.mix < 1);
-  assert.ok(!/NaN|Infinity|-[\d.]+%/.test(state.clip), `Invalid clip at ${raw}`);
+  assert.ok(!/NaN|Infinity/.test(JSON.stringify(state)), `Invalid pose at ${raw}`);
+  assert.ok(!/-[\d.]+%/.test(state.clip), `Invalid clip at ${raw}`);
   assert.ok(transitionKinds.includes(state.kind));
 }
 for (let index = 0; index < count; index++) {

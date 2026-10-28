@@ -10,17 +10,35 @@ export function sceneTransition(position: number, count: number) {
   const mix = progress - from;
   const kind = transitionKinds[from % transitionKinds.length];
   const remaining = 1 - mix;
+  const alternate = from % 2 === 0 ? 1 : -1;
   let clip = "none";
   let transform = "none";
+  let baseTransform = "none";
+  let origin = "50% 50%";
   if (kind === "iris") {
-    clip = `circle(${(mix * 110).toFixed(4)}% at 50% 52%)`;
-    transform = `scale(${(1 + remaining * .07).toFixed(5)})`;
+    const centerX = alternate > 0 ? 43 : 57;
+    const centerY = alternate > 0 ? 54 : 46;
+    clip = `ellipse(${(mix * 118).toFixed(4)}% ${(mix * 132).toFixed(4)}% at ${centerX}% ${centerY}%)`;
+    transform = `scale(${(.945 + mix * .055).toFixed(5)}) rotate(${(alternate * remaining * .32).toFixed(4)}deg)`;
+    baseTransform = `scale(${(1 - mix * .024).toFixed(5)}) rotate(${(-alternate * mix * .16).toFixed(4)}deg)`;
+    origin = `${centerX}% ${centerY}%`;
   } else if (kind === "curtain") {
-    clip = `inset(0 ${(remaining * 100).toFixed(4)}% 0 0)`;
-    transform = `translate3d(${(remaining * 3).toFixed(4)}%,0,0)`;
+    const lead = Math.min(100, mix * 112);
+    const trail = Math.min(100, mix * 101);
+    clip = alternate > 0
+      ? `polygon(0 0,${lead.toFixed(4)}% 0,${trail.toFixed(4)}% 100%,0 100%)`
+      : `polygon(${(100 - lead).toFixed(4)}% 0,100% 0,100% 100%,${(100 - trail).toFixed(4)}% 100%)`;
+    transform = `translate3d(${(alternate * remaining * 2.8).toFixed(4)}%,0,0) scale(${(.982 + mix * .018).toFixed(5)})`;
+    baseTransform = `translate3d(${(-alternate * mix * 1.25).toFixed(4)}%,0,0) scale(${(1 - mix * .012).toFixed(5)})`;
+    origin = alternate > 0 ? "0% 50%" : "100% 50%";
   } else {
-    clip = `inset(${(remaining * 100).toFixed(4)}% 0 0 0 round ${(remaining * 42).toFixed(4)}% ${(remaining * 42).toFixed(4)}% 0 0)`;
-    transform = `translate3d(0,${(remaining * 4).toFixed(4)}%,0)`;
+    const radius = remaining * 46;
+    clip = alternate > 0
+      ? `inset(${(remaining * 100).toFixed(4)}% 0 0 0 round ${radius.toFixed(4)}% ${radius.toFixed(4)}% 0 0)`
+      : `inset(0 0 ${(remaining * 100).toFixed(4)}% 0 round 0 0 ${radius.toFixed(4)}% ${radius.toFixed(4)}%)`;
+    transform = `translate3d(0,${(alternate * remaining * 3.6).toFixed(4)}%,0) scale(${(.978 + mix * .022).toFixed(5)})`;
+    baseTransform = `translate3d(0,${(-alternate * mix * 1.1).toFixed(4)}%,0) scale(${(1 - mix * .014).toFixed(5)})`;
+    origin = alternate > 0 ? "50% 100%" : "50% 0%";
   }
-  return { progress, from, to, mix, kind, clip, transform, baseTransform: mix ? `scale(${(1 + mix * .025).toFixed(5)})` : "none" };
+  return { progress, from, to, mix, kind, clip, transform, baseTransform: mix ? baseTransform : "none", origin };
 }

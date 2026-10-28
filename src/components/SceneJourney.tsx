@@ -87,10 +87,14 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
         if (base || overlay) {
           panel.style.zIndex = overlay ? "2" : "1";
           panel.style.transform = overlay ? pose.transform : pose.baseTransform;
+          panel.style.transformOrigin = pose.origin;
           panel.style.clipPath = overlay ? pose.clip : "none";
           if (pose.mix > .001 && pose.mix < .999) panel.style.willChange = "transform, clip-path";
           else panel.style.removeProperty("will-change");
-        } else panel.style.removeProperty("will-change");
+        } else {
+          panel.style.removeProperty("will-change");
+          panel.style.removeProperty("transform-origin");
+        }
         // Only outgoing/incoming panels change state; leave dormant trees alone.
         if (nearest !== current && (current < 0 || index === current || index === nearest)) {
           panel.style.pointerEvents = nearest === index ? "auto" : "none";
@@ -128,6 +132,11 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
       const origin = camera.get();
       if (Math.abs(target - origin) > .00001) root.dataset.direction = target > origin ? "forward" : "backward";
       root.dataset.target = chapters[target].id;
+      panels.forEach((panel, index) => {
+        if (index === target) panel.dataset.transitionRole = "incoming";
+        else if (index === current) panel.dataset.transitionRole = "outgoing";
+        else delete panel.dataset.transitionRole;
+      });
       if (reset) {
         bodies[target].scrollTop = 0;
         bodies[target].querySelector<HTMLElement>(".certificate-cards-grid")?.scrollTo({ top: 0, behavior: "instant" });
@@ -149,7 +158,7 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
         queueCue();
       };
       if (!busy) complete();
-      else animation = animate(camera, target, { duration: .68, ease: [.65, 0, .25, 1], onComplete: complete });
+      else animation = animate(camera, target, { duration: compact.matches ? .64 : .72, ease: [.16, 1, .3, 1], onComplete: complete });
     };
     navigateRef.current = go;
     const followHash = () => {
