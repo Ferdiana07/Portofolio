@@ -40,5 +40,8 @@ for (let index = 0; index < count; index++) {
 }
 assert.equal(sceneTransition(-10, count).from, 0);
 assert.equal(sceneTransition(100, count).from, count - 1);
-assert.equal(new Set(transitionKinds).size, 3);
-console.log("Motion checks passed: 1,201 positions, forward/reverse parity, boundaries and three variants.");
+assert.equal(new Set(transitionKinds).size, 6);
+for (let boundary = 0; boundary < transitionKinds.length; boundary++) {
+  assert.equal(sceneTransition(boundary + .5, count).kind, transitionKinds[boundary]);
+}
+console.log("Motion checks passed: 1,201 positions, forward/reverse parity, boundaries and six variants.");

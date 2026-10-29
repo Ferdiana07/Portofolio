@@ -5,7 +5,7 @@ import { animate, useMotionValue } from "framer-motion";
 import { ArrowDown, ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
 import { chapters } from "@/data/journey";
 import SceneAtmosphere from "./SceneAtmosphere";
-import { sceneTransition } from "@/lib/scene-transition";
+import { sceneTransition, transitionKinds } from "@/lib/scene-transition";
 
 const rulerTicks = Array.from({ length: 61 }, (_, i) => `M${i * 1000 / 60} ${i % 5 === 0 ? 1 : 8}V${i % 5 === 0 ? 23 : 19}`).join(" ");
 
@@ -75,43 +75,14 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
       cancelAnimationFrame(cueFrame);
       cueFrame = requestAnimationFrame(() => { cueFrame = 0; updateCue(); });
     };
-    const update = () => {
-      const pose = sceneTransition(camera.get(), chapters.length);
-      const nearest = Math.round(pose.progress);
-      root.dataset.transition = pose.kind;
-      panels.forEach((panel, index) => {
-        const base = index === pose.from;
-        const overlay = index === pose.to && pose.mix > 0;
-        panel.style.visibility = base || overlay ? "visible" : "hidden";
-        panel.style.opacity = base || overlay ? "1" : "0";
-        if (base || overlay) {
-          panel.style.zIndex = overlay ? "2" : "1";
-          panel.style.transform = overlay ? pose.transform : pose.baseTransform;
-          panel.style.transformOrigin = pose.origin;
-          panel.style.clipPath = overlay ? pose.clip : "none";
-          if (pose.mix > .001 && pose.mix < .999) panel.style.willChange = "transform, clip-path";
-          else panel.style.removeProperty("will-change");
-        } else {
-          panel.style.removeProperty("will-change");
-          panel.style.removeProperty("transform-origin");
-        }
-        // Only outgoing/incoming panels change state; leave dormant trees alone.
-        if (nearest !== current && (current < 0 || index === current || index === nearest)) {
-          panel.style.pointerEvents = nearest === index ? "auto" : "none";
-          panel.inert = nearest !== index;
-          panel.setAttribute("aria-hidden", String(nearest !== index));
-        }
-      });
-      const progress = pose.progress / (chapters.length - 1);
-      rail?.setAttribute("width", String(progress * 1000));
-      progressBar?.setAttribute("aria-valuenow", String(Math.round(progress * 100)));
-      if (nearest !== current) {
+    const activate = (index: number, interactive = true) => {
+      if (index !== current) {
         const focused = document.activeElement;
-        if (focused instanceof HTMLElement && panels.some((panel, index) => index !== nearest && panel.contains(focused))) focused.blur();
-        current = nearest;
-        setActive(nearest);
-        root.dataset.active = chapters[nearest].id;
-        const chapter = chapters[nearest];
+        if (focused instanceof HTMLElement && panels.some((panel, panelIndex) => panelIndex !== index && panel.contains(focused))) focused.blur();
+        current = index;
+        setActive(index);
+        root.dataset.active = chapters[index].id;
+        const chapter = chapters[index];
         for (const element of chrome) {
           element.style.setProperty("--chapter-ground", chapter.background);
           element.style.setProperty("--chapter-ink", chapter.ink);
@@ -124,17 +95,53 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
         frame.style.backgroundColor = chapter.background;
         window.dispatchEvent(new CustomEvent("portfolio:chapter", { detail: chapter.id }));
       }
+      panels.forEach((panel, panelIndex) => {
+        const selected = panelIndex === index;
+        panel.style.pointerEvents = selected && interactive ? "auto" : "none";
+        panel.inert = !selected || !interactive;
+        panel.setAttribute("aria-hidden", String(!selected));
+      });
+    };
+    const update = () => {
+      const pose = sceneTransition(camera.get(), chapters.length);
+      if (!busy) root.dataset.transition = pose.kind;
+      panels.forEach((panel, index) => {
+        const base = index === pose.from;
+        const overlay = index === pose.to && pose.mix > 0;
+        const visibility = base || overlay ? "visible" : "hidden";
+        const opacity = base || overlay ? "1" : "0";
+        if (panel.style.visibility !== visibility) panel.style.visibility = visibility;
+        if (panel.style.opacity !== opacity) panel.style.opacity = opacity;
+        if (base || overlay) {
+          const zIndex = overlay ? "2" : "1";
+          if (panel.style.zIndex !== zIndex) panel.style.zIndex = zIndex;
+          panel.style.transform = overlay ? pose.transform : pose.baseTransform;
+          if (panel.style.transformOrigin !== pose.origin) panel.style.transformOrigin = pose.origin;
+          panel.style.clipPath = overlay ? pose.clip : "none";
+          if (pose.mix > .001 && pose.mix < .999) panel.style.willChange = "transform, clip-path";
+          else panel.style.removeProperty("will-change");
+        } else {
+          panel.style.removeProperty("will-change");
+          panel.style.removeProperty("transform-origin");
+        }
+      });
+      const progress = pose.progress / (chapters.length - 1);
+      rail?.setAttribute("width", String(progress * 1000));
+      progressBar?.setAttribute("aria-valuenow", String(Math.round(progress * 100)));
     };
     const go = (index: number, focus = false, instant = false, reset = false) => {
       const target = Math.max(0, Math.min(chapters.length - 1, index));
-      if (target === goal && busy) return;
+      if (busy && !instant) return;
       animation?.stop();
       const origin = camera.get();
+      const outgoing = current;
       if (Math.abs(target - origin) > .00001) root.dataset.direction = target > origin ? "forward" : "backward";
       root.dataset.target = chapters[target].id;
+      const boundary = Math.max(0, Math.min(transitionKinds.length - 1, Math.floor(Math.min(origin, target))));
+      root.dataset.transition = transitionKinds[boundary];
       panels.forEach((panel, index) => {
         if (index === target) panel.dataset.transitionRole = "incoming";
-        else if (index === current) panel.dataset.transitionRole = "outgoing";
+        else if (index === outgoing) panel.dataset.transitionRole = "outgoing";
         else delete panel.dataset.transitionRole;
       });
       if (reset) {
@@ -145,11 +152,15 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
       goal = target;
       busy = !direct && Math.abs(camera.get() - target) > .00001;
       root.dataset.transitioning = String(busy);
+      chrome.forEach(element => { element.dataset.transitioning = String(busy); });
+      activate(target, !busy);
       const complete = () => {
         camera.set(target);
         update();
         busy = false;
         root.dataset.transitioning = "false";
+        chrome.forEach(element => { element.dataset.transitioning = "false"; });
+        activate(target, true);
         if (focus) requestAnimationFrame(() => {
           if (bodies[target].isConnected && !bodies[target].closest("[inert]")) bodies[target].focus({ preventScroll: true });
         });
@@ -158,7 +169,11 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
         queueCue();
       };
       if (!busy) complete();
-      else animation = animate(camera, target, { duration: compact.matches ? .64 : .72, ease: [.16, 1, .3, 1], onComplete: complete });
+      else {
+        const distance = Math.min(1, Math.abs(target - origin));
+        const duration = (compact.matches ? .66 : .76) * (.72 + .28 * Math.sqrt(distance));
+        animation = animate(camera, target, { duration, ease: [.65, 0, .35, 1], onComplete: complete });
+      }
     };
     navigateRef.current = go;
     const followHash = () => {
@@ -224,6 +239,7 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
     };
     const visibility = () => { root.dataset.hidden = String(document.hidden); };
     configure();
+    activate(0);
     update();
     const initial = requestAnimationFrame(followHash);
     const unsubscribe = camera.on("change", update);
@@ -249,7 +265,10 @@ export default function SceneJourney({ children }: { children: ReactNode }) {
       window.removeEventListener("hashchange", followHash);
       window.removeEventListener("popstate", followHash);
       delete document.documentElement.dataset.journey;
-      chrome.forEach(element => { element.style.removeProperty("--chapter-ground"); element.style.removeProperty("--chapter-ink"); });
+      chrome.forEach(element => {
+        delete element.dataset.transitioning;
+        for (const name of ["--chapter-ground", "--chapter-ink", "--chapter-accent", "--chapter-glow", "--neu-light", "--neu-dark", "--neu-surface"]) element.style.removeProperty(name);
+      });
     };
   }, [camera]);
 

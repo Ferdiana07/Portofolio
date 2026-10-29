@@ -62,16 +62,16 @@ function TypedInterests() {
       timer = window.setTimeout(type, 250);
     };
     const chapter = (event: Event) => {
-      if ((event as CustomEvent<string>).detail === "hello") start();
+      if ((event as CustomEvent<string>).detail === "hello" && root?.dataset.transitioning !== "true") start();
       else clearTimeout(timer);
     };
     const sync = () => {
       clearTimeout(timer);
-      if (root?.dataset.active === "hello" && root.dataset.motionPaused !== "true" && !document.hidden && !reduce.matches) start();
+      if (root?.dataset.active === "hello" && root.dataset.motionPaused !== "true" && root.dataset.transitioning !== "true" && !document.hidden && !reduce.matches) start();
       else setLength(text.length);
     };
     const observer = new MutationObserver(sync);
-    if (root) observer.observe(root, { attributes: true, attributeFilter: ["data-motion-paused"] });
+    if (root) observer.observe(root, { attributes: true, attributeFilter: ["data-motion-paused", "data-transitioning"] });
     const visibility = sync;
     window.addEventListener("portfolio:chapter", chapter);
     document.addEventListener("visibilitychange", visibility);
